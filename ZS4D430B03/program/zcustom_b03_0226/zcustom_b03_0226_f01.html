@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZCUSTOM_B03_0226_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZCUSTOM_B03_0226_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZCUSTOM_B03_0226_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZCUSTOM_B03_0226_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+  " ### ##
+<font color ="#0000FF">*  SELECT * FROM zcdscustom_b03</font>
+<font color ="#0000FF">*    WHERE buspartnum &lt; 30</font>
+<font color ="#0000FF">*    INTO CORRESPONDING FIELDS OF TABLE @gt_data.</font>
+  SELECT FROM zcdscustom_b03
+    FIELDS buspartnum, Name, Custtype, CusttypeName, Custrate, CustrateText, Buspatyp, Discount
+    WHERE buspartnum &lt; 30
+    INTO TABLE @gt_data.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'BUSPARTNUM'.
+  gs_fcat-coltext   = 'Buspartnum'.
+  gs_fcat-col_pos = 1.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'NAME'.
+  gs_fcat-coltext   = 'Name'.
+  gs_fcat-col_pos = 2.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CUSTTYPE'.
+  gs_fcat-coltext   = 'Custtype'.
+  gs_fcat-col_pos = 3.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CUSTTYPENAME'.
+  gs_fcat-coltext   = 'Custtype Name'.
+  gs_fcat-col_pos = 4.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CUSTRATE'.
+  gs_fcat-coltext   = 'Cust rate'.
+  gs_fcat-col_pos = 5.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CUSTRATETEXT'.
+  gs_fcat-coltext   = 'Cust Rate Text'.
+  gs_fcat-col_pos = 6.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'BUSPATYP'.
+  gs_fcat-coltext   = 'Buspatyp'.
+  gs_fcat-col_pos = 7.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'DISCOUNT'.
+  gs_fcat-coltext   = 'Discount'.
+  gs_fcat-col_pos = 8.
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+  gs_layout-grid_title = 'CDS View## ###'.
+  gs_layout-zebra      = 'X'.
+  gs_layout-sel_mode   = 'A'.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
