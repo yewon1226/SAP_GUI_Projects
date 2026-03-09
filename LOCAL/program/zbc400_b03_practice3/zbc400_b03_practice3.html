@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE3</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE3</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program ZBC400_B03_PRACTICE3</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_B03_PRACTICE3</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zbc400_b03_practice3.
+
+DATA: lt_mem   TYPE TABLE OF ztgym_member_b03,
+      lt_check TYPE TABLE OF ztgym_b03,
+      ls_check LIKE LINE OF lt_check.
+
+DATA: BEGIN OF ls_result,
+        member_name TYPE ztgym_member_b03-member_name,
+        phone       TYPE ztgym_member_b03-phone,
+        teacher     TYPE ztgym_b03-teacher,
+        class_name  TYPE ztgym_b03-class_name,
+      END OF ls_result.
+DATA: lt_result LIKE TABLE OF ls_result.
+
+PARAMETERS: p_gymid TYPE ztgym_b03-gym_id,
+            p_claid TYPE ztgym_b03-class_id.
+
+SELECT SINGLE teacher class_name
+  FROM ztgym_b03
+  INTO CORRESPONDING FIELDS OF ls_check
+  WHERE gym_id = p_gymid
+    AND class_id = p_claid.
+
+SELECT member_name phone
+  FROM ztgym_member_b03
+  INTO CORRESPONDING FIELDS OF TABLE lt_mem
+  WHERE gym_id = p_gymid
+    AND class_id = p_claid.
+
+SELECT member_name phone teacher class_name
+  INTO CORRESPONDING FIELDS OF TABLE lt_result
+  FROM ztgym_member_b03 AS a
+  INNER JOIN ztgym_b03 AS b
+    ON a~gym_id = b~gym_id
+    AND a~class_id = b~class_id
+  WHERE a~gym_id = p_gymid.
+
+cl_demo_output=&gt;display( lt_result ).
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

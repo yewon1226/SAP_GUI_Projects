@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE11</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE11</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  01.13 ##</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_B03_PRACTICE11</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZBC400_B03_PRACTICE11.
+
+CLASS lcl_person DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: display_info IMPORTING iv_name TYPE CHAR20
+                                          iv_age TYPE I
+                                RETURNING VALUE(rv_result) TYPE CHAR40.
+  PRIVATE SECTION.
+    CLASS-DATA: name TYPE CHAR20 VALUE '###',
+                age TYPE I VALUE 20.
+ENDCLASS.
+
+CLASS lcl_person IMPLEMENTATION.
+  METHOD display_info.
+    IF iv_name IS NOT INITIAL.
+      name = iv_name.
+      age = iv_age.
+    ENDIF.
+    rv_result = name && `# ### ` && age && '# ###.'.
+    WRITE:/ rv_result.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_person=&gt;display_info(
+    EXPORTING
+      iv_name = ''
+      iv_age = 0
+  ).
+  lcl_person=&gt;display_info(
+    EXPORTING
+      iv_name = '###'
+      iv_age = 24
+  ).
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

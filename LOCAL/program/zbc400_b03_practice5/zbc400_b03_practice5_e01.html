@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE5_E01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE5_E01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC400_B03_PRACTICE5_E01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC400_B03_PRACTICE5_E01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+INITIALIZATION.
+  so_car-sign = 'I'.
+  so_car-option = 'BT'.
+  so_car-low = 'AA'.
+  so_car-high = 'QF'.
+  APPEND so_car.
+
+  CLEAR so_car.
+  so_car-sign = 'E'.
+  so_car-option = 'EQ'.
+  so_car-low = 'LH'.
+  APPEND so_car.
+
+AT SELECTION-SCREEN ON RADIOBUTTON GROUP rad.
+  IF pa_all = 'X'.
+    MESSAGE 'ERROR !' TYPE 'E'.
+  ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

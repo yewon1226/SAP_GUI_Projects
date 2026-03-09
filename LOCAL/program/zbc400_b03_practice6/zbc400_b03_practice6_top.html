@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE6_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE6_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC400_B03_PRACTICE6_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC400_B03_PRACTICE6_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: gs_scarr TYPE scarr,
+      gt_scarr TYPE TABLE OF scarr.
+
+DATA: BEGIN OF gs_data,
+        carrid    TYPE s_carr_id,     "DV_FLIGHTS
+        carrname  TYPE s_carrname,    "SCARR
+        connid    TYPE s_conn_id,     "DV_FLIGHTS
+        fldate    TYPE s_date,        "DV_FLIGHTS
+        cityfrom  TYPE s_from_cit,    "DV_FLIGHTS
+        cityto    TYPE s_to_city,     "DV_FLIGHTS
+        countryfr TYPE land1,         "DV_FLIGHTS
+        countryto TYPE land1,         "DV_FLIGHTS
+      END OF gs_data.
+DATA: gt_data LIKE TABLE OF gs_data,
+      gt_copy_data LIKE gt_data.
+
+SELECT-OPTIONS: SO_CAR FOR gs_data-carrid,
+                SO_CON FOR gs_data-connid,
+                SO_FDT FOR gs_data-fldate NO INTERVALS.
+
+DATA: go_salv TYPE REF TO cl_salv_table.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

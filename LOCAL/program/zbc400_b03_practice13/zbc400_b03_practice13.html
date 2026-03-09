@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE13</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE13</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  02.02 ##### ##</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_B03_PRACTICE13</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZBC400_B03_PRACTICE13.
+
+TYPES: BEGIN OF ts_data,
+        ID(20),
+        NAME(20),
+        AGE(20),
+        ADDRESS(20),
+       END OF ts_data.
+
+
+PARAMETERS: pa_file TYPE localfile.
+DATA: gt_filename TYPE filetable,
+      gv_rc TYPE I,
+      gt_excel_data TYPE TABLE OF alsmex_tabline.
+DATA: gt_data TYPE TABLE OF ts_data,
+      gs_data LIKE LINE OF gt_data.
+FIELD-SYMBOLS: &lt;fs&gt; TYPE ANY.
+CONSTANTS gc_filters TYPE string VALUE 'EXCEL FILES (*.XLSX)|*.XLSX|EXCEL FILES (*.XLS)|*.XLS|'.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR pa_file.
+  cl_gui_frontend_services=&gt;file_open_dialog(
+    EXPORTING
+      window_title            = '####'                 " Title Of File Open Dialog
+      default_filename        = space                 " Default File Name
+      file_filter             = gc_filters                 " File Extension Filter String
+      initial_directory       = 'C:'                 " Initial Directory
+    CHANGING
+      file_table              = gt_filename                 " Table Holding Selected Files
+      rc                      = gv_rc                 " Return Code, Number of Files or -1 If Error Occurred
+    EXCEPTIONS
+      file_open_dialog_failed = 1                " "Open File" dialog failed
+      cntl_error              = 2                " Control error
+      error_no_gui            = 3                " No GUI available
+      not_supported_by_gui    = 4                " GUI does not support this
+      others                  = 5
+  ).
+  IF SY-SUBRC = 0.
+    READ TABLE gt_filename INTO pa_file INDEX 1.
+  ENDIF.
+
+START-OF-SELECTION.
+  IF pa_file IS NOT INITIAL.
+    CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'
+      EXPORTING
+        filename                = pa_file
+        i_begin_col             = 2
+        i_begin_row             = 5
+        i_end_col               = 5
+        i_end_row               = 50
+      TABLES
+        intern                  = gt_excel_data
+      EXCEPTIONS
+        inconsistent_parameters = 1
+        upload_ole              = 2
+        others                  = 3.
+    IF SY-SUBRC = 0.
+      SORT gt_excel_data BY row col.
+      LOOP AT gt_excel_data INTO DATA(gs_excel_data).
+        UNASSIGN &lt;fs&gt;.
+        ASSIGN COMPONENT gs_excel_data-col OF STRUCTURE gs_data TO &lt;fs&gt;.
+        &lt;fs&gt; = gs_excel_data-value.
+
+        AT END OF row.
+          APPEND gs_data TO gt_data.
+          CLEAR gs_data.
+        ENDAT.
+      ENDLOOP.
+      cl_demo_output=&gt;display( gt_data ).
+    ENDIF.
+  ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

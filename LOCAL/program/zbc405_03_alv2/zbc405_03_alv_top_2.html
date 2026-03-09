@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC405_03_ALV_TOP_2</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC405_03_ALV_TOP_2</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC405_03_ALV_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC405_03_ALV_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+DATA: OK_CODE TYPE sy-ucomm,
+      go_container TYPE REF TO cl_gui_custom_container,
+      go_alv_grid TYPE REF TO cl_gui_alv_grid.
+DATA: gs_variant TYPE disvariant,
+      gs_stable TYPE LVC_S_STBL,
+      gs_layout TYPE LVC_S_LAYO.
+DATA: gt_fcat TYPE LVC_T_FCAT,
+      gs_fcat TYPE LVC_S_FCAT.
+
+DATA: BEGIN OF gs_flight.
+        INCLUDE TYPE sflight.
+DATA: excp TYPE CHAR1,
+      color TYPE C LENGTH 4,
+      lt_field_colors TYPE LVC_T_SCOL,
+      changes_possible TYPE icon-id,
+      END OF gs_flight.
+DATA: gt_flight LIKE TABLE OF gs_flight.
+DATA: ls_field_colors TYPE LVC_S_SCOL.
+
+<font color ="#0000FF">*DATA: gs_flight2 TYPE BC400_S_FLIGHT,</font>
+<font color ="#0000FF">*      gt_flight2 TYPE TABLE OF BC400_S_FLIGHT.</font>
+
+PARAMETERS: pa_va TYPE disvariant-variant.
+
+SELECT-OPTIONS: so_car FOR gs_flight-carrid,
+                so_con FOR gs_flight-connid.
+
+START-OF-SELECTION.
+  PERFORM get_data.
+<font color ="#0000FF">*  PERFORM get_data2.</font>
+  CALL SCREEN 100.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

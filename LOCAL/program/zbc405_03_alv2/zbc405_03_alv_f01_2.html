@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC405_03_ALV_F01_2</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC405_03_ALV_F01_2</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC405_03_ALV_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC405_03_ALV_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+TYPE-POOLS: COL, ICON.
+
+FORM get_data.
+  SELECT * FROM sflight
+    INTO CORRESPONDING FIELDS OF TABLE gt_flight
+    WHERE carrid IN so_car
+      AND connid IN so_con.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE '#### #### ####.' TYPE 'E'.
+  ELSE.
+    LOOP AT gt_flight INTO gs_flight.
+      IF gs_flight-seatsocc = 0.
+        gs_flight-excp = '1'.
+      ELSEIF gs_flight-seatsocc &lt; 50.
+        gs_flight-excp = '2'.
+      ELSE.
+        gs_flight-excp = '3'.
+      ENDIF.
+
+      IF gs_flight-fldate+4(2) = sy-datum+4(2).
+        gs_flight-color = 'C' && col_negative && 10.
+      ENDIF.
+
+      IF gs_flight-fldate &lt; sy-datum.
+        gs_flight-changes_possible = ICON_SPACE.
+      ELSE.
+        gs_flight-changes_possible = ICON_OKAY.
+      ENDIF.
+
+      IF gs_flight-PLANETYPE = '747-400'.
+        ls_field_colors-fname = 'PLANETYPE'.
+        ls_field_colors-color-col = col_positive.
+        ls_field_colors-color-int = '1'.
+        ls_field_colors-color-inv = '0'.
+        APPEND ls_field_colors TO gs_flight-lt_field_colors.
+      ENDIF.
+
+      MODIFY gt_flight FROM gs_flight
+        TRANSPORTING excp color lt_field_colors changes_possible.
+      CLEAR gs_flight.
+    ENDLOOP.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form get_data2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*FORM get_data2.</font>
+<font color ="#0000FF">*  SELECT carrid connid fldate seatsmax seatsocc FROM sflight</font>
+<font color ="#0000FF">*    INTO CORRESPONDING FIELDS OF TABLE gt_flight2</font>
+<font color ="#0000FF">*    WHERE carrid IN so_car</font>
+<font color ="#0000FF">*      AND connid IN so_con.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  LOOP AT gt_flight2 INTO gs_flight2.</font>
+<font color ="#0000FF">*    gs_flight2-PERCENTAGE = ( gs_flight2-seatsocc / gs_flight2-seatsmax ) * 100.</font>
+<font color ="#0000FF">*    MODIFY gt_flight2 FROM gs_flight2.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*ENDFORM.</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form free_alv</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM free_alv .
+  IF go_container IS INITIAL.
+    go_container-&gt;free( ).
+  ENDIF.
+  IF go_alv_grid IS INITIAL.
+    go_alv_grid-&gt;free( ).
+  ENDIF.
+  FREE: go_container, go_alv_grid.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+  gs_layout-grid_title = 'Flights'.
+  gs_layout-zebra = 'X'.
+  gs_layout-sel_mode = 'C'.
+  gs_layout-excp_fname = 'EXCP'.
+  gs_layout-info_fname = 'COLOR'.
+  gs_layout-ctab_fname = 'LT_FIELD_COLORS'.
+  gs_layout-no_hgridln = 'X'.
+  gs_layout-no_vgridln = 'X'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'SEATSOCC'.
+  gs_fcat-do_sum = 'X'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'PAYMENTSUM'.
+  gs_fcat-no_out = 'X'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CHANGES_POSSIBLE'.
+  gs_fcat-icon = 'X'.
+  gs_fcat-coltext = 'Changes Possible'.
+  gs_fcat-tooltip = 'Are changes still possible?'.
+  gs_fcat-col_pos = 5.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'EXCP'.
+  gs_fcat-coltext = 'traffic light'.
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

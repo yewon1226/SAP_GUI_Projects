@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZALV_SPFLI_B03_C01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZALV_SPFLI_B03_C01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZALV_SPFLI_B03_C01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZALV_SPFLI_B03_C01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+CLASS lcl_event_handler DEFINITION.
+  PUBLIC SECTION.
+  CLASS-METHODS: ON_HOTSPOT_CLICK
+    FOR EVENT HOTSPOT_CLICK OF CL_GUI_ALV_GRID
+    IMPORTING E_ROW_ID SENDER.
+ENDCLASS.
+
+
+CLASS lcl_event_handler IMPLEMENTATION.
+  METHOD ON_HOTSPOT_CLICK.
+    IF SENDER = GO_ALV.
+      gv_index = E_ROW_ID-index.
+      PERFORM get_sflight.
+      CALL SCREEN 110.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

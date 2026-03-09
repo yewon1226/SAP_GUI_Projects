@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZPRACTICE05B03_I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZPRACTICE05B03_I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZPRACTICE05B03_I01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZPRACTICE05B03_I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'EXIT' OR 'CANCEL'.
+      LEAVE PROGRAM.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  CHECK_INPUTS  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE check_inputs INPUT.
+  IF SDYN_BOOK-CARRID IS NOT INITIAL AND
+     SDYN_BOOK-CONNID IS NOT INITIAL AND
+     SDYN_BOOK-FLDATE IS NOT INITIAL AND
+     SDYN_BOOK-BOOKID IS NOT INITIAL.
+    SELECT SINGLE CANCELLED FROM SBOOK
+      INTO gv_cancelled
+      WHERE carrid = SDYN_BOOK-CARRID
+        AND connid = SDYN_BOOK-CONNID
+        AND fldate = SDYN_BOOK-FLDATE
+        AND bookid = SDYN_BOOK-BOOKID.
+    SELECT SINGLE carrid connid fldate bookid CUSTOMID CUSTTYPE FROM SBOOK
+      INTO CORRESPONDING FIELDS OF gs_data
+      WHERE carrid = SDYN_BOOK-CARRID
+        AND connid = SDYN_BOOK-CONNID
+        AND fldate = SDYN_BOOK-FLDATE
+        AND bookid = SDYN_BOOK-BOOKID.
+
+    IF gv_cancelled = 'X'.
+      MESSAGE '### ### ### # ###.' TYPE 'E'.
+    ENDIF.
+  ELSE.
+    IF SDYN_BOOK-CARRID IS INITIAL.
+      SET CURSOR FIELD 'SDYN_BOOK-CARRID'.
+    ELSEIF SDYN_BOOK-CONNID IS INITIAL.
+      SET CURSOR FIELD 'SDYN_BOOK-CONNID'.
+    ELSEIF SDYN_BOOK-FLDATE IS INITIAL.
+      SET CURSOR FIELD 'SDYN_BOOK-FLDATE'.
+    ELSEIF SDYN_BOOK-BOOKID IS INITIAL.
+      SET CURSOR FIELD 'SDYN_BOOK-BOKKID'.
+    ENDIF.
+    MESSAGE '1# ### ### ### ####.' TYPE 'E'.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE EXIT INPUT.
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      MESSAGE '## ########?' TYPE 'I'.
+      LEAVE PROGRAM.
+    WHEN 'CANCEL'.
+      MESSAGE '## ########?' TYPE 'I'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
