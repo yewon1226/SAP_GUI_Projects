@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_EXAMY_I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_EXAMY_I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_EXAMY_I01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_EXAMY_I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+  DATA: lt_select_data TYPE LVC_T_ROW,
+        ls_select_data TYPE LVC_S_ROW.
+  DATA: gs_req_record TYPE ZTREQFOOD_B03,
+        gv_flag_cancel TYPE I VALUE 0.
+  CLEAR gs_data.
+  CASE OK_CODE.
+    WHEN 'CANC'.
+      CALL METHOD go_alv-&gt;get_selected_rows
+        IMPORTING
+          et_index_rows = lt_select_data.
+      IF sy-subrc = 0.
+        LOOP AT lt_select_data INTO ls_select_data.
+          READ TABLE gt_data INTO gs_data INDEX ls_select_data-index.
+          IF gs_data-status NE 'B' OR gs_data-reqdate NE sy-datum.
+            MESSAGE '### ## ### #### #####.' TYPE 'I'.
+            gv_flag_cancel = 1.
+          ENDIF.
+        ENDLOOP.
+        IF gv_flag_cancel = 0.
+          LOOP AT lt_select_data INTO ls_select_data.
+            READ TABLE gt_data INTO gs_data INDEX ls_select_data-index.
+            MOVE-CORRESPONDING gs_data TO gs_req_record.
+            gs_req_record-status = 'C'.
+            gs_req_record-enddate = sy-datum - 1.
+            UPDATE ZTREQFOOD_B03 from gs_req_record.
+          ENDLOOP.
+          PERFORM set_data.
+          PERFORM set_fixedvalue.
+        ENDIF.
+      ELSE.
+        MESSAGE '## ### ### ## ## #####' TYPE 'I'.
+      ENDIF.
+    WHEN 'REQUEST'.
+      CALL METHOD go_alv-&gt;get_selected_rows
+        IMPORTING
+          et_index_rows = lt_select_data.
+      READ TABLE lt_select_data INTO ls_select_data INDEX 1.
+      IF sy-subrc = 0.
+        READ TABLE lt_select_data INTO ls_select_data INDEX 2.
+        IF sy-subrc = 0.
+          MESSAGE '#### ### ### #####.' TYPE 'I'.
+        ELSE.
+          CLEAR ls_select_data.
+          READ TABLE lt_select_data INTO ls_select_data INDEX 1.
+          gv_index = ls_select_data-index.
+          READ TABLE gt_data INTO gs_data INDEX gv_index.
+          IF gs_data-status = 'B'.
+            MESSAGE '## ### ### ### #####.' TYPE 'I'.
+          ENDIF.
+          PERFORM set_data2.
+          CALL SCREEN 200.
+        ENDIF.
+      ELSE.
+        MESSAGE '## ### ### ### #####' TYPE 'I'.
+      ENDIF.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'CANCEL'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0200  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0200 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0110  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0110 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

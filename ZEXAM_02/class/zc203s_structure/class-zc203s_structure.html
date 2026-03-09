@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZC203S_STRUCTURE</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for class: ZC203S_STRUCTURE</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Template: Use structure types in ABAP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">**************************************************************************</font>
+<font color ="#0000FF">*   Class attributes.                                                    *</font>
+<font color ="#0000FF">**************************************************************************</font>
+Instantiation: Public
+Message class:
+State: Implemented
+Final Indicator: X
+R/3 Release: 758
+
+<font color ="#0000FF">**************************************************************************</font>
+<font color ="#0000FF">*   Public section of class.                                             *</font>
+<font color ="#0000FF">**************************************************************************</font>
+CLASS zc203s_structure DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    INTERFACES if_oo_adt_classrun .
+
+<font color ="#0000FF">* Task 1: Simple Structure</font>
+<font color ="#0000FF">**********************************************************************</font>
+    TYPES:
+      BEGIN OF st_address,
+        street      TYPE /dmo/street,
+        postal_code TYPE /dmo/postal_code,
+        city        TYPE /dmo/city,
+        country     TYPE land1,
+      END OF st_address.
+
+<font color ="#0000FF">* Task 2: Nested Structure</font>
+<font color ="#0000FF">**********************************************************************</font>
+    TYPES:
+      BEGIN OF st_name,
+        first_name TYPE /dmo/first_name,
+        last_name  TYPE /dmo/last_name,
+      END OF st_name.
+
+    TYPES: BEGIN OF st_person,
+             name    TYPE st_name,
+             address TYPE st_address,
+           END OF st_person.
+
+
+<font color ="#0000FF">*Task 3: Named Includes</font>
+<font color ="#0000FF">**********************************************************************</font>
+    TYPES BEGIN OF st_person_inc.
+    INCLUDE TYPE st_name    AS name.
+    INCLUDE TYPE st_address AS address.
+    TYPES END OF st_person_inc.
+
+
+<font color ="#0000FF">**************************************************************************</font>
+<font color ="#0000FF">*   Private section of class.                                            *</font>
+<font color ="#0000FF">**************************************************************************</font>
+private section.
+
+<font color ="#0000FF">**************************************************************************</font>
+<font color ="#0000FF">*   Protected section of class.                                          *</font>
+<font color ="#0000FF">**************************************************************************</font>
+protected section.
+
+<font color ="#0000FF">**************************************************************************</font>
+<font color ="#0000FF">*   Types section of class.                                              *</font>
+<font color ="#0000FF">**************************************************************************</font>
+<font color ="#0000FF">*"* dummy include to reduce generation dependencies between</font>
+<font color ="#0000FF">*"* class ZC203S_STRUCTURE and it's users.</font>
+<font color ="#0000FF">*"* touched if any type reference has been changed</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
