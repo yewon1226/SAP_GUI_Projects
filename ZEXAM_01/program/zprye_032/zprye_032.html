@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPRYE_032</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPRYE_032</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program ZPRYE_03</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPRYE_03</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPRYE_032.
+
+PARAMETERS: p_d_id TYPE ZTYEEM12B03-DEPT_ID OBLIGATORY,   " ###, ##, ## ## ## #### ##
+            p_e_id TYPE ZTYEEM12B03-EMP_ID,
+            p_check AS CHECKBOX.
+
+DATA: gt_employee TYPE TABLE OF ZTYEEM12B03,    " #### ### data ## (###, ####) ##
+      gs_employee LIKE LINE OF gt_employee.
+
+<font color ="#0000FF">**********************************************************************</font>
+
+TYPES: tv_pos TYPE CHAR1.      " #### ###### ### ## ##
+
+" ## ### ###
+DATA: gv_birth TYPE CHAR40,   " ####
+      gv_dats TYPE CHAR40,    " ###
+      gv_age1 TYPE I,         " ##
+      gv_age2 TYPE I,         " # ##
+      gv_job TYPE CHAR40.     " ##
+
+<font color ="#0000FF">**********************************************************************</font>
+
+" ## # #### ## ### ##
+AT SELECTION-SCREEN.
+  IF p_e_id IS INITIAL AND p_check NE 'X'.  " ## ###, ### ### #
+    MESSAGE '## ## ## ### #####.' TYPE 'E'.
+  ENDIF.
+
+  SELECT SINGLE * FROM ZTYEEM12B03    " ### ### ### #### #### #### ### ##
+    INTO gs_employee
+    WHERE EMP_ID = p_e_id.
+  IF sy-subrc &lt;&gt; 0 AND p_check NE 'X'.    " ## ### ### ### ### #
+    MESSAGE '#### ## #####.' TYPE 'E'.
+  ENDIF.
+
+<font color ="#0000FF">**********************************************************************</font>
+
+START-OF-SELECTION.
+  IF p_check = 'X'.   " ### ## #
+    SELECT * FROM ZTYEEM12B03   " #### #### #### ## #### ###
+      INTO TABLE gt_employee
+      WHERE DEPT_ID = p_d_id.
+    cl_demo_output=&gt;display( gt_employee ).   " ##
+
+  ELSE.   " ### ### #
+    " ##1 ##
+    PERFORM get_date_format USING gs_employee-BIRTHDATE       " #### ## ### ## #### ##
+                            CHANGING gv_birth.
+
+    call function <a href ="zyeb03fm/zyeb03fm.html">'ZYEB03FM'</a>   " ### # ### ### function module ##
+      EXPORTING
+        iv_date = gs_employee-BIRTHDATE       " ## ## ##### ##
+      IMPORTING
+        EV_AGE1 = gv_age1       " ## ### ##, # ## ### ### ##
+        EV_AGE2 = gv_age2
+      .
+
+    PERFORM get_position_text USING gs_employee-POS_CODE       " ### ## ## #### ##
+                              CHANGING gv_job.
+
+    PERFORM get_date_format USING gs_employee-HIREDATE        " ### ### ## #### ##
+                            CHANGING gv_dats.
+
+    IF sy-subrc = 0.
+      WRITE:/ '##: ', p_e_id NO-ZERO,    " ## ### 0# #### ##
+            / '##: ', gs_employee-EMP_NAME,               " ## ##
+            / '####: ', gv_birth,          " ##### ## ### ## #### ##
+            / '##:' , gv_age1,              " function module# ### ### ## ## ##
+            / '# ##: ', gv_age2,           " function module# ### ### ## # ## ##
+            / '##: ', gv_job,               " ##### ## ## ## ## ##
+            / '###: ', gv_dats.             " ##### ## ## ## ### ##
+    ENDIF.
+  ENDIF.
+
+<font color ="#0000FF">*********************************************************************</font>
+
+<font color ="#0000FF">* #### ## ### ## #### ##</font>
+FORM get_date_format USING VALUE(pv_date) TYPE DATS
+                     CHANGING VALUE(cv_date) TYPE CHAR40.
+  DATA: lv_year TYPE CHAR10,
+        lv_month TYPE CHAR10,   " ##, #, # # ### ### ## ##
+        lv_date TYPE CHAR10.
+
+  CONCATENATE pv_date+0(4) '#' INTO lv_year.    " ##, #, # # ### ## ### ##
+
+  CONCATENATE pv_date+4(2) '#' INTO lv_month.
+  IF lv_month+0(1) = '0'.
+    CONCATENATE lv_month+1(1) '#' INTO lv_month.
+  ENDIF.
+
+  CONCATENATE pv_date+6(2) '#' INTO lv_date.
+  IF lv_date+0(1) = '0'.
+    CONCATENATE lv_date+1(1) '#' INTO lv_date.
+  ENDIF.
+
+  CONCATENATE lv_year lv_month lv_date INTO cv_date SEPARATED BY ' '.   " # #### ##, #, ## CONCATENATE# ### ##
+
+ENDFORM.
+
+<font color ="#0000FF">* ### #### ## #### ##</font>
+FORM get_position_text USING VALUE(pv_pos) TYPE tv_pos    " ### ### ### # ### ##
+                       CHANGING VALUE(cv_pos) TYPE CHAR40.
+  CASE pv_pos.    " case when # #### ## ### ## ### ###
+    WHEN '1'.
+      cv_pos = text-J01.    " text symbols# ### ### ### ### ###
+    WHEN '2'.
+      cv_pos = text-J02.
+    WHEN '3'.
+      cv_pos = text-J03.
+    WHEN '4'.
+      cv_pos = text-J04.
+    WHEN '5'.
+      cv_pos = text-J05.
+    WHEN '6'.
+      cv_pos = text-J06.
+    WHEN '7'.
+      cv_pos = text-J07.
+    WHEN OTHERS.
+      MESSAGE '## ### ####.' TYPE 'E'.    " #### ### ## # ## ### ##
+  ENDCASE.
+ENDFORM.
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* J01 ##</font>
+<font color ="#0000FF">* J02 ##</font>
+<font color ="#0000FF">* J03 ##</font>
+<font color ="#0000FF">* J04 ##</font>
+<font color ="#0000FF">* J05 ##</font>
+<font color ="#0000FF">* J06 ##</font>
+<font color ="#0000FF">* J07 ##</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* GV_DNAME         ###</font>
+<font color ="#0000FF">* P_CHECK         ##</font>
+<font color ="#0000FF">* P_NUM         ##</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   ## ## ## ### #####.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

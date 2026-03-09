@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPRYE_03</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPRYE_03</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program ZPRYE_03</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPRYE_03</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPRYE_03.
+
+TYPES: tv_pos TYPE N LENGTH 1.      " #### ###### ### ## ##
+
+" ## ## ##### ## (OBLIGATORY# #### ## ##### ##)
+PARAMETERS: p_num TYPE N LENGTH 8 OBLIGATORY,   " ##
+            p_name TYPE C LENGTH 10 OBLIGATORY, " ##
+            p_birth TYPE DATS OBLIGATORY,       " ####
+            p_job TYPE N LENGTH 1 OBLIGATORY,   " ##
+            p_dats TYPE DATS OBLIGATORY.        " ###
+
+" ## ### ###
+DATA: gv_birth TYPE CHAR40,   " ####
+      gv_dats TYPE CHAR40,    " ###
+      gv_age1 TYPE I,         " ##
+      gv_age2 TYPE I,         " # ##
+      gv_job TYPE CHAR40.     " ##
+
+
+<font color ="#0000FF">**********************************************************************</font>
+START-OF-SELECTION.
+
+  PERFORM get_date_format USING p_birth       " #### ## ### ## #### ##
+                          CHANGING gv_birth.
+
+  call function <a href ="zyeb03fm/zyeb03fm.html">'ZYEB03FM'</a>   " ### # ### ### function module ##
+    EXPORTING
+      iv_date = p_birth       " ## ## ##### ##
+    IMPORTING
+      EV_AGE1 = gv_age1       " ## ### ##, # ## ### ### ##
+      EV_AGE2 = gv_age2
+    .
+
+  PERFORM get_position_text USING p_job       " ### ## ## #### ##
+                            CHANGING gv_job.
+
+  PERFORM get_date_format USING p_dats        " ### ### ## #### ##
+                          CHANGING gv_dats.
+
+  IF sy-subrc = 0.
+    WRITE:/ '##: ', p_num NO-ZERO,    " ## ### 0# #### ##
+      / '##: ', p_name,               " ## ##
+      / '####: ', gv_birth,          " ##### ## ### ## #### ##
+      / '##:' , gv_age1,              " function module# ### ### ## ## ##
+      / '# ##: ', gv_age2,           " function module# ### ### ## # ## ##
+      / '##: ', gv_job,               " ##### ## ## ## ## ##
+      / '###: ', gv_dats.             " ##### ## ## ## ### ##
+  ENDIF.
+
+<font color ="#0000FF">**********************************************************************</font>
+
+" #### ## ### ## #### ##
+FORM get_date_format USING VALUE(pv_date) TYPE DATS
+                     CHANGING VALUE(cv_date) TYPE CHAR40.
+  DATA: lv_year TYPE CHAR10,
+        lv_month TYPE CHAR10,   " ##, #, # # ### ### ## ##
+        lv_date TYPE CHAR10.
+
+  CONCATENATE pv_date+0(4) '#' INTO lv_year.    " ##, #, # # ### ## ### ##
+
+  CONCATENATE pv_date+4(2) '#' INTO lv_month.
+  IF lv_month+0(1) = '0'.
+    CONCATENATE lv_month+1(1) '#' INTO lv_month.
+  ENDIF.
+
+  CONCATENATE pv_date+6(2) '#' INTO lv_date.
+  IF lv_date+0(1) = '0'.
+    CONCATENATE lv_date+1(1) '#' INTO lv_date.
+  ENDIF.
+
+  CONCATENATE lv_year lv_month lv_date INTO cv_date SEPARATED BY ' '.   " # #### ##, #, ## CONCATENATE# ### ##
+
+ENDFORM.
+
+" ### #### ## #### ##
+FORM get_position_text USING VALUE(pv_pos) TYPE tv_pos    " ### ### ### # ### ##
+                       CHANGING VALUE(cv_pos) TYPE CHAR40.
+  CASE pv_pos.    " case when # #### ## ### ## ### ###
+    WHEN '1'.
+      cv_pos = text-J01.    " text symbols# ### ### ### ### ###
+    WHEN '2'.
+      cv_pos = text-J02.
+    WHEN '3'.
+      cv_pos = text-J03.
+    WHEN '4'.
+      cv_pos = text-J04.
+    WHEN '5'.
+      cv_pos = text-J05.
+    WHEN '6'.
+      cv_pos = text-J06.
+    WHEN '7'.
+      cv_pos = text-J07.
+    WHEN OTHERS.
+      MESSAGE '## ### ####.' TYPE 'E'.    " #### ### ## # ## ### ##
+  ENDCASE.
+ENDFORM.
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* J01 ##</font>
+<font color ="#0000FF">* J02 ##</font>
+<font color ="#0000FF">* J03 ##</font>
+<font color ="#0000FF">* J04 ##</font>
+<font color ="#0000FF">* J05 ##</font>
+<font color ="#0000FF">* J06 ##</font>
+<font color ="#0000FF">* J07 ##</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_BIRTH         ####</font>
+<font color ="#0000FF">* P_DATS         ###</font>
+<font color ="#0000FF">* P_JOB         ##</font>
+<font color ="#0000FF">* P_NAME         ##</font>
+<font color ="#0000FF">* P_NUM         ##</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   ## ### ####.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
