@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>DEFINE_ASSOCIATIONS</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: DEFINE_ASSOCIATIONS</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  DEFINE_ASSOCIATIONS</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">**************************************************************************</font>
+<font color ="#0000FF">*   Method attributes.                                                   *</font>
+<font color ="#0000FF">**************************************************************************</font>
+Instantiation: Private
+<font color ="#0000FF">**************************************************************************</font>
+
+  method DEFINE_ASSOCIATIONS.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&           Generated code for the MODEL PROVIDER BASE CLASS         &*</font>
+<font color ="#0000FF">*&                                                                     &*</font>
+<font color ="#0000FF">*&  !!!NEVER MODIFY THIS CLASS. IN CASE YOU WANT TO CHANGE THE MODEL  &*</font>
+<font color ="#0000FF">*&        DO THIS IN THE MODEL PROVIDER SUBCLASS!!!                   &*</font>
+<font color ="#0000FF">*&                                                                     &*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+
+
+
+data:
+lo_annotation     type ref to /iwbep/if_mgw_odata_annotation,                   "#EC NEEDED
+lo_entity_type    type ref to /iwbep/if_mgw_odata_entity_typ,                   "#EC NEEDED
+lo_association    type ref to /iwbep/if_mgw_odata_assoc,                        "#EC NEEDED
+lo_ref_constraint type ref to /iwbep/if_mgw_odata_ref_constr,                   "#EC NEEDED
+lo_assoc_set      type ref to /iwbep/if_mgw_odata_assoc_set,                    "#EC NEEDED
+lo_nav_property   type ref to /iwbep/if_mgw_odata_nav_prop.                     "#EC NEEDED
+
+<font color ="#0000FF">***********************************************************************************************************************************</font>
+<font color ="#0000FF">*   ASSOCIATIONS</font>
+<font color ="#0000FF">***********************************************************************************************************************************</font>
+
+ lo_association = model-&gt;create_association(
+                            iv_association_name = 'HeaderToItem' "#EC NOTEXT
+                            iv_left_type        = 'Header' "#EC NOTEXT
+                            iv_right_type       = 'Item' "#EC NOTEXT
+                            iv_right_card       = 'M' "#EC NOTEXT
+                            iv_left_card        = '1'  "#EC NOTEXT
+                            iv_def_assoc_set    = abap_false ). "#EC NOTEXT
+<font color ="#0000FF">* Referential constraint for association - HeaderToItem</font>
+lo_ref_constraint = lo_association-&gt;create_ref_constraint( ).
+lo_ref_constraint-&gt;add_property( iv_principal_property = 'Carrid'   iv_dependent_property = 'Carrid' ). "#EC NOTEXT
+lo_assoc_set = model-&gt;create_association_set( iv_association_set_name  = 'HeaderToItemSet'                         "#EC NOTEXT
+                                              iv_left_entity_set_name  = 'HeaderSet'              "#EC NOTEXT
+                                              iv_right_entity_set_name = 'ItemSet'             "#EC NOTEXT
+                                              iv_association_name      = 'HeaderToItem' ).                                 "#EC NOTEXT
+
+
+<font color ="#0000FF">***********************************************************************************************************************************</font>
+<font color ="#0000FF">*   NAVIGATION PROPERTIES</font>
+<font color ="#0000FF">***********************************************************************************************************************************</font>
+
+<font color ="#0000FF">* Navigation Properties for entity - Header</font>
+lo_entity_type = model-&gt;get_entity_type( iv_entity_name = 'Header' ). "#EC NOTEXT
+lo_nav_property = lo_entity_type-&gt;create_navigation_property( iv_property_name  = 'ItemSet' "#EC NOTEXT
+                                                              iv_abap_fieldname = 'ITEMSET' "#EC NOTEXT
+                                                              iv_association_name = 'HeaderToItem' ). "#EC NOTEXT
+  endmethod.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
