@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0017</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0017</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Internal table ex</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0017</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0017.
+
+<font color ="#0000FF">*DATA: gs_data TYPE bc400_s_flight,</font>
+<font color ="#0000FF">*      gt_data TYPE TABLE OF bc400_s_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" Header Line# ### ### ### ## ##</font>
+<font color ="#0000FF">*" =&gt; #### ### gs_data/gt_data# gt_hline## ######..</font>
+<font color ="#0000FF">*DATA: gt_data2 TYPE TABLE OF bc400_s_flight WITH HEADER LINE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT carrid connid fldate seatsmax seatsocc</font>
+<font color ="#0000FF">*  FROM sflight</font>
+<font color ="#0000FF">*  INTO TABLE gt_data</font>
+<font color ="#0000FF">*  WHERE carrid = 'AA'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" 1) ## sy-subrc# 0 ###</font>
+<font color ="#0000FF">*" gt_data# LOOP ### Percentage #### MODIFY# ### ####.</font>
+<font color ="#0000FF">*" ### : percentage = seatsocc * 100 / seatmax</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( sy-subrc = 0 ).</font>
+<font color ="#0000FF">*  LOOP AT gt_data INTO gs_data.</font>
+<font color ="#0000FF">*    gs_data-percentage = gs_data-seatsocc * 100 / gs_data-seatsmax.</font>
+<font color ="#0000FF">*    MODIFY gt_data FROM gs_data.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SORT gt_data BY connid ASCENDING</font>
+<font color ="#0000FF">*                percentage DESCENDING.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" 2) percentage ### itab# LOOP ###,</font>
+<font color ="#0000FF">*"    percentage # 80# #### #### ####. (##### #### ##)</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CLEAR gs_data.</font>
+<font color ="#0000FF">*LOOP AT gt_data INTO gs_data WHERE percentage &gt; 80.</font>
+<font color ="#0000FF">*  WRITE:/ gs_data-carrid,</font>
+<font color ="#0000FF">*          gs_data-connid,</font>
+<font color ="#0000FF">*          gs_data-fldate,</font>
+<font color ="#0000FF">*          gs_data-seatsmax,</font>
+<font color ="#0000FF">*          gs_data-seatsocc,</font>
+<font color ="#0000FF">*          gs_data-percentage.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">** SELECT LOOP</font>
+<font color ="#0000FF">*DATA: ls_connect  TYPE BC400_s_connection,</font>
+<font color ="#0000FF">*      lt_connects LIKE TABLE OF ls_connect.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*PARAMETERS: pa_car TYPE s_carr_id.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT *</font>
+<font color ="#0000FF">*  FROM spfli</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF ls_connect</font>
+<font color ="#0000FF">*  WHERE carrid = pa_car.</font>
+<font color ="#0000FF">*  " ##) ### sy-dbcnt# index# ## # ##</font>
+<font color ="#0000FF">*    APPEND ls_connect TO lt_connects.</font>
+<font color ="#0000FF">*  WRITE: ls_connect-arrtime.</font>
+<font color ="#0000FF">*ENDSELECT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc &lt;&gt; 0.</font>
+<font color ="#0000FF">*  MESSAGE 'Data is not exist' TYPE 'E'.</font>
+<font color ="#0000FF">*ELSE.</font>
+<font color ="#0000FF">*  cl_demo_output=&gt;display( lt_connects ).</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*Array fetch</font>
+<font color ="#0000FF">*DATA: gt_flight TYPE TABLE OF sflight,</font>
+<font color ="#0000FF">*      gt_flight2 LIKE gt_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT *</font>
+<font color ="#0000FF">*  FROM sflight</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_flight    " TABLE # ###</font>
+<font color ="#0000FF">*  WHERE carrid = 'AA'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  APPEND LINES OF gt_flight TO gt_flight2.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  cl_demo_output=&gt;display( gt_flight2 ).</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gs_connect TYPE BC400_S_CONNECTION,</font>
+<font color ="#0000FF">*      gt_connect TYPE BC400_T_CONNECTIONS.</font>
+<font color ="#0000FF">*DATA: gv_dt TYPE S_DATE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*PARAMETERS: pa_car TYPE s_carr_id DEFAULT 'AA'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT-OPTIONS: so_con FOR gs_connect-connid DEFAULT '17',</font>
+<font color ="#0000FF">*                so_fdt FOR gv_dt.</font>
+<font color ="#0000FF">**SELECT-OPTIONS: so_con2 FOR S_CONN_ID. " ##!</font>
+<font color ="#0000FF">** =&gt; FOR ### TYPE# ##### ### DATA Object</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT *</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_connect</font>
+<font color ="#0000FF">*  FROM spfli</font>
+<font color ="#0000FF">*  WHERE carrid = pa_car</font>
+<font color ="#0000FF">*    AND connid IN so_con.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*LOOP AT gt_connect INTO gs_connect.</font>
+<font color ="#0000FF">*  WRITE:/ gs_connect-carrid,</font>
+<font color ="#0000FF">*        gs_connect-connid,</font>
+<font color ="#0000FF">*        gs_connect-cityfrom.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gs_data TYPE bc400_s_flight,</font>
+<font color ="#0000FF">*      gt_data TYPE TABLE OF bc400_s_flight.</font>
+
+" Header Line# ## Internal table ##
+" gt_hline# Structure, gt_hline[] # Itab # ##.
+<font color ="#0000FF">*DATA: gt_hline TYPE TABLE OF bc400_s_flight WITH HEADER LINE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT carrid connid fldate seatsmax seatsocc</font>
+<font color ="#0000FF">*  FROM sflight</font>
+<font color ="#0000FF">*  INTO TABLE gt_hline[]</font>
+<font color ="#0000FF">*  WHERE carrid = 'AA'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( sy-subrc = 0 ).</font>
+<font color ="#0000FF">*  LOOP AT gt_hline.       " INTO # ## ##</font>
+<font color ="#0000FF">*    gt_hline-percentage = gt_hline-seatsocc * 100 / gt_hline-seatsmax.</font>
+<font color ="#0000FF">*    MODIFY gt_hline.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SORT gt_hline[] BY connid ASCENDING</font>
+<font color ="#0000FF">*                   percentage DESCENDING.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CLEAR gt_hline.</font>
+<font color ="#0000FF">*LOOP AT gt_hline WHERE percentage &gt; 80.</font>
+<font color ="#0000FF">*  WRITE:/ gt_hline-carrid,</font>
+<font color ="#0000FF">*          gt_hline-connid,</font>
+<font color ="#0000FF">*          gt_hline-fldate,</font>
+<font color ="#0000FF">*          gt_hline-seatsmax,</font>
+<font color ="#0000FF">*          gt_hline-seatsocc,</font>
+<font color ="#0000FF">*          gt_hline-percentage.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+"## ## ## # ### ### VALUE ### ##
+DATA: gv_data TYPE S_CONN_ID VALUE '0017'.
+
+" ## ## ## # ### ### DEFAULT ### ##
+PARAMETERS: pa_car TYPE S_CARR_ID DEFAULT 'AA'.
+SELECT-OPTIONS: so_con FOR gv_data DEFAULT '0017' TO '0064'
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

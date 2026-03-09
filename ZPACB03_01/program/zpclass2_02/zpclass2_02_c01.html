@@ -1,0 +1,273 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPCLASS2_02_C01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPCLASS2_02_C01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPCLASS_02_C01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPCLASS_02_C01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+CLASS lcl_event_handler DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: on_toolbar FOR EVENT toolbar
+                    OF cl_gui_alv_grid IMPORTING e_object sender,
+                   on_user_command FOR EVENT user_command
+                    OF cl_gui_alv_grid IMPORTING e_ucomm sender.
+    CLASS-METHODS: on_double_click FOR EVENT double_click
+                    OF cl_gui_alv_grid IMPORTING e_row sender.
+ENDCLASS.
+
+CLASS lcl_event_handler IMPLEMENTATION.
+   METHOD on_toolbar.
+    IF sender = go_alv.
+      DATA ls_button TYPE stb_button.
+      ls_button-butn_type = 3. "###
+      INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button.
+      ls_button-function = 'CREATE'.
+      ls_button-quickinfo = '# ## ##'.
+      ls_button-butn_type = 0. "##
+      ls_button-text = '##'.
+      INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button.
+      ls_button-function = 'UPDATE'.
+      ls_button-quickinfo = '# ## ##'.
+      ls_button-butn_type = 0. "##
+      ls_button-text = '##'.
+      INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button.
+      ls_button-function = 'DELETE'.
+      ls_button-quickinfo = '# ## ##'.
+      ls_button-butn_type = 0. "##
+      ls_button-text = '##'.
+      INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button.
+      ls_button-function = 'SEARCH'.
+      ls_button-quickinfo = '## ## ## ##'.
+      ls_button-butn_type = 0. "##
+      ls_button-text = '## ## ##'.
+      INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+    ELSE.
+      DATA ls_button2 TYPE stb_button.
+      ls_button2-butn_type = 3. "###
+      INSERT ls_button2 INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button2.
+      ls_button2-function = 'CREATE'.
+      ls_button2-quickinfo = '# #### ## ##'.
+      ls_button2-butn_type = 0. "##
+      ls_button2-text = '##'.
+      INSERT ls_button2 INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button2.
+      ls_button2-function = 'BTN_UPDATE'.
+      ls_button2-quickinfo = '# #### ## ##'.
+      ls_button2-butn_type = 0. "##
+      ls_button2-text = '##'.
+      INSERT ls_button2 INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button2.
+      ls_button2-function = 'DELETE'.
+      ls_button2-quickinfo = '# #### ## ##'.
+      ls_button2-butn_type = 0. "##
+      ls_button2-text = '##'.
+      INSERT ls_button2 INTO TABLE e_object-&gt;mt_toolbar.
+
+      ls_button2-butn_type = 3. "###
+      INSERT ls_button2 INTO TABLE e_object-&gt;mt_toolbar.
+
+      CLEAR ls_button2.
+      ls_button2-function = 'UPDATE_COMPLETE'.
+      ls_button2-quickinfo = '## ## ## ##'.
+      ls_button2-butn_type = 0. "##
+      ls_button2-text = '## ##'.
+      INSERT ls_button2 INTO TABLE e_object-&gt;mt_toolbar.
+    ENDIF.
+   ENDMETHOD.
+
+   METHOD on_user_command.
+    DATA: lt_select_data TYPE LVC_T_ROW,
+          ls_select_data TYPE LVC_S_ROW.
+    DATA: lv_end_date TYPE ZTCOURSE_01-end_date.
+
+    IF sender = go_alv.
+      CASE e_ucomm.
+        WHEN 'CREATE'.
+          IF ZTCURRICULUM_02-COURSE_ID IS INITIAL OR ZTCURRICULUM_02-GENERATION IS INITIAL.
+            MESSAGE i001(ZMCCL2_02).
+          ELSEIF gv_btn_flag = 0.
+            MESSAGE i107(ZMCCL2_02).
+          ELSE.
+            SELECT SINGLE end_date FROM ZTCOURSE_01
+              INTO lv_end_date
+              WHERE course_id = ZTCURRICULUM_02-COURSE_ID
+                AND generation = ZTCURRICULUM_02-GENERATION.
+            IF lv_end_date &lt; sy-datum.
+              MESSAGE i109(ZMCCL2_02).
+            ELSE.
+              CALL SCREEN 300.
+              CLEAR OK_CODE.
+            ENDIF.
+          ENDIF.
+        WHEN 'UPDATE'.
+          IF ZTCURRICULUM_02-COURSE_ID IS INITIAL OR ZTCURRICULUM_02-GENERATION IS INITIAL.
+            MESSAGE i001(ZMCCL2_02).
+          ELSEIF gv_btn_flag = 0.
+            MESSAGE i107(ZMCCL2_02).
+          ELSE.
+            SELECT SINGLE end_date FROM ZTCOURSE_01
+              INTO lv_end_date
+              WHERE course_id = ZTCURRICULUM_02-COURSE_ID
+                AND generation = ZTCURRICULUM_02-GENERATION.
+            IF lv_end_date &lt; sy-datum.
+              MESSAGE i109(ZMCCL2_02).
+            ELSE.
+              CALL METHOD go_alv-&gt;get_selected_rows
+                IMPORTING
+                  et_index_rows = lt_select_data.
+              IF lines( lt_select_data ) = 0 OR lines( lt_select_data ) &gt; 1.
+                MESSAGE i000(ZMCCL2_02).
+              ELSE.
+                READ TABLE lt_select_data INTO ls_select_data INDEX 1.
+                gv_update_index = ls_select_data-index.
+                PERFORM set_200_data.
+                CALL SCREEN 200.
+                CLEAR OK_CODE.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        WHEN 'DELETE'.
+          IF ZTCURRICULUM_02-COURSE_ID IS INITIAL OR ZTCURRICULUM_02-GENERATION IS INITIAL.
+            MESSAGE i001(ZMCCL2_02).
+          ELSEIF gv_btn_flag = 0.
+            MESSAGE i107(ZMCCL2_02).
+          ELSE.
+            SELECT SINGLE end_date FROM ZTCOURSE_01
+              INTO lv_end_date
+              WHERE course_id = ZTCURRICULUM_02-COURSE_ID
+                AND generation = ZTCURRICULUM_02-GENERATION.
+            IF lv_end_date &lt; sy-datum.
+              MESSAGE i109(ZMCCL2_02).
+            ELSE.
+              CALL METHOD go_alv-&gt;get_selected_rows
+                IMPORTING
+                  et_index_rows = lt_select_data.
+              IF lines( lt_select_data ) = 0.
+                MESSAGE i000(ZMCCL2_02).
+              ELSE.
+                PERFORM delete_data USING lt_select_data ls_select_data.
+                PERFORM set_data.
+                CALL METHOD go_alv-&gt;refresh_table_display.
+                MESSAGE i104(ZMCCL2_02).
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        WHEN 'SEARCH'.
+          IF ZTCURRICULUM_02-COURSE_ID IS INITIAL OR ZTCURRICULUM_02-GENERATION IS INITIAL.
+            MESSAGE i001(ZMCCL2_02).
+          ELSEIF gv_btn_flag = 0.
+            MESSAGE i107(ZMCCL2_02).
+          ELSE.
+            CALL METHOD go_alv-&gt;get_selected_rows
+              IMPORTING
+                et_index_rows = lt_select_data.
+
+            IF lines( lt_select_data ) = 0 OR lines( lt_select_data ) &gt; 1.
+              MESSAGE i000(ZMCCL2_02).
+            ELSE.
+              READ TABLE lt_select_data INTO ls_select_data INDEX 1.
+              gv_search_index = ls_select_data-index.
+              PERFORM set_screen110_data.
+              CALL SCREEN 110
+               STARTING AT 5  3
+               ENDING   AT 90 15.
+              CLEAR OK_CODE.
+            ENDIF.
+          ENDIF.
+        WHEN OTHERS.
+      ENDCASE.
+    ELSE.
+      CASE e_ucomm.
+        WHEN 'CREATE'.
+          CALL SCREEN 400.
+          CLEAR OK_CODE.
+        WHEN 'BTN_UPDATE'.
+          CALL METHOD go_alv_200-&gt;get_selected_rows
+            IMPORTING
+              et_index_rows = lt_select_data.
+          IF lines( lt_select_data ) = 0.
+            MESSAGE i000(ZMCCL2_02).
+          ELSE.
+            gv_update_success = 1.
+            PERFORM update_data_200 USING lt_select_data ls_select_data.
+          ENDIF.
+        WHEN 'UPDATE_COMPLETE'.
+          IF gv_update_success = 1.
+            gv_update_success = 0.
+            gv_save_success = 1.
+          ENDIF.
+          PERFORM update_result_data.
+        WHEN 'DELETE'.
+          CALL METHOD go_alv_200-&gt;get_selected_rows
+            IMPORTING
+              et_index_rows = lt_select_data.
+          IF lines( lt_select_data ) = 0.
+            MESSAGE i000(ZMCCL2_02).
+          ELSE.
+            PERFORM delete_data_200 USING lt_select_data ls_select_data.
+            MESSAGE i104(ZMCCL2_02).
+          ENDIF.
+        WHEN OTHERS.
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD on_double_click.
+    IF sender &lt;&gt; go_alv_120.
+      RETURN.
+    ENDIF.
+
+    CLEAR gs_teacher_120.
+    READ TABLE gt_teacher_120 INTO gs_teacher_120 INDEX e_row-index.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    IF gv_pos_code = 'M'.
+      IF screen300_go120_flag = 1.
+        screen300_go120_flag = 0.
+        PA_MNAME = gs_teacher_120-name.
+        pa_mcode = gs_teacher_120-personal_id.
+      ELSE.
+        PA_DATA_200-PA_MNAME2 = gs_teacher_120-name.
+        pa_mcode2 = gs_teacher_120-personal_id.
+      ENDIF.
+    ELSEIF gv_pos_code = 'S'.
+      IF screen300_go120_flag = 1.
+        screen300_go120_flag = 0.
+        PA_SNAME = gs_teacher_120-name.
+        pa_scode = gs_teacher_120-personal_id.
+      ELSE.
+        PA_DATA_200-PA_SNAME2 = gs_teacher_120-name.
+        pa_scode2 = gs_teacher_120-personal_id.
+      ENDIF.
+    ENDIF.
+
+    LEAVE TO SCREEN 0.
+  ENDMETHOD.
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

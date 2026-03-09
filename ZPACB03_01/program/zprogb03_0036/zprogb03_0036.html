@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0036</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0036</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Class</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0036</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0036.
+
+include <a href ="zprogb03_0036_c01.html">ZPROGB03_0036_C01</a>.
+
+START-OF-SELECTION.
+
+ DATA: go_vehicle TYPE REF TO lcl_vehicle.
+<font color ="#0000FF">* DATA: go_vehicle2 TYPE REF TO lcl_vehicle.</font>
+ DATA: gt_vehicle TYPE TABLE OF REF TO lcl_vehicle.
+ DATA: gv_vehicle TYPE i. " ### ## ##
+ DATA: go_truck TYPE REF TO lcl_truck.
+
+ CREATE OBJECT go_vehicle EXPORTING iv_make = 'AUDI'
+                                    iv_model = 'A3'
+                          EXCEPTIONS wrong_planetype = 1.
+<font color ="#0000FF">* CALL METHOD go_vehicle-&gt;set_attribute</font>
+<font color ="#0000FF">*  EXPORTING iv_make = 'MK1'</font>
+<font color ="#0000FF">*            iv_mode = 'MODEL1'.</font>
+<font color ="#0000FF">* go_vehicle-&gt;set_attribute(</font>
+<font color ="#0000FF">*  EXPORTING iv_make = 'MK1'</font>
+<font color ="#0000FF">*            iv_mode = 'MODEL1'</font>
+<font color ="#0000FF">* ).</font>
+ APPEND go_vehicle TO gt_vehicle.
+
+ CREATE OBJECT go_vehicle EXPORTING iv_make = 'BMW'
+                                    iv_model = '318I'
+                          EXCEPTIONS wrong_planetype = 1.
+<font color ="#0000FF">* CALL METHOD go_vehicle-&gt;set_attribute</font>
+<font color ="#0000FF">*  EXPORTING iv_make = 'MK2'</font>
+<font color ="#0000FF">*            iv_mode = 'MODEL2'.</font>
+<font color ="#0000FF">* go_vehicle-&gt;set_attribute(</font>
+<font color ="#0000FF">*  EXPORTING iv_make = 'MK2'</font>
+<font color ="#0000FF">*            iv_mode = 'MODEL2'</font>
+<font color ="#0000FF">* ).</font>
+ APPEND go_vehicle TO gt_vehicle.
+
+<font color ="#0000FF">* ## #### ## ##</font>
+ CREATE OBJECT go_truck EXPORTING iv_make = 'BMW'
+                                  iv_model = '111E'
+                                  iv_cargo = '100'.
+
+<font color ="#0000FF">* CALL METHOD go_vehicle1-&gt;display_attributes.</font>
+<font color ="#0000FF">* CALL METHOD go_vehicle2-&gt;display_attributes.</font>
+<font color ="#0000FF">* CALL METHOD go_vehicle1-&gt;display_global_vehicles.</font>
+
+ gt_vehicle[ 1 ]-&gt;display_attributes( ).
+ gt_vehicle[ 2 ]-&gt;display_attributes( ).
+<font color ="#0000FF">* gt_vehicle[ 1 ]-&gt;display_global_vehicles( ).</font>
+
+ lcl_vehicle=&gt;display_global_vehicles( ).
+<font color ="#0000FF">* lcl_vehicle=&gt;display_global_vehicles( ). ## !</font>
+
+ gv_vehicle = lcl_vehicle=&gt;add_vehicles( EXPORTING lv_num = 100 ).
+ lcl_vehicle=&gt;add_vehicles( EXPORTING lv_num = 100
+                            RECEIVING rv_veh = gv_vehicle ).
+
+ WRITE:/ gt_vehicle[ 1 ]-&gt;gv_cdata,
+       / lcl_vehicle=&gt;gv_cdata,
+       / go_vehicle-&gt;gv_data,
+       / go_vehicle-&gt;gv_cdata,
+       / gv_vehicle.  " ### #### ## ###
+
+ lcl_vehicle=&gt;display_global_vehicles( ). " #### class-data #
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZDSCUSTOM_CL222002_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZDSCUSTOM_CL222002_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZDSCUSTOM_CL222_01_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZDSCUSTOM_CL222_01_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_first_screen</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_first_screen .
+<font color ="#0000FF">*  DELETE FROM ZTSCUSTOM_CL22.</font>
+<font color ="#0000FF">*  DATA gt_data TYPE TABLE OF ZTSCUSTOM_CL22.</font>
+
+  SELECT * FROM ZTSCUSTOM_CL22
+    INTO CORRESPONDING FIELDS OF TABLE gt_cust.
+<font color ="#0000FF">*  MOVE-CORRESPONDING gt_cust TO gt_data.</font>
+<font color ="#0000FF">*  INSERT ZTSCUSTOM_CL22 FROM TABLE gt_data.</font>
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE 'Table# #### # ##' TYPE 'E'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form get_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_data .
+  SELECT * FROM ZTSCUSTOM_CL22 "## optional# ### ###... ###
+    WHERE ( id = @ZTSCUSTOM_CL222-ID             or @ZTSCUSTOM_CL222-ID IS INITIAL )
+      AND ( name = @ZTSCUSTOM_CL222-NAME         or @ZTSCUSTOM_CL222-NAME IS INITIAL )
+      AND ( form = @ZTSCUSTOM_CL222-FORM         or @ZTSCUSTOM_CL222-FORM IS INITIAL )
+      AND ( street = @ZTSCUSTOM_CL222-STREET     or @ZTSCUSTOM_CL222-STREET IS INITIAL )
+      AND ( postbox = @ZTSCUSTOM_CL222-POSTBOX   or @ZTSCUSTOM_CL222-POSTBOX IS INITIAL )
+      AND ( postcode = @ZTSCUSTOM_CL222-POSTCODE or @ZTSCUSTOM_CL222-POSTCODE IS INITIAL )
+      AND ( city = @ZTSCUSTOM_CL222-CITY         or @ZTSCUSTOM_CL222-CITY IS INITIAL )
+      AND ( country = @ZTSCUSTOM_CL222-COUNTRY   or @ZTSCUSTOM_CL222-COUNTRY IS INITIAL )
+      AND ( region = @ZTSCUSTOM_CL222-REGION     or @ZTSCUSTOM_CL222-REGION IS INITIAL )
+      AND ( telephone = @ZTSCUSTOM_CL222-TELEPHONE or @ZTSCUSTOM_CL222-TELEPHONE IS INITIAL )
+    INTO CORRESPONDING FIELDS OF TABLE @gt_cust.
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE '### ## #### #### # ##' TYPE 'W' DISPLAY LIKE 'E'.
+  ENDIF.
+
+  PERFORM refresh_table USING go_alv gs_stable.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form refresh_table</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; GO_ALV_L</font>
+<font color ="#0000FF">*&      --&gt; GS_STABLE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM refresh_table  USING    p_go_alv TYPE REF TO cl_gui_alv_grid
+                             p_gs_stable TYPE LVC_S_STBL.
+  CALL METHOD p_go_alv-&gt;refresh_table_display
+    EXPORTING
+      is_stable      = p_gs_stable
+      i_soft_refresh = ''
+    EXCEPTIONS
+      finished       = 1
+      others         = 2
+          .
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE 'refresh # ##' TYPE 'E'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+  gs_layout-cwidth_opt = 'X'. "## ## ##
+  gs_layout-sel_mode = 'A'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_value</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; GS_ROW</font>
+<font color ="#0000FF">*&      &lt;-- GT_CUST</font>
+<font color ="#0000FF">*&      &lt;-- GS_CUST</font>
+<font color ="#0000FF">*&      &lt;-- GT_CUSTOM</font>
+<font color ="#0000FF">*&      &lt;-- GS_CUSTOM</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_value  USING    p_gs_row TYPE lvc_s_roid
+                CHANGING p_gt_cust LIKE gt_cust
+                         p_gs_cust LIKE gs_cust
+                         p_gt_custom LIKE gt_custom
+                         p_gs_custom LIKE gs_custom.
+  gv_index = p_gs_row-row_id.
+  READ TABLE p_gt_cust INTO p_gs_cust INDEX p_gs_row-row_id.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE '#### ### #### # ##' TYPE 'E'.
+  ENDIF.
+
+  CLEAR gs_custom.
+  p_gs_custom = p_gs_cust.
+  "## #### ##### # # # PBO# ## ## #
+  LEAVE TO SCREEN sy-dynnr.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_tb</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_tb .
+  CALL SCREEN 200
+  STARTING AT 10 10
+  ENDING AT 80 20.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form delete_tb</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM delete_tb .
+  DATA: lt_select_data TYPE LVC_T_ROW,
+        ls_select_data TYPE LVC_S_ROW.
+  DATA: gs_data TYPE ZTSCUSTOM_CL22.
+
+  CALL METHOD go_alv-&gt;get_selected_rows
+    IMPORTING
+      et_index_rows = lt_select_data.
+
+  LOOP AT lt_select_data INTO ls_select_data.
+    READ TABLE gt_cust INTO gs_data INDEX ls_select_data-index.
+    IF sy-subrc = 0.
+      DELETE ZTSCUSTOM_CL22 FROM gs_data.
+      DELETE gt_cust INDEX ls_select_data-index.
+    ENDIF.
+  ENDLOOP.
+  CALL METHOD go_alv-&gt;refresh_table_display.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form change_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM change_data .
+  DATA: gs_data TYPE ZTSCUSTOM_CL22.
+
+  gs_data-id = GS_CUSTOM-ID.
+  gs_data-name = GS_CUSTOM-NAME.
+  gs_data-form = GS_CUSTOM-FORM.
+  gs_data-street = GS_CUSTOM-STREET.
+  gs_data-postbox = GS_CUSTOM-POSTBOX.
+  gs_data-postcode = GS_CUSTOM-POSTCODE.
+  gs_data-city = GS_CUSTOM-CITY.
+  gs_data-country = GS_CUSTOM-COUNTRY.
+  gs_data-region = GS_CUSTOM-REGION.
+  gs_data-telephone = GS_CUSTOM-TELEPHONE.
+
+  UPDATE ZTSCUSTOM_CL22 FROM gs_data.
+  MODIFY gt_cust FROM gs_data INDEX gv_index.
+
+  CALL METHOD go_alv-&gt;refresh_table_display.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

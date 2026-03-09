@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZDSCUSTOM_CL222002_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZDSCUSTOM_CL222002_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZDSCUSTOM_CL222_01_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZDSCUSTOM_CL222_01_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+TABLES: ztscustom_cl222, ZTSCUSTOM_CL22. " ztcustvalue_b08.
+
+DATA: ok_code   TYPE sy-ucomm,
+      gs_layout TYPE LVC_S_LAYO, "ALV_L ## ## #### #
+      gs_stable TYPE LVC_S_STBL, "refresh() ##
+      gs_row TYPE LVC_S_ROID, "#### ###
+      gs_style TYPE LVC_S_STYL, "#### ###/#### ### ###
+      gt_style TYPE LVC_T_STYL.
+DATA: gv_index TYPE INT4.
+
+DATA : go_cont TYPE REF TO cl_gui_custom_container,
+       go_alv  TYPE REF TO cl_gui_alv_grid.
+
+DATA: BEGIN OF gs_cust.
+        include structure <a href ="ztscustom_cl222/dictionary-ztscustom_cl222.html">ZTSCUSTOM_CL222</a>.
+DATA:END OF gs_cust.
+DATA: gt_cust LIKE TABLE OF gs_cust. "alv# ## cust
+
+DATA : gs_custom LIKE gs_cust, "# ### ## cust
+       gt_custom LIKE TABLE OF gs_custom.
+
+START-OF-SELECTION.
+  PERFORM set_first_screen.
+  CALL SCREEN 100.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

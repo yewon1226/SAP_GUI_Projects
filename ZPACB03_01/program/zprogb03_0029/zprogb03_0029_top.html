@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0029_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0029_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_0029_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_0029_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+TYPE-POOLS: COL, ICON.
+
+TABLES: SDYN_CONN.
+<font color ="#0000FF">*DATA: gt_data TYPE TABLE OF sbook,</font>
+<font color ="#0000FF">*      gs_data LIKE LINE OF gt_data.</font>
+DATA: BEGIN OF gs_data.
+        INCLUDE TYPE sbook.
+DATA: excp_fld TYPE char1,
+      col_fld TYPE char4, "##)'C310'
+      lt_scol TYPE LVC_T_SCOL,
+      cancelled_icon TYPE icon-id,
+      phone TYPE SCUSTOM-telephone,
+      display_bookings TYPE C LENGTH 10,
+      it_cell_style TYPE LVC_T_STYL,
+     END OF gs_data.
+DATA gt_data LIKE TABLE OF gs_data.
+DATA ls_scol TYPE LVC_S_SCOL.
+DATA gs_cell_style TYPE LVC_S_STYL.
+
+DATA: ok_code TYPE sy-ucomm,
+      go_cont TYPE REF TO cl_gui_custom_container,
+      go_alv  TYPE REF TO cl_gui_alv_grid.
+DATA: gs_variant TYPE disvariant,
+      gs_stable TYPE LVC_S_STBL,
+      gs_layout TYPE LVC_S_LAYO, " ####
+      gt_sorter TYPE LVC_T_SORT, " ##(itab)
+      gs_sorter TYPE LVC_S_SORT, " ##(str)
+      gt_filter TYPE LVC_T_FILT, " ##(itab)
+      gs_filter TYPE LVC_S_FILT, " ##(str)
+      gt_uifunc TYPE UI_FUNCTIONS.
+DATA: gt_fcat TYPE LVC_T_FCAT,
+      gs_fcat TYPE LVC_S_FCAT.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME.
+  SELECT-OPTIONS: so_car FOR gs_data-carrid,
+                  so_con FOR gs_data-connid,
+                  so_fdt FOR gs_data-fldate.
+SELECTION-SCREEN END OF BLOCK blk1.
+
+SELECTION-SCREEN BEGIN OF SCREEN 1100 AS SUBSCREEN.
+  SELECT-OPTIONS: so_car2 FOR SDYN_CONN-CARRID DEFAULT 'DL',
+                  so_con2 FOR SDYN_CONN-CONNID.
+SELECTION-SCREEN END OF SCREEN 1100.
+
+INITIALIZATION.
+  PERFORM set_options.
+  gs_variant-report = sy-cprog.
+  gs_variant-username = sy-uname.
+  gs_variant-handle = 'MAIN'.
+  " handle : ### ### #### ALV# ## ##
+  "          # ALV## #### ##### ### ####
+
+START-OF-SELECTION.
+  PERFORM GET_DATA.
+  CALL SCREEN 100.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

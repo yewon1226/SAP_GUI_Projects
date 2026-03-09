@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0028</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0028</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  ALV Basic</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0028</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0028.
+
+DATA: OK_CODE TYPE sy-ucomm.
+DATA: gs_flight TYPE sflight,
+      gt_flight TYPE TABLE OF sflight.
+
+" Container #### ## (## ## #### #)
+DATA: go_cont TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      " ALV #### ## (## ## #### #)
+      go_alv TYPE REF TO CL_GUI_ALV_GRID.
+
+PARAMETERS: pa_car TYPE s_carr_id.
+SELECT-OPTIONS: so_con FOR gs_flight-connid,
+                so_fdt FOR gs_flight-fldate.
+
+include <a href ="zprogb03_0028_o01.html">ZPROGB03_0028_O01</a>.  " PBO
+include <a href ="zprogb03_0028_i01.html">ZPROGB03_0028_I01</a>.  " PAI
+include <a href ="zprogb03_0028_f01.html">ZPROGB03_0028_F01</a>.
+
+START-OF-SELECTION.
+
+PERFORM get_data.
+CALL SCREEN 100.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* T100 --&gt; ALV Program</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* PA_CAR         Airline</font>
+<font color ="#0000FF">* SO_CON         Connection Number</font>
+<font color ="#0000FF">* SO_FDT         Flight Date</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   Container ## # ## ##</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

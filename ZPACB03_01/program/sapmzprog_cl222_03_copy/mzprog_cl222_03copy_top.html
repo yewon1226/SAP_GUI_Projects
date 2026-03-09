@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZPROG_CL222_03COPY_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZPROG_CL222_03COPY_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZPROG_CL222_03_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include MZPROG_CL222_03_TOP                      - Module Pool      SAPMZPROG_CL222_03</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+PROGRAM SAPMZPROG_CL222_03.
+
+TABLES: ZSASSIGNMENT1_B03, ZSSCARRSPFLI_CLASS222, ZSSFLIGHT_CLASS222, ZSBOOK_CL222, ZSSCUSTOM_CLASS222 .
+
+DATA: OK_CODE TYPE sy-ucomm,
+      gv_tab_dynnr TYPE sy-dynnr.
+
+CONTROLS: TAB_STRIP TYPE TABSTRIP.
+
+DATA: gs_scarrspfli TYPE ZSSCARRSPFLI_CLASS222,
+      gs_sflight TYPE ZSSFLIGHT_CLASS222,
+      gs_book TYPE ZSBOOK_CL222,
+      gs_custom TYPE ZSSCUSTOM_CLASS222,
+
+      gt_scarrspfli LIKE TABLE OF gs_scarrspfli,
+      gt_sflight LIKE TABLE OF gs_sflight,
+      gt_book LIKE TABLE OF gs_book,
+      gt_custom LIKE TABLE OF gs_custom.
+
+DATA: CHK02 TYPE C LENGTH 1 VALUE 'X',
+      gv_chk TYPE C LENGTH 1 VALUE 'X'.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

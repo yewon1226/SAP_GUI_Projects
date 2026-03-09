@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>YPROGB03_11_18</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: YPROGB03_11_18</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program YPROGB03_11_18</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report YPROGB03_11_18</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT YPROGB03_11_18.
+
+<font color ="#0000FF">*PARAMETERS: pa_num1 TYPE I,   " #### # ##</font>
+<font color ="#0000FF">*            pa_num2 TYPE I.</font>
+<font color ="#0000FF">*DATA: gv_num TYPE I,</font>
+<font color ="#0000FF">*      gv_num1 LIKE gv_num,</font>
+<font color ="#0000FF">*      gv_num2 LIKE gv_num.           " ### ## ### ### ## ##</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( pa_num1 &gt; pa_num2 ).     " ## ## ## # # #</font>
+<font color ="#0000FF">*  gv_num = pa_num2 + 1.</font>
+<font color ="#0000FF">*  gv_num1 = pa_num1.</font>
+<font color ="#0000FF">*  gv_num2 = pa_num2.</font>
+<font color ="#0000FF">*ELSE.</font>
+<font color ="#0000FF">*  gv_num = pa_num1 + 1.</font>
+<font color ="#0000FF">*  gv_num1 = pa_num2.</font>
+<font color ="#0000FF">*  gv_num2 = pa_num1.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DO.</font>
+<font color ="#0000FF">*  IF ( sy-index &gt; gv_num1 - gv_num2 - 1 ).</font>
+<font color ="#0000FF">*    EXIT.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*  IF ( gv_num MOD 2 = 1 ).</font>
+<font color ="#0000FF">*    WRITE / gv_num.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*  gv_num = gv_num + 1.</font>
+<font color ="#0000FF">*ENDDO.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS: pa_small TYPE I, pa_big TYPE I.</font>
+<font color ="#0000FF">*CONSTANTS: gc_const TYPE I VALUE 3.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( ( pa_small IS INITIAL ) OR ( pa_big IS INITIAL ) ).</font>
+<font color ="#0000FF">*  MESSAGE TEXT-001 TYPE 'E'.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( pa_big &lt; pa_small ).</font>
+<font color ="#0000FF">*  MESSAGE TEXT-002 TYPE 'E'.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DO.</font>
+<font color ="#0000FF">*  IF ( pa_small &gt; pa_big ).</font>
+<font color ="#0000FF">*    EXIT.</font>
+<font color ="#0000FF">*  ELSEIF ( pa_small MOD gc_const = 0 ).</font>
+<font color ="#0000FF">*    WRITE / pa_small.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*  pa_small = pa_small + 1.</font>
+<font color ="#0000FF">*ENDDO.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 error</font>
+<font color ="#0000FF">* 002 error</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

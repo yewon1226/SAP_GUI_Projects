@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZPROG_CL222_03COPY_I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZPROG_CL222_03COPY_I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZPROG_CL222_03_I01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZPROG_CL222_03_I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+  CASE OK_CODE.
+    WHEN 'CHK'.
+      IF 'CHK02' = 'X'.
+        gv_chk = 'X'.
+      ELSE.
+        gv_chk = ' '.
+      ENDIF.
+    WHEN 'AIR'.
+      PERFORM select_flight.
+    WHEN 'RES'.
+      PERFORM select_booking.
+    WHEN 'CUS'.
+      PERFORM select_customer.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'EXIT' OR 'CANCEL'.
+      LEAVE PROGRAM.
+    WHEN 'FCTAB01' OR 'FCTAB02' OR 'FCTAB03' OR 'FCTAB04'.
+      TAB_STRIP-activetab = OK_CODE.
+    WHEN OTHERS.
+  ENDCASE.
+
+  SELECT SINGLE carrid, connid, fldate, bookid, customid
+    FROM sbook
+    WHERE ( carrid   = @ZSASSIGNMENT1_B03-carrid   OR @ZSASSIGNMENT1_B03-carrid   = '' )
+      AND ( connid   = @ZSASSIGNMENT1_B03-connid   OR @ZSASSIGNMENT1_B03-connid   = '' )
+      AND ( fldate   = @ZSASSIGNMENT1_B03-fldate   OR @ZSASSIGNMENT1_B03-fldate   = '00000000' )
+      AND ( bookid   = @ZSASSIGNMENT1_B03-bookid   OR @ZSASSIGNMENT1_B03-bookid   = '' )
+      AND ( customid = @ZSASSIGNMENT1_B03-customid OR @ZSASSIGNMENT1_B03-customid = '' )
+      AND cancelled = @gv_chk
+    INTO CORRESPONDING FIELDS OF @gs_book.
+  IF sy-subrc = 0.
+    IF ZSASSIGNMENT1_B03-carrid IS INITIAL.
+      ZSASSIGNMENT1_B03-carrid = gs_book-carrid.
+    ENDIF.
+    IF ZSASSIGNMENT1_B03-connid IS INITIAL.
+      ZSASSIGNMENT1_B03-connid = gs_book-connid.
+    ENDIF.
+    IF ZSASSIGNMENT1_B03-fldate IS INITIAL.
+      ZSASSIGNMENT1_B03-fldate = gs_book-fldate.
+    ENDIF.
+    IF ZSASSIGNMENT1_B03-bookid IS INITIAL.
+      ZSASSIGNMENT1_B03-bookid = gs_book-bookid.
+    ENDIF.
+    IF ZSASSIGNMENT1_B03-customid IS INITIAL.
+      ZSASSIGNMENT1_B03-customid = gs_book-customid.
+    ENDIF.
+
+    PERFORM select_data.
+  ELSE.
+    MESSAGE '### #### ### ####.' TYPE 'S' DISPLAY LIKE 'E'.
+  ENDIF.
+
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZDSBOOK_CL222_C01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZDSBOOK_CL222_C01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZDSBOOK_CL222_01_C01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZDSBOOK_CL222_01_C01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+CLASS lcl_event_handler DEFINITION.
+  PUBLIC SECTION.
+  CLASS-METHODS: on_toolbar FOR EVENT toolbar
+    OF cl_gui_alv_grid IMPORTING e_object,
+      on_user_command FOR EVENT user_command
+    OF cl_gui_alv_grid IMPORTING e_ucomm.
+ENDCLASS.
+
+CLASS lcl_event_handler IMPLEMENTATION.
+  METHOD on_toolbar.
+    DATA ls_button TYPE STB_BUTTON.
+    ls_button-butn_type = 3.
+    INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+
+    CLEAR ls_button.
+    ls_button-function = 'UPDATE'.
+    ls_button-icon = ICON_EXPAND.
+    ls_button-butn_type = 0.
+    ls_button-text = 'UPDATE'.
+    INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+  ENDMETHOD.
+
+  METHOD on_user_command.
+    CASE e_ucomm.
+      WHEN 'UPDATE'.
+        DATA: lt_select_data TYPE LVC_T_ROW,
+              ls_select_data TYPE LVC_S_ROW.
+
+        CALL METHOD go_alv-&gt;get_selected_rows
+          IMPORTING
+            et_index_rows = lt_select_data.
+
+        READ TABLE gt_sbook TRANSPORTING NO FIELDS
+          WITH KEY update_cell = ICON_CHANGE.
+        IF sy-subrc = 0.
+          MESSAGE '## #### ## ####.' TYPE 'I'.
+        ELSE.
+          IF lt_select_data IS INITIAL.
+            MESSAGE '### #### #####' TYPE 'I'.
+          ELSE.
+            PERFORM update_data USING lt_select_data ls_select_data.
+          ENDIF.
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

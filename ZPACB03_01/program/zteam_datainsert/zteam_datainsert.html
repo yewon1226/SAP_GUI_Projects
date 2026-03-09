@@ -1,0 +1,958 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZTEAM_DATAINSERT</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZTEAM_DATAINSERT</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program ZTEAM_DATAINSERT</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">**& Report ZTEAM_DATAINSERT</font>
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">**&</font>
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+REPORT ZTEAM_DATAINSERT.
+
+
+
+<font color ="#0000FF">************************ SYNC **********************************************</font>
+
+<font color ="#0000FF">*DELETE FROM ztattedent_02.</font>
+<font color ="#0000FF">* WHERE course_id  = 'SYNC'</font>
+<font color ="#0000FF">*   AND generation = '01'</font>
+<font color ="#0000FF">*   AND class_no   = '01'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20240102' AND '20240302'.</font>
+
+COMMIT WORK.
+
+DATA: ls_attend TYPE ztattedent_02,
+      lv_date   TYPE d,
+      lv_idx    TYPE i,
+      lv_rand   TYPE i,
+      lv_pid    TYPE char10,
+      lv_num    TYPE n LENGTH 9,
+      lo_rand   TYPE REF TO cl_abap_random_int.
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20240102'.
+
+WHILE lv_date &lt;= '20240302'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index.
+
+    lv_num = lv_idx.          " 1 ~ 10
+    lv_pid = |S{ lv_num }|.   " S000000001 ~ S000000010
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'SYNC'.
+    ls_attend-generation  = '01'.
+    ls_attend-class_no    = '01'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+    IF lv_pid BETWEEN 'S000000001' AND 'S000000004'.     " #
+      IF lv_rand &lt;= 85.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 93.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 97.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSEIF lv_pid BETWEEN 'S000000005' AND 'S000000007'. " #
+      IF lv_rand &lt;= 65.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 80.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 90.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSE.                                               " #
+      IF lv_rand &lt;= 40.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 55.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 65.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+    ENDIF.
+
+    INSERT ztattedent_02 FROM ls_attend.
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">***********************************************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DELETE FROM ztattedent_02</font>
+<font color ="#0000FF">* WHERE course_id  = 'SYNC'</font>
+<font color ="#0000FF">*   AND generation = '01'</font>
+<font color ="#0000FF">*   AND class_no   = '02'</font>
+<font color ="#0000FF">*   AND personal_id BETWEEN 'S000000011' AND 'S000000020'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20240102' AND '20240302'.</font>
+
+COMMIT WORK.
+
+
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_num    TYPE n LENGTH 9,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20240102'.
+
+WHILE lv_date &lt;= '20240302'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index.
+
+    lv_num = 10 + lv_idx.     " 11 ~ 20
+    lv_pid = |S{ lv_num }|.   " S000000011 ~ S000000020
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'SYNC'.
+    ls_attend-generation  = '01'.
+    ls_attend-class_no    = '02'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+    IF lv_pid BETWEEN 'S000000011' AND 'S000000014'.
+      " # ## (## ##)
+      IF lv_rand &lt;= 90.          " 90%
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 95.      " 5%
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 98.      " 3%
+        ls_attend-status = 'L'.
+      ELSE.                      " 2%
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSEIF lv_pid BETWEEN 'S000000015' AND 'S000000017'.
+      " # ##
+      IF lv_rand &lt;= 70.          " 70%
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 85.      " 15%
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 92.      " 7%
+        ls_attend-status = 'L'.
+      ELSE.                      " 8%
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSE.
+      " # ##
+      IF lv_rand &lt;= 45.          " 45%
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 60.      " 15%
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 75.      " 15%
+        ls_attend-status = 'L'.
+      ELSE.                      " 25%
+        ls_attend-status = 'X'.
+      ENDIF.
+    ENDIF.
+
+    INSERT ztattedent_02 FROM ls_attend.
+
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+
+<font color ="#0000FF">***********************************************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DELETE FROM ztattedent_02</font>
+<font color ="#0000FF">* WHERE course_id  = 'SYNC'</font>
+<font color ="#0000FF">*   AND generation = '02'</font>
+<font color ="#0000FF">*   AND class_no   = '01'</font>
+<font color ="#0000FF">*   AND personal_id BETWEEN 'S000000021' AND 'S000000030'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20250102' AND '20250302'.</font>
+
+COMMIT WORK.
+
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_num    TYPE n LENGTH 9,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20250102'.
+
+WHILE lv_date &lt;= '20250302'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index.
+
+    lv_num = 20 + lv_idx.     " 21 ~ 30
+    lv_pid = |S{ lv_num }|.   " S000000021 ~ S000000030
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'SYNC'.
+    ls_attend-generation  = '02'.
+    ls_attend-class_no    = '01'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+    IF lv_pid BETWEEN 'S000000021' AND 'S000000024'.
+  " # ##
+  IF lv_rand &lt;= 88.          " 88%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 94.      " 6%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 97.      " 3%
+    ls_attend-status = 'L'.
+  ELSE.                      " 3%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSEIF lv_pid BETWEEN 'S000000025' AND 'S000000027'.
+  " # ##
+  IF lv_rand &lt;= 68.          " 68%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 82.      " 14%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 90.      " 8%
+    ls_attend-status = 'L'.
+  ELSE.                      " 10%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSE.
+  " # ##
+  IF lv_rand &lt;= 42.          " 42%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 58.      " 16%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 72.      " 14%
+    ls_attend-status = 'L'.
+  ELSE.                      " 28%
+    ls_attend-status = 'X'.
+  ENDIF.
+ENDIF.
+
+INSERT ztattedent_02 FROM ls_attend.
+
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+
+<font color ="#0000FF">***********************************************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DELETE FROM ztattedent_02</font>
+<font color ="#0000FF">* WHERE course_id  = 'SYNC'</font>
+<font color ="#0000FF">*   AND generation = '02'</font>
+<font color ="#0000FF">*   AND class_no   = '02'</font>
+<font color ="#0000FF">*   AND personal_id BETWEEN 'S000000031' AND 'S000000040'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20250102' AND '20250302'.</font>
+
+COMMIT WORK.
+
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_num    TYPE n LENGTH 9,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20250102'.
+
+WHILE lv_date &lt;= '20250302'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index.
+
+    lv_num = 30 + lv_idx.     " 31 ~ 40
+    lv_pid = |S{ lv_num }|.   " S000000031 ~ S000000040
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'SYNC'.
+    ls_attend-generation  = '02'.
+    ls_attend-class_no    = '02'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+    IF lv_pid BETWEEN 'S000000031' AND 'S000000034'.
+  " # ##
+  IF lv_rand &lt;= 82.          " 82%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 90.      " 8%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 95.      " 5%
+    ls_attend-status = 'L'.
+  ELSE.                      " 5%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSEIF lv_pid BETWEEN 'S000000035' AND 'S000000037'.
+  " # ##
+  IF lv_rand &lt;= 62.          " 62%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 78.      " 16%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 88.      " 10%
+    ls_attend-status = 'L'.
+  ELSE.                      " 12%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSE.
+  " # ##
+  IF lv_rand &lt;= 38.          " 38%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 55.      " 17%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 70.      " 15%
+    ls_attend-status = 'L'.
+  ELSE.                      " 30%
+    ls_attend-status = 'X'.
+  ENDIF.
+ENDIF.
+
+    INSERT ztattedent_02 FROM ls_attend.
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+
+
+<font color ="#0000FF">************************ SESAC **********************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DELETE FROM ztattedent_02</font>
+<font color ="#0000FF">* WHERE course_id  = 'SESAC'</font>
+<font color ="#0000FF">*   AND generation = '01'</font>
+<font color ="#0000FF">*   AND class_no   = '01'</font>
+<font color ="#0000FF">*   AND personal_id BETWEEN 'S000000041' AND 'S000000050'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20251201' AND '20260109'.</font>
+
+COMMIT WORK.
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_num    TYPE n LENGTH 9,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20251201'.
+
+WHILE lv_date &lt;= '20260109'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index.
+
+    lv_num = 40 + lv_idx.     " 41 ~ 50
+    lv_pid = |S{ lv_num }|.   " S000000041 ~ S000000050
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'SESAC'.
+    ls_attend-generation  = '01'.
+    ls_attend-class_no    = '01'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+
+    IF lv_pid BETWEEN 'S000000041' AND 'S000000044'.
+      IF lv_rand &lt;= 85.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 93.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 97.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSEIF lv_pid BETWEEN 'S000000045' AND 'S000000047'.
+      IF lv_rand &lt;= 65.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 80.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 90.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSE.
+      IF lv_rand &lt;= 40.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 55.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 65.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+    ENDIF.
+
+    INSERT ztattedent_02 FROM ls_attend.
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">**</font>
+<font color ="#0000FF">*DELETE FROM ztattedent_02</font>
+<font color ="#0000FF">* WHERE course_id  = 'SESAC'</font>
+<font color ="#0000FF">*   AND generation = '01'</font>
+<font color ="#0000FF">*   AND class_no   = '02'</font>
+<font color ="#0000FF">*   AND personal_id BETWEEN 'S000000051' AND 'S000000060'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20251201' AND '20260109'.</font>
+
+COMMIT WORK.
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_num    TYPE n LENGTH 9,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20251201'.
+
+WHILE lv_date &lt;= '20260109'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index.
+
+    lv_num = 50 + lv_idx.     " 51 ~ 60
+    lv_pid = |S{ lv_num }|.   " S000000051 ~ S000000060
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'SESAC'.
+    ls_attend-generation  = '01'.
+    ls_attend-class_no    = '02'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+    IF lv_pid BETWEEN 'S000000051' AND 'S000000054'.
+  " # ##
+  IF lv_rand &lt;= 87.          " 87%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 93.      " 6%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 96.      " 3%
+    ls_attend-status = 'L'.
+  ELSE.                      " 4%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSEIF lv_pid BETWEEN 'S000000055' AND 'S000000057'.
+  " # ##
+  IF lv_rand &lt;= 67.          " 67%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 82.      " 15%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 90.      " 8%
+    ls_attend-status = 'L'.
+  ELSE.                      " 10%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSE.
+  " # ##
+  IF lv_rand &lt;= 43.          " 43%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 58.      " 15%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 72.      " 14%
+    ls_attend-status = 'L'.
+  ELSE.                      " 28%
+    ls_attend-status = 'X'.
+  ENDIF.
+ENDIF.
+
+
+    INSERT ztattedent_02 FROM ls_attend.
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+
+
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">************************ CODE **********************************************</font>
+<font color ="#0000FF">**</font>
+<font color ="#0000FF">*DELETE FROM ZTATTEDENT_02.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20260102'.
+
+WHILE lv_date &lt;= '20260129'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index - 1.
+    lv_pid = |S0000000{ 61 + lv_idx }|.
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'CODE'.
+    ls_attend-generation  = '01'.
+    ls_attend-class_no    = '01'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+    IF lv_pid BETWEEN 'S000000061' AND 'S000000064'.     " #
+      IF lv_rand &lt;= 85.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 93.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 97.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSEIF lv_pid BETWEEN 'S000000065' AND 'S000000067'. " #
+      IF lv_rand &lt;= 65.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 80.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 90.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+
+    ELSE.                                               " #
+      IF lv_rand &lt;= 40.
+        ls_attend-status = 'O'.
+      ELSEIF lv_rand &lt;= 55.
+        ls_attend-status = 'R'.
+      ELSEIF lv_rand &lt;= 65.
+        ls_attend-status = 'L'.
+      ELSE.
+        ls_attend-status = 'X'.
+      ENDIF.
+    ENDIF.
+
+    INSERT ztattedent_02 FROM ls_attend.
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DELETE FROM ztattedent_02</font>
+<font color ="#0000FF">* WHERE course_id  = 'CODE'</font>
+<font color ="#0000FF">*   AND generation = '01'</font>
+<font color ="#0000FF">*   AND class_no   = '02'</font>
+<font color ="#0000FF">*   AND personal_id BETWEEN 'S000000071' AND 'S000000080'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20260102' AND '20260302'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*COMMIT WORK.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20260102'.
+
+WHILE lv_date &lt;= '20260129'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index - 1.
+    lv_pid = |S0000000{ 71 + lv_idx }|.
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'CODE'.
+    ls_attend-generation  = '01'.
+    ls_attend-class_no    = '02'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+
+IF lv_pid BETWEEN 'S000000071' AND 'S000000074'.
+  " # ##
+  IF lv_rand &lt;= 84.          " 84%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 92.      " 8%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 96.      " 4%
+    ls_attend-status = 'L'.
+  ELSE.                      " 4%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSEIF lv_pid BETWEEN 'S000000075' AND 'S000000077'.
+  " # ##
+  IF lv_rand &lt;= 64.          " 64%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 80.      " 16%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 89.      " 9%
+    ls_attend-status = 'L'.
+  ELSE.                      " 11%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSE.
+  " # ##
+  IF lv_rand &lt;= 39.          " 39%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 56.      " 17%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 71.      " 15%
+    ls_attend-status = 'L'.
+  ELSE.                      " 29%
+    ls_attend-status = 'X'.
+  ENDIF.
+ENDIF.
+
+
+    INSERT ztattedent_02 FROM ls_attend.
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DELETE FROM ztattedent_02</font>
+<font color ="#0000FF">* WHERE course_id  = 'CODE'</font>
+<font color ="#0000FF">*   AND generation = '01'</font>
+<font color ="#0000FF">*   AND class_no   = '03'</font>
+<font color ="#0000FF">*   AND personal_id BETWEEN 'S000000081' AND 'S000000090'</font>
+<font color ="#0000FF">*   AND attend_day BETWEEN '20260102' AND '20260129'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*COMMIT WORK.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: ls_attend TYPE ztattedent_02,</font>
+<font color ="#0000FF">*      lv_date   TYPE d,</font>
+<font color ="#0000FF">*      lv_pid    TYPE char10,</font>
+<font color ="#0000FF">*      lv_idx    TYPE i,</font>
+<font color ="#0000FF">*      lv_rand   TYPE i,</font>
+<font color ="#0000FF">*      lo_rand   TYPE REF TO cl_abap_random_int.</font>
+
+lo_rand = cl_abap_random_int=&gt;create(
+            seed = CONV i( sy-uzeit )
+            min  = 1
+            max  = 100 ).
+
+lv_date = '20260102'.
+
+WHILE lv_date &lt;= '20260129'.
+
+  DO 10 TIMES.
+    lv_idx = sy-index - 1.
+    lv_pid = |S0000000{ 81 + lv_idx }|.
+
+    CLEAR ls_attend.
+    ls_attend-mandt       = sy-mandt.
+    ls_attend-personal_id = lv_pid.
+    ls_attend-course_id   = 'CODE'.
+    ls_attend-generation  = '01'.
+    ls_attend-class_no    = '03'.
+    ls_attend-attend_day  = lv_date.
+
+    lv_rand = lo_rand-&gt;get_next( ).
+
+    IF lv_pid BETWEEN 'S000000081' AND 'S000000084'.
+  " # ##
+  IF lv_rand &lt;= 83.          " 83%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 91.      " 8%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 95.      " 4%
+    ls_attend-status = 'L'.
+  ELSE.                      " 5%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSEIF lv_pid BETWEEN 'S000000085' AND 'S000000087'.
+  " # ##
+  IF lv_rand &lt;= 63.          " 63%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 79.      " 16%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 88.      " 9%
+    ls_attend-status = 'L'.
+  ELSE.                      " 12%
+    ls_attend-status = 'X'.
+  ENDIF.
+
+ELSE.
+  " # ##
+  IF lv_rand &lt;= 37.          " 37%
+    ls_attend-status = 'O'.
+  ELSEIF lv_rand &lt;= 54.      " 17%
+    ls_attend-status = 'R'.
+  ELSEIF lv_rand &lt;= 69.      " 15%
+    ls_attend-status = 'L'.
+  ELSE.                      " 31%
+    ls_attend-status = 'X'.
+  ENDIF.
+ENDIF.
+
+
+    INSERT ztattedent_02 FROM ls_attend.
+  ENDDO.
+
+  lv_date = lv_date + 1.
+ENDWHILE.
+
+COMMIT WORK.
+
+<font color ="#0000FF">**********************************************************************</font>
+
+" SYNC # 1
+UPDATE ztattedent_02
+   SET course_id = '1'
+ WHERE course_id LIKE 'SYNC%'.
+
+WRITE: / 'SYNC # 1 ## ##:', sy-dbcnt.
+
+" SESAC # 2
+UPDATE ztattedent_02
+   SET course_id = '2'
+ WHERE course_id LIKE 'SESAC%'.
+
+WRITE: / 'SESAC # 2 ## ##:', sy-dbcnt.
+
+" CODE # 3
+UPDATE ztattedent_02
+   SET course_id = '3'
+ WHERE course_id LIKE 'CODE%'.
+
+WRITE: / 'CODE # 3 ## ##:', sy-dbcnt.
+
+COMMIT WORK.
+
+<font color ="#0000FF">**********************************************************************</font>
+DATA:
+<font color ="#0000FF">*      lv_pid TYPE ztattedent_02-personal_id,</font>
+      lv_total_days TYPE i,
+      lv_absence    TYPE i,
+      lv_rl_cnt     TYPE i,
+      lv_rate       TYPE p DECIMALS 2.
+
+DATA: lt_pid TYPE SORTED TABLE OF ztattedent_02-personal_id
+              WITH UNIQUE KEY table_line.
+
+" ## ## ID ##
+SELECT DISTINCT personal_id
+  INTO TABLE lt_pid
+  FROM ztattedent_02.
+
+LOOP AT lt_pid INTO lv_pid.
+
+  CLEAR: lv_total_days, lv_absence, lv_rl_cnt, lv_rate.
+
+  " ## ##
+  SELECT COUNT(*)
+    INTO lv_total_days
+    FROM ztattedent_02
+    WHERE personal_id = lv_pid.
+
+  " ##(X)
+  SELECT COUNT(*)
+    INTO lv_absence
+    FROM ztattedent_02
+    WHERE personal_id = lv_pid
+      AND status = 'X'.
+
+  " ## + ## (R/L)
+  SELECT COUNT(*)
+    INTO lv_rl_cnt
+    FROM ztattedent_02
+    WHERE personal_id = lv_pid
+      AND status IN ('R','L').
+
+  " R/L 3# = ## 1# ##
+  lv_absence = lv_absence + ( lv_rl_cnt / 3 ).
+
+  " ### ##
+  IF lv_total_days &gt; 0.
+    lv_rate = ( lv_total_days - lv_absence ) * 100 / lv_total_days.
+  ENDIF.
+
+  WRITE: / lv_pid,
+           '###:',
+           lv_rate, '%'.
+
+ENDLOOP.
+
+DATA: lv_tot_days TYPE i,
+      lv_abs_cnt  TYPE i
+      .
+
+TYPES: BEGIN OF ty_class,
+         course_id  TYPE ztattedent_02-course_id,
+         generation TYPE ztattedent_02-generation,
+         class_no   TYPE ztattedent_02-class_no,
+       END OF ty_class.
+
+DATA: lt_class TYPE SORTED TABLE OF ty_class
+                WITH UNIQUE KEY course_id generation class_no,
+      ls_class TYPE ty_class.
+
+" ## / ## / # ##
+SELECT DISTINCT course_id
+                generation
+                class_no
+  INTO TABLE lt_class
+  FROM ztattedent_02.
+
+LOOP AT lt_class INTO ls_class.
+
+  CLEAR: lv_tot_days, lv_abs_cnt, lv_rl_cnt, lv_rate.
+
+  " ## #### (# ##)
+  SELECT COUNT(*)
+    INTO lv_tot_days
+    FROM ztattedent_02
+    WHERE course_id  = ls_class-course_id
+      AND generation = ls_class-generation
+      AND class_no   = ls_class-class_no.
+
+  " ##(X)
+  SELECT COUNT(*)
+    INTO lv_abs_cnt
+    FROM ztattedent_02
+    WHERE course_id  = ls_class-course_id
+      AND generation = ls_class-generation
+      AND class_no   = ls_class-class_no
+      AND status = 'X'.
+
+  " ## + ## (R/L)
+  SELECT COUNT(*)
+    INTO lv_rl_cnt
+    FROM ztattedent_02
+    WHERE course_id  = ls_class-course_id
+      AND generation = ls_class-generation
+      AND class_no   = ls_class-class_no
+      AND status IN ('R','L').
+
+  " R/L 3# = ## 1#
+  lv_abs_cnt = lv_abs_cnt + ( lv_rl_cnt / 3 ).
+
+  IF lv_tot_days &gt; 0.
+    lv_rate = ( lv_tot_days - lv_abs_cnt ) * 100 / lv_tot_days.
+  ENDIF.
+
+  WRITE: / '##:', ls_class-course_id,
+           '##:', ls_class-generation,
+           '#:',   ls_class-class_no,
+           '###:', lv_rate, '%'.
+
+ENDLOOP.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

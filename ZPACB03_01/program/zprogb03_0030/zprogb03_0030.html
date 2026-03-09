@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0030</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0030</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Container</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0030</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0030.
+
+PARAMETERS: pa_car TYPE s_carr_id DEFAULT 'AA'.
+
+DATA: go_docking TYPE REF TO cl_gui_docking_container,
+      " ### ###### ### ## Splitter ##
+      go_splitter TYPE REF TO cl_gui_splitter_container,
+      " 2## #### # ## ## ##
+      go_cont_l TYPE REF TO cl_gui_container,
+      " ### ##
+      go_cont_r TYPE REF TO cl_gui_container,
+      go_alv_l TYPE REF TO cl_gui_alv_grid,
+      go_alv_r TYPE REF TO cl_gui_alv_grid.
+
+DATA: gt_flight TYPE TABLE OF sflight,
+      gt_spfli TYPE TABLE OF spfli.
+
+AT SELECTION-SCREEN OUTPUT.
+  IF go_docking IS INITIAL.
+    SELECT * FROM sflight INTO TABLE gt_flight
+      UP TO 20 ROWS WHERE carrid = pa_car.
+    SELECT * FROM spfli INTO TABLE gt_spfli
+      UP TO 20 ROWS WHERE carrid = pa_car.
+    CHECK sy-subrc = 0. " ### ## ## ##
+    " Docking Container ##
+    CREATE OBJECT go_docking
+      EXPORTING
+        side      = cl_gui_docking_container=&gt;dock_at_bottom
+        extension = 300
+        repid     = sy-repid
+        dynnr     = sy-dynnr.
+
+<font color ="#0000FF">**********************************************************************</font>
+    " Container ## ## (1# 2##)
+    CREATE OBJECT go_splitter
+    EXPORTING parent  = go_docking
+              rows    = 1
+              columns = 2.
+
+    " ### ### Container# ## ####
+    CALL METHOD go_splitter-&gt;get_container
+    EXPORTING row = 1
+              column = 1
+    RECEIVING container = go_cont_l.
+
+    CALL METHOD go_splitter-&gt;get_container
+    EXPORTING row = 1
+              column = 2
+    RECEIVING container = go_cont_r.
+
+    " # ### ALV ##
+    CREATE OBJECT go_alv_l
+    EXPORTING i_parent = go_cont_l.
+    CREATE OBJECT go_alv_r
+    EXPORTING i_parent = go_cont_r.
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*    " Docking Container# ALV ##</font>
+<font color ="#0000FF">*    CREATE OBJECT go_alv EXPORTING i_parent = go_docking.</font>
+
+    " Data display
+    CALL METHOD go_alv_l-&gt;set_table_for_first_display
+      EXPORTING
+        i_structure_name              = 'SPFLI'
+      CHANGING
+        it_outtab                     = gt_flight
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE '### ## # ## ##' TYPE 'E'.
+    ENDIF.
+
+    CALL METHOD go_alv_r-&gt;set_table_for_first_display
+      EXPORTING
+        i_structure_name              = 'SPFLI'
+      CHANGING
+        it_outtab                     = gt_flight
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE '### ## # ## ##' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+
+START-OF-SELECTION.
+  SELECT * FROM sflight INTO TABLE gt_flight
+    UP TO 20 ROWS WHERE carrid = pa_car.
+  SELECT * FROM spfli INTO TABLE gt_spfli
+    UP TO 20 ROWS WHERE carrid = pa_car.
+  IF sy-subrc = 0.
+    CALL METHOD go_alv_l-&gt;refresh_table_display
+      EXCEPTIONS
+        finished       = 1
+        others         = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE 'Refresh ## # ## ##' TYPE 'E'.
+    ENDIF.
+
+    CALL METHOD go_alv_r-&gt;refresh_table_display
+      EXCEPTIONS
+        finished       = 1
+        others         = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE 'Refresh ## # ## ##' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   ### ## # ## ##</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

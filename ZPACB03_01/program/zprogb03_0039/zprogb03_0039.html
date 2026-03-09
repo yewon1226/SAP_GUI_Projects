@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0039</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0039</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Excel Upload</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0039</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0039.
+
+" ###### ## ##### ### #### ##
+PARAMETERS pa_file TYPE localfile.
+
+DATA: gt_filename TYPE filetable,
+      gv_rc TYPE I.
+
+DATA: gt_excel_data TYPE TABLE OF alsmex_tabline.
+
+TYPES BEGIN OF ts_data.
+  TYPES: a_field(20),
+         b_field(20),
+         c_field(20).
+TYPES END OF ts_data.
+DATA: gt_itab TYPE TABLE OF ts_data,
+      gs_itab TYPE ts_data.
+FIELD-SYMBOLS: &lt;fs&gt;.
+CONSTANTS: gc_filters TYPE string VALUE
+'EXCEL FILES (*.XLSX)|*.XLSX|EXCEL FILES (*.XLS)|*.XLS|'.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR pa_file.
+  cl_gui_frontend_services=&gt;file_open_dialog(
+    EXPORTING
+      window_title            = '####'                 " Title Of File Open Dialog
+      default_filename        = space                 " Default File Name
+      file_filter             = gc_filters                 " File Extension Filter String
+      initial_directory       = 'C:'                 " Initial Directory
+    CHANGING
+      file_table              = gt_filename                 " Table Holding Selected Files
+      rc                      = gv_rc                 " Return Code, Number of Files or -1 If Error Occurred
+    EXCEPTIONS
+      file_open_dialog_failed = 1                " "Open File" dialog failed
+      cntl_error              = 2                " Control error
+      error_no_gui            = 3                " No GUI available
+      not_supported_by_gui    = 4                " GUI does not support this
+      others                  = 5
+  ).
+  IF SY-SUBRC = 0.
+    " #### ## # INDEX 1 # #### ## pa_file # ##
+    READ TABLE gt_filename INTO pa_file INDEX 1.
+  ENDIF.
+
+START-OF-SELECTION.
+  IF pa_file IS NOT INITIAL.
+    CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'
+      EXPORTING
+        filename                      = pa_file
+        i_begin_col                   = 1 " #### ## ### Column
+        i_begin_row                   = 2 " #### ## ### Row
+        i_end_col                     = 3 " #### ## ## Column
+        i_end_row                     = 100 " #### ## ## ROW (2~100#)
+      TABLES
+        intern                        = gt_excel_data
+     EXCEPTIONS
+       INCONSISTENT_PARAMETERS       = 1
+       UPLOAD_OLE                    = 2
+       OTHERS                        = 3
+              .
+    IF sy-subrc = 0.
+      SORT gt_excel_data BY row col.
+      LOOP AT gt_excel_data INTO DATA(gs_excel_data).
+<font color ="#0000FF">*        CASE gs_excel_data-col.</font>
+<font color ="#0000FF">*          WHEN '1'.</font>
+<font color ="#0000FF">*            gs_itab-a_field = gs_excel_data-value.</font>
+<font color ="#0000FF">*          WHEN '2'.</font>
+<font color ="#0000FF">*            gs_itab-b_field = gs_excel_data-value.</font>
+<font color ="#0000FF">*          WHEN '3'.</font>
+<font color ="#0000FF">*            gs_itab-c_field = gs_excel_data-value.</font>
+<font color ="#0000FF">*          WHEN OTHERS.</font>
+<font color ="#0000FF">*        ENDCASE.</font>
+
+" ## ## ##
+        UNASSIGN &lt;fs&gt;. "CLEAR# #### #### ### # ## ##
+        ASSIGN COMPONENT gs_excel_data-col OF STRUCTURE gs_itab TO &lt;fs&gt;.
+        &lt;fs&gt; = gs_excel_data-value.
+
+        AT END OF row. " row ## #### # #### ##
+          APPEND gs_itab TO gt_itab.
+          CLEAR gs_itab.
+        ENDAT.
+      ENDLOOP.
+      cl_demo_output=&gt;display( gt_itab ).
+    ENDIF.
+  ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

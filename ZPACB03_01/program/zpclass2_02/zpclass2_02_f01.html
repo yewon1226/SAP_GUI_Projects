@@ -1,0 +1,1480 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPCLASS2_02_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPCLASS2_02_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPCLASS_02_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPCLASS_02_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+<font color ="#0000FF">*  gs_layout-cwidth_opt = 'X'.</font>
+  gs_layout-zebra = 'X'.
+  gs_layout-sel_mode = 'A'.
+  gs_layout-grid_title = '# ## ##'.
+ENDFORM.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CLASS_NO'.
+  gs_fcat-coltext = '# ##'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'M_NAME'.
+  gs_fcat-coltext = '# ##'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'S_NAME'.
+  gs_fcat-coltext = '## ##'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CAPACITY_STU'.
+  gs_fcat-coltext = '# ##'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'COUNT_STU'.
+  gs_fcat-coltext = '## ###'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CLASS_LOCATION'.
+  gs_fcat-coltext = '##'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'ATTEND_RATE'.
+  gs_fcat-coltext = '## ###'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'EMP_RATE'.
+  gs_fcat-coltext = '## ###'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+  DATA: gv_class_cnt TYPE i,
+        gv_name TYPE CHAR10.
+  DATA: gv_attend_rate TYPE P DECIMALS 2.
+
+  DATA: lv_pid TYPE ztattedent_02-personal_id,
+        lv_total_days TYPE i,
+        lv_absence    TYPE i,
+        lv_rl_cnt     TYPE i,
+        lv_attend_rate TYPE P DECIMALS 2,
+        total_attend_rate TYPE P DECIMALS 2 VALUE 0.
+
+  SELECT * FROM ZTCOURSE_01
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    WHERE COURSE_ID = ZTCURRICULUM_02-COURSE_ID
+      AND GENERATION = ZTCURRICULUM_02-GENERATION.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE i002(ZMCCL2_02).
+  ENDIF.
+
+  CLEAR gs_data.
+  LOOP AT gt_data INTO gs_data.
+
+<font color ="#0000FF">********** ### ####</font>
+    SELECT * FROM ztthistory_02
+      UP TO 1 ROWS
+      INTO TABLE gt_t_history
+      WHERE COURSE_ID = ZTCURRICULUM_02-COURSE_ID
+        AND GENERATION = ZTCURRICULUM_02-GENERATION
+        AND CLASS_NO = gs_data-class_no
+        AND POS_CODE = 'M'
+      ORDER BY START_DATE DESCENDING.
+    READ TABLE gt_t_history INTO gs_t_history INDEX 1.
+
+    SELECT SINGLE NAME FROM ZTPERSON_01
+      INTO gv_name
+      WHERE personal_id = gs_t_history-personal_id.
+    gs_data-m_name = gv_name.
+    MODIFY gt_data FROM gs_data TRANSPORTING m_name.
+    CLEAR: gv_name, gt_t_history, gs_t_history.
+
+    SELECT * FROM ztthistory_02
+      UP TO 1 ROWS
+      INTO TABLE gt_t_history
+      WHERE COURSE_ID = ZTCURRICULUM_02-COURSE_ID
+        AND GENERATION = ZTCURRICULUM_02-GENERATION
+        AND CLASS_NO = gs_data-class_no
+        AND POS_CODE = 'S'
+      ORDER BY START_DATE DESCENDING.
+    READ TABLE gt_t_history INTO gs_t_history INDEX 1.
+
+    SELECT SINGLE NAME FROM ZTPERSON_01
+      INTO gv_name
+      WHERE personal_id = gs_t_history-personal_id.
+    gs_data-s_name = gv_name.
+    MODIFY gt_data FROM gs_data TRANSPORTING s_name.
+    CLEAR: gv_name, gt_t_history, gs_t_history.
+
+<font color ="#0000FF">********** ###</font>
+    SELECT * FROM ZTSHISTORY_01
+      INTO TABLE gt_s_history
+      WHERE course_id  = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no   = gs_data-class_no
+        AND status     IN ('I','C').
+    SORT gt_s_history BY personal_id.
+    DELETE ADJACENT DUPLICATES FROM gt_s_history COMPARING personal_id.
+
+    IF gt_s_history IS NOT INITIAL.
+      SELECT * FROM ZTPERSON_01
+        INTO CORRESPONDING FIELDS OF TABLE gt_students
+        FOR ALL ENTRIES IN gt_s_history
+        WHERE personal_id = gt_s_history-personal_id.
+    ENDIF.
+
+    gs_data-count_stu = lines( gt_students ).
+    MODIFY gt_data FROM gs_data TRANSPORTING count_stu.
+    CLEAR: gt_students, gt_s_history.
+
+<font color ="#0000FF">********** ###</font>
+    SELECT DISTINCT personal_id
+      INTO CORRESPONDING FIELDS OF TABLE gt_sattend
+      FROM ztattedent_02
+      WHERE course_id  = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no   = gs_data-class_no.
+
+    CLEAR total_attend_rate.
+    LOOP AT gt_sattend INTO gs_sattend.
+      CLEAR: lv_total_days, lv_absence, lv_rl_cnt, lv_attend_rate.
+
+      SELECT COUNT(*)
+       INTO lv_total_days
+       FROM ztattedent_02
+       WHERE personal_id = gs_sattend-personal_id
+         AND course_id  = ZTCURRICULUM_02-course_id
+         AND generation = ZTCURRICULUM_02-generation
+         AND class_no   = gs_data-class_no.
+
+      SELECT COUNT(*)
+        INTO lv_absence
+        FROM ztattedent_02
+        WHERE personal_id = gs_sattend-personal_id
+          AND status = 'X'
+          AND course_id  = ZTCURRICULUM_02-course_id
+          AND generation = ZTCURRICULUM_02-generation
+          AND class_no   = gs_data-class_no.
+
+      SELECT COUNT(*)
+        INTO lv_rl_cnt
+        FROM ztattedent_02
+        WHERE personal_id = gs_sattend-personal_id
+          AND status IN ('R','L')
+          AND course_id  = ZTCURRICULUM_02-course_id
+          AND generation = ZTCURRICULUM_02-generation
+          AND class_no   = gs_data-class_no.
+
+      lv_absence = lv_absence + ( lv_rl_cnt / 3 ).
+
+      " ### ##
+      IF lv_total_days &gt; 0.
+        lv_attend_rate = ( lv_total_days - lv_absence ) * 100 / lv_total_days.
+        total_attend_rate = total_attend_rate + lv_attend_rate.
+      ENDIF.
+    ENDLOOP.
+
+    gs_data-attend_rate = total_attend_rate / lines( gt_sattend ).
+    MODIFY gt_data FROM gs_data TRANSPORTING attend_rate.
+
+<font color ="#0000FF">********** ###</font>
+   SELECT * FROM ZTSHISTORY_01
+     INTO CORRESPONDING FIELDS OF TABLE gt_s_history
+     WHERE course_id  = ZTCURRICULUM_02-course_id
+       AND generation = ZTCURRICULUM_02-generation
+       AND class_no   = gs_data-class_no
+       AND GETJOB = 'O'.
+   gs_data-emp_rate = lines( gt_s_history ) * 100 / lines( gt_sattend ).
+   MODIFY gt_data FROM gs_data TRANSPORTING emp_rate.
+
+   CLEAR: gt_s_history, gt_sattend.
+  ENDLOOP.
+
+  SORT gt_data BY class_no.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_screen110_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_screen110_data .
+  CLEAR gs_data.
+  DATA: lt_history TYPE TABLE OF ZTSHISTORY_01.
+
+  READ TABLE gt_data INTO gs_data INDEX gv_search_index.
+
+  SELECT * FROM ZTSHISTORY_01
+    INTO TABLE lt_history
+    WHERE course_id  = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = gs_data-class_no.
+
+  SELECT * FROM ZTPERSON_01
+    INTO TABLE gt_stu
+    FOR ALL ENTRIES IN lt_history
+    WHERE course_id  = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = gs_data-class_no
+      AND personal_id = lt_history-personal_id.
+
+  SORT gt_stu BY PERSONAL_ID.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FREE_ALV_110</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM free_alv_110 .
+  IF GO_ALV_110 IS NOT INITIAL.
+    GO_ALV_110-&gt;FREE( ).
+  ENDIF.
+  IF GO_CONT_110 IS NOT INITIAL.
+    GO_CONT_110-&gt;FREE( ).
+  ENDIF.
+  FREE: GO_ALV_110, GO_CONT_110.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat_110</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat_110 .
+  CLEAR gt_fcat_110.
+
+  CLEAR gs_fcat_110.
+  gs_fcat_110-fieldname = 'PERSONAL_ID'.
+  gs_fcat_110-coltext = '####'.
+  APPEND gs_fcat_110 TO gt_fcat_110.
+
+  CLEAR gs_fcat_110.
+  gs_fcat_110-fieldname = 'NAME'.
+  gs_fcat_110-coltext = '##'.
+  APPEND gs_fcat_110 TO gt_fcat_110.
+
+  CLEAR gs_fcat_110.
+  gs_fcat_110-fieldname = 'GENDER'.
+  gs_fcat_110-coltext = '##'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat_110 TO gt_fcat_110.
+
+  CLEAR gs_fcat_110.
+  gs_fcat_110-fieldname = 'MOBILE'.
+  gs_fcat_110-coltext = '####'.
+  APPEND gs_fcat_110 TO gt_fcat_110.
+
+  CLEAR gs_fcat_110.
+  gs_fcat_110-fieldname = 'EMAIL'.
+  gs_fcat_110-coltext = '###'.
+  APPEND gs_fcat_110 TO gt_fcat_110.
+
+  CLEAR gs_fcat_110.
+  gs_fcat_110-fieldname = 'BIRTH_DATE'.
+  gs_fcat_110-coltext = '####'.
+  APPEND gs_fcat_110 TO gt_fcat_110.
+
+  CLEAR gs_fcat_110.
+  gs_fcat_110-fieldname = 'MAJOR'.
+  gs_fcat_110-coltext = '####'.
+  gs_fcat-outputlen = 10.
+  APPEND gs_fcat_110 TO gt_fcat_110.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat_300</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat_300 .
+  CLEAR gt_fcat_300.
+
+  CLEAR gs_fcat_300.
+  gs_fcat_300-fieldname = 'NAME'.
+  gs_fcat_300-coltext = '##'.
+  gs_fcat_300-ref_field = 'NAME'.
+  gs_fcat_300-ref_table = 'ZTPERSON_01'.
+  gs_fcat_300-edit = 'X'.
+  gs_fcat_300-outputlen = 15.
+  APPEND gs_fcat_300 TO gt_fcat_300.
+
+  CLEAR gs_fcat_300.
+  gs_fcat_300-fieldname = 'GENDER'.
+  gs_fcat_300-coltext = '##'.
+  gs_fcat_300-ref_field = 'GENDER'.
+  gs_fcat_300-ref_table = 'ZTPERSON_01'.
+  gs_fcat_300-edit = 'X'.
+  gs_fcat_300-outputlen = 7.
+  APPEND gs_fcat_300 TO gt_fcat_300.
+
+  CLEAR gs_fcat_300.
+  gs_fcat_300-fieldname = 'MOBILE'.
+  gs_fcat_300-coltext = '####'.
+  gs_fcat_300-ref_field = 'MOBILE'.
+  gs_fcat_300-ref_table = 'ZTPERSON_01'.
+  gs_fcat_300-edit = 'X'.
+  gs_fcat_300-outputlen = 15.
+  APPEND gs_fcat_300 TO gt_fcat_300.
+
+  CLEAR gs_fcat_300.
+  gs_fcat_300-fieldname = 'EMAIL'.
+  gs_fcat_300-coltext = '###'.
+  gs_fcat_300-ref_field = 'EMAIL'.
+  gs_fcat_300-ref_table = 'ZTPERSON_01'.
+  gs_fcat_300-edit = 'X'.
+  gs_fcat_300-outputlen = 15.
+  APPEND gs_fcat_300 TO gt_fcat_300.
+
+  CLEAR gs_fcat_300.
+  gs_fcat_300-fieldname = 'BIRTH_DATE'.
+  gs_fcat_300-coltext = '####'.
+  gs_fcat_300-ref_field = 'BIRTH_DATE'.
+  gs_fcat_300-ref_table = 'ZTPERSON_01'.
+  gs_fcat_300-edit = 'X'.
+  gs_fcat_300-outputlen = 15.
+  APPEND gs_fcat_300 TO gt_fcat_300.
+
+  CLEAR gs_fcat_300.
+  gs_fcat_300-fieldname = 'MAJOR'.
+  gs_fcat_300-coltext = '####'.
+  gs_fcat_300-ref_field = 'MAJOR'.
+  gs_fcat_300-ref_table = 'ZTPERSON_01'.
+  gs_fcat_300-edit = 'X'.
+  gs_fcat_300-outputlen = 7.
+  APPEND gs_fcat_300 TO gt_fcat_300.
+
+  DO 50 TIMES.
+    CLEAR gs_data_300.
+    APPEND gs_data_300 TO gt_data_300.
+  ENDDO.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form FREE_ALV_120</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM free_alv_120 .
+  IF GO_ALV_120 IS NOT INITIAL.
+    GO_ALV_120-&gt;FREE( ).
+  ENDIF.
+  IF GO_CONT_120 IS NOT INITIAL.
+    GO_CONT_120-&gt;FREE( ).
+  ENDIF.
+  FREE: GO_ALV_120, GO_CONT_120.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat_120</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat_120 .
+  CLEAR gt_fcat_120.
+
+  CLEAR gs_fcat_120.
+  gs_fcat_120-fieldname = 'PERSONAL_ID'.
+  gs_fcat_120-coltext = '####'.
+  APPEND gs_fcat_120 TO gt_fcat_120.
+
+  CLEAR gs_fcat_120.
+  gs_fcat_120-fieldname = 'NAME'.
+  gs_fcat_120-coltext = '##'.
+  APPEND gs_fcat_120 TO gt_fcat_120.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form go_120_screen</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM go_120_screen .
+  SELECT DISTINCT h~personal_id, p~name
+    INTO TABLE @gt_teacher_120
+    FROM ZTTHISTORY_02 AS h
+    INNER JOIN ZTPERSON_01 AS p
+            ON h~personal_id = p~personal_id
+    WHERE h~pos_code = @gv_pos_code.
+
+  CALL SCREEN 120
+    STARTING AT 10 5
+    ENDING   AT 70 15.
+
+  CLEAR OK_CODE.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form save_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM save_data .
+  CALL METHOD go_alv_300-&gt;check_changed_data.
+
+  IF gt_data_300 IS INITIAL.
+    MESSAGE i101(zmccl2_02).
+    RETURN.
+  ENDIF.
+
+  DATA: init_flag TYPE I VALUE 0.
+  DATA: lv_max_class TYPE ZTCOURSE_01-class_no.
+  DATA: lv_cnt TYPE i VALUE 0,
+        lv_max_id   TYPE ZTSHISTORY_01-history_id,
+        lv_num_part TYPE n LENGTH 9,
+        lv_curr_num TYPE i,
+        lv_curr_num_c TYPE n LENGTH 9,
+        lv_new_id   TYPE ZTSHISTORY_01-history_id..
+
+  DATA: lv_numc9 TYPE n LENGTH 9,
+        lv_class_no TYPE NUMC2.
+  DATA: lt_tea_history TYPE TABLE OF ztthistory_02,
+        ls_m_tea_history TYPE ZTTHISTORY_02,
+        ls_s_tea_history TYPE ZTTHISTORY_02.
+  DATA: ls_course TYPE ZTCOURSE_01.
+  DATA: ls_student TYPE ZTPERSON_01,
+        lt_student TYPE TABLE OF ZTPERSON_01.
+  DATA: lt_stu_history TYPE TABLE OF ZTSHISTORY_01,
+        ls_stu_history TYPE ZTSHISTORY_01.
+  DATA: ls_mteacher TYPE ZTPERSON_01,
+        ls_steacher TYPE ZTPERSON_01.
+
+  SELECT MAX( class_no )
+    INTO lv_max_class
+    FROM ZTCOURSE_01
+    WHERE course_id  = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation.
+
+<font color ="#0000FF">********* ## ##, #### ### #### *************************************************************</font>
+  " ### ##
+  SELECT SINGLE * FROM ZTPERSON_01
+    INTO ls_mteacher
+    WHERE personal_id = pa_mcode.
+  ls_mteacher-course_id = ZTCURRICULUM_02-course_id.
+  ls_mteacher-generation = ZTCURRICULUM_02-generation.
+  ls_mteacher-class_no = lv_max_class + 1.
+
+  " #### ##
+  SELECT SINGLE * FROM ZTPERSON_01
+    INTO ls_steacher
+    WHERE personal_id = pa_scode.
+  ls_steacher-course_id = ZTCURRICULUM_02-course_id.
+  ls_steacher-generation = ZTCURRICULUM_02-generation.
+  ls_steacher-class_no = lv_max_class + 1.
+
+  " ### ## ####
+  ls_m_tea_history-personal_id = pa_mcode.
+  ls_m_tea_history-course_id = ZTCURRICULUM_02-course_id.
+  ls_m_tea_history-generation = ZTCURRICULUM_02-generation.
+  ls_m_tea_history-class_no = lv_max_class + 1. " # ####
+  ls_m_tea_history-start_date = sy-datum.
+  ls_m_tea_history-end_date = '99991231'.
+  ls_m_tea_history-pos_code = 'M'.
+  ls_m_tea_history-status = 'A'.
+
+" #### ## ####
+  ls_s_tea_history-personal_id = pa_scode.
+  ls_s_tea_history-course_id = ZTCURRICULUM_02-course_id.
+  ls_s_tea_history-generation = ZTCURRICULUM_02-generation.
+  ls_s_tea_history-class_no = lv_max_class + 1. " # ####
+  ls_s_tea_history-start_date = sy-datum.
+  ls_s_tea_history-end_date = '99991231'.
+  ls_s_tea_history-pos_code = 'S'.
+  ls_s_tea_history-status = 'A'.
+
+  LOOP AT gt_data_300 INTO gs_data_300.
+    IF gs_data_300-name      IS INITIAL AND
+      gs_data_300-gender     IS INITIAL AND
+      gs_data_300-mobile     IS INITIAL AND
+      gs_data_300-email      IS INITIAL AND
+      gs_data_300-birth_date IS INITIAL AND
+      gs_data_300-major      IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    IF gs_data_300-name      IS INITIAL OR
+      gs_data_300-gender     IS INITIAL OR
+      gs_data_300-mobile     IS INITIAL OR
+      gs_data_300-email      IS INITIAL OR
+      gs_data_300-birth_date IS INITIAL OR
+      gs_data_300-major      IS INITIAL.
+
+     MESSAGE i101(zmccl2_02).
+     RETURN.
+    ENDIF.
+  ENDLOOP.
+
+<font color ="#0000FF">********* #### ### #### *************************************************************</font>
+  SELECT SINGLE * FROM ZTCOURSE_01
+    INTO ls_course
+    WHERE course_id  = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation.
+  ls_course-class_no = lv_max_class + 1.
+
+  LOOP AT gt_data_300 INTO gs_data_300.
+    IF gs_data_300 IS NOT INITIAL.
+      lv_cnt = lv_cnt + 1.
+    ENDIF.
+    CLEAR gs_data_300.
+  ENDLOOP.
+  ls_course-count_stu = lv_cnt.
+
+  ls_course-class_location = pa_loc.
+
+<font color ="#0000FF">********* #######, ####(##) ### #### *************************************************************</font>
+  CLEAR gs_data_300.
+  SELECT MAX( history_id ) FROM ZTSHISTORY_01
+    INTO lv_max_id.
+  lv_curr_num = lv_max_id+1(9).
+
+  LOOP AT gt_data_300 INTO gs_data_300.
+    IF gs_data_300 IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    MOVE-CORRESPONDING gs_data_300 TO ls_student.
+    ls_student-course_id = ZTCURRICULUM_02-course_id.
+    ls_student-generation = ZTCURRICULUM_02-generation.
+    ls_student-class_no = lv_max_class + 1.
+
+    lv_curr_num = lv_curr_num + 1.
+    lv_curr_num_c = lv_curr_num.
+    lv_new_id = |H{ lv_curr_num_c }|.
+    ls_stu_history-history_id = lv_new_id.
+    ls_stu_history-history_id = lv_new_id.
+    ls_stu_history-course_id = ZTCURRICULUM_02-course_id.
+    ls_stu_history-generation = ZTCURRICULUM_02-generation.
+    ls_stu_history-class_no = lv_max_class + 1.
+    ls_stu_history-start_date = sy-datum.
+    ls_stu_history-end_date   = ls_s_tea_history-end_date.
+    ls_stu_history-status = 'I'.
+    ls_stu_history-getjob = 'X'.
+
+    CALL FUNCTION 'NUMBER_GET_NEXT'
+      EXPORTING
+        nr_range_nr   = '01'
+        object        = 'ZNRS02'
+        quantity      = '1'
+        ignore_buffer = 'X'
+      IMPORTING
+        number        = lv_numc9
+      EXCEPTIONS
+        OTHERS        = 1.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE 'Number Range ## ##' TYPE 'E'.
+    ELSE.
+      ls_student-personal_id = |S{ lv_numc9 }|.
+      ls_stu_history-personal_id = ls_student-personal_id.
+      CLEAR lv_numc9.
+    ENDIF.
+
+    APPEND ls_student TO lt_student.
+    APPEND ls_stu_history TO lt_stu_history.
+
+    CLEAR: gs_data_300, ls_student, ls_stu_history.
+  ENDLOOP.
+
+<font color ="#0000FF">*********** DB ### ####  ***********************************************************</font>
+
+  INSERT ZTPERSON_01 FROM ls_mteacher. " ##, ##
+  INSERT ZTPERSON_01 FROM ls_steacher.
+  INSERT ZTTHISTORY_02 FROM ls_m_tea_history.
+  INSERT ZTTHISTORY_02 FROM ls_s_tea_history.
+
+  INSERT ZTCOURSE_01 FROM ls_course. " ####
+
+  INSERT ZTPERSON_01 FROM TABLE lt_student. " ##, ##
+  INSERT ZTSHISTORY_01 FROM TABLE lt_stu_history.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form delete_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM delete_data USING lt_select_data TYPE LVC_T_ROW
+                       ls_select_data TYPE LVC_S_ROW.
+  DATA: ls_data LIKE gs_data.
+  DATA: lv_class_no TYPE ZTCOURSE_01-class_no.
+  DATA: lt_course TYPE TABLE OF ZTCOURSE_01,
+        ls_course TYPE ZTCOURSE_01.
+  DATA: lt_shistory TYPE TABLE OF ZTSHISTORY_01,
+        lt_shistory_tmp TYPE TABLE OF ztshistory_01,
+        ls_shistory TYPE ZTSHISTORY_01.
+  DATA: lt_student TYPE TABLE OF ZTPERSON_01,
+        lt_student_tmp TYPE TABLE OF ztperson_01,
+        ls_student TYPE ZTPERSON_01.
+  DATA: lt_thistory TYPE TABLE OF ZTTHISTORY_02,
+        lt_thistory_tmp TYPE TABLE OF ztthistory_02,
+        ls_thistory TYPE ZTTHISTORY_02.
+  DATA: lt_teacher TYPE TABLE OF ZTPERSON_01,
+        lt_teacher_tmp TYPE TABLE OF ztperson_01.
+
+  LOOP AT lt_select_data INTO ls_select_data.
+
+    READ TABLE gt_data INTO ls_data INDEX ls_select_data-index.
+    lv_class_no = ls_data-class_no. " # ##
+
+<font color ="#0000FF">********** #### ************************************************************</font>
+    SELECT SINGLE * FROM ZTCOURSE_01
+      INTO ls_course
+      WHERE course_id  = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no = lv_class_no.
+    APPEND ls_course TO lt_course.
+
+<font color ="#0000FF">********** ## ************************************************************</font>
+    SELECT * FROM ZTSHISTORY_01
+      INTO TABLE lt_shistory
+      WHERE course_id  = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no = lv_class_no.
+    SELECT * FROM ZTPERSON_01
+      INTO TABLE lt_student
+      WHERE course_id  = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no = lv_class_no
+        AND personal_id LIKE 'S%'.
+    APPEND LINES OF lt_shistory TO lt_shistory_tmp.
+    APPEND LINES OF lt_student TO lt_student_tmp.
+
+<font color ="#0000FF">********** ## ************************************************************</font>
+    SELECT * FROM ZTTHISTORY_02
+      INTO TABLE lt_thistory
+      WHERE course_id  = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no = lv_class_no.
+    READ TABLE lt_thistory INTO ls_thistory INDEX 1.
+    SELECT * FROM ZTPERSON_01
+      INTO TABLE lt_teacher
+      FOR ALL ENTRIES IN lt_thistory
+      WHERE course_id  = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no = lv_class_no
+        AND personal_id = lt_thistory-personal_id.
+    APPEND LINES OF lt_thistory TO lt_thistory_tmp.
+    APPEND LINES OF lt_teacher TO lt_teacher_tmp.
+  ENDLOOP.
+
+<font color ="#0000FF">*  BREAK-POINT.</font>
+
+<font color ="#0000FF">******* DB #### ***************************************************************</font>
+  DELETE ZTCOURSE_01 FROM TABLE lt_course.
+  DELETE ZTSHISTORY_01 FROM TABLE lt_shistory_tmp.
+  DELETE ZTPERSON_01 FROM TABLE lt_student_tmp.
+  DELETE ZTTHISTORY_02 FROM TABLE lt_thistory_tmp.
+  DELETE ZTPERSON_01 FROM TABLE lt_teacher_tmp.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_200_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_200_data .
+  DATA: lv_class_no TYPE ZTPERSON_01-class_no,
+        lv_loc TYPE ZTCOURSE_01-class_location,
+        lv_mname TYPE ztperson_01-name,
+        lv_sname TYPE ztperson_01-name,
+        lv_mcode TYPE ztperson_01-name,
+        lv_scode TYPE ztperson_01-name.
+
+  CLEAR gs_data.
+  READ TABLE gt_data INTO gs_data INDEX gv_update_index.
+
+  lv_class_no = gs_data-class_no.
+  gv_class_no = gs_data-class_no.
+
+  SELECT SINGLE CLASS_LOCATION FROM ZTCOURSE_01
+    INTO lv_loc
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = lv_class_no.
+
+  SELECT SINGLE PERSONAL_ID FROM ZTTHISTORY_02
+    INTO lv_mcode
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = lv_class_no
+      AND pos_code = 'M'.
+  SELECT SINGLE PERSONAL_ID FROM ZTTHISTORY_02
+    INTO lv_scode
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = lv_class_no
+      AND pos_code = 'S'.
+
+  SELECT SINGLE name FROM ZTPERSON_01
+    INTO lv_mname
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = lv_class_no
+      AND personal_id = lv_mcode.
+  SELECT SINGLE name FROM ZTPERSON_01
+    INTO lv_sname
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = lv_class_no
+      AND personal_id = lv_scode.
+
+  CLEAR: PA_DATA_200-PA_LOC2, PA_DATA_200-PA_MNAME2, PA_DATA_200-PA_SNAME2.
+  PA_DATA_200-PA_LOC2 = lv_loc.
+  PA_DATA_200-PA_MNAME2 = lv_mname.
+  PA_DATA_200-PA_SNAME2 = lv_sname.
+  pa_mcode200 = lv_mcode.
+  pa_scode200 = lv_scode.
+  pa_mname200 = lv_mname.
+  pa_sname200 = lv_sname.
+
+<font color ="#0000FF">**********************************************************************</font>
+  IF gv_from_400 = 0.
+    SELECT * FROM ZTPERSON_01
+      INTO CORRESPONDING FIELDS OF TABLE gt_data_200
+      WHERE course_id = ZTCURRICULUM_02-course_id
+        AND generation = ZTCURRICULUM_02-generation
+        AND class_no = lv_class_no
+        AND personal_id LIKE 'S%'.
+    SORT gt_data_200 BY personal_id.
+
+    CLEAR gt_cell_200.
+    LOOP AT gt_data_200 INTO gs_data_200.
+      CLEAR gs_cell_200.
+      MOVE-CORRESPONDING gs_data_200 TO gs_cell_200.
+      APPEND gs_cell_200 TO gt_cell_200.
+    ENDLOOP.
+  ELSE.
+    CLEAR gt_cell_200.
+    SORT gt_data_200 BY personal_id.
+
+    LOOP AT gt_data_200 INTO gs_data_200.
+      CLEAR gs_cell_200.
+      MOVE-CORRESPONDING gs_data_200 TO gs_cell_200.
+      APPEND gs_cell_200 TO gt_cell_200.
+    ENDLOOP.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat_200</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat_200 .
+  CLEAR gt_fcat_200.
+
+  CLEAR gs_fcat_200.
+  gs_fcat_200-fieldname = 'PERSONAL_ID'.
+  gs_fcat_200-coltext = '####'.
+  gs_fcat_200-ref_field = 'PERSONAL_ID'.
+  gs_fcat_200-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_200 TO gt_fcat_200.
+
+  CLEAR gs_fcat_200.
+  gs_fcat_200-fieldname = 'NAME'.
+  gs_fcat_200-coltext = '##'.
+  gs_fcat_200-ref_field = 'NAME'.
+  gs_fcat_200-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_200 TO gt_fcat_200.
+
+  CLEAR gs_fcat_200.
+  gs_fcat_200-fieldname = 'GENDER'.
+  gs_fcat_200-coltext = '##'.
+  gs_fcat_200-ref_field = 'GENDER'.
+  gs_fcat_200-ref_table = 'ZTPERSON_01'.
+  gs_fcat_200-outputlen = 7.
+  APPEND gs_fcat_200 TO gt_fcat_200.
+
+  CLEAR gs_fcat_200.
+  gs_fcat_200-fieldname = 'MOBILE'.
+  gs_fcat_200-coltext = '####'.
+  gs_fcat_200-ref_field = 'MOBILE'.
+  gs_fcat_200-ref_table = 'ZTPERSON_01'.
+  gs_fcat_200-outputlen = 15.
+  APPEND gs_fcat_200 TO gt_fcat_200.
+
+  CLEAR gs_fcat_200.
+  gs_fcat_200-fieldname = 'EMAIL'.
+  gs_fcat_200-coltext = '###'.
+  gs_fcat_200-ref_field = 'EMAIL'.
+  gs_fcat_200-ref_table = 'ZTPERSON_01'.
+  gs_fcat_200-outputlen = 15.
+  APPEND gs_fcat_200 TO gt_fcat_200.
+
+  CLEAR gs_fcat_200.
+  gs_fcat_200-fieldname = 'BIRTH_DATE'.
+  gs_fcat_200-coltext = '####'.
+  gs_fcat_200-ref_field = 'BIRTH_DATE'.
+  gs_fcat_200-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_200 TO gt_fcat_200.
+
+  CLEAR gs_fcat_200.
+  gs_fcat_200-fieldname = 'MAJOR'.
+  gs_fcat_200-coltext = '####'.
+  gs_fcat_200-ref_field = 'MAJOR'.
+  gs_fcat_200-ref_table = 'ZTPERSON_01'.
+  gs_fcat_200-outputlen = 7.
+  APPEND gs_fcat_200 TO gt_fcat_200.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat_400</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat_400 .
+  CLEAR gt_fcat_400.
+
+  CLEAR gs_fcat_400.
+  gs_fcat_400-fieldname = 'NAME'.
+  gs_fcat_400-coltext = '##'.
+  gs_fcat_400-edit = 'X'.
+  gs_fcat_400-ref_field = 'NAME'.
+  gs_fcat_400-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_400 TO gt_fcat_400.
+
+  CLEAR gs_fcat_400.
+  gs_fcat_400-fieldname = 'GENDER'.
+  gs_fcat_400-coltext = '##'.
+  gs_fcat_400-edit = 'X'.
+  gs_fcat_400-ref_field = 'GENDER'.
+  gs_fcat_400-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_400 TO gt_fcat_400.
+
+  CLEAR gs_fcat_400.
+  gs_fcat_400-fieldname = 'MOBILE'.
+  gs_fcat_400-coltext = '####'.
+  gs_fcat_400-edit = 'X'.
+  gs_fcat_400-ref_field = 'MOBILE'.
+  gs_fcat_400-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_400 TO gt_fcat_400.
+
+  CLEAR gs_fcat_400.
+  gs_fcat_400-fieldname = 'EMAIL'.
+  gs_fcat_400-coltext = '###'.
+  gs_fcat_400-edit = 'X'.
+  gs_fcat_400-ref_field = 'EMAIL'.
+  gs_fcat_400-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_400 TO gt_fcat_400.
+
+  CLEAR gs_fcat_400.
+  gs_fcat_400-fieldname = 'BIRTH_DATE'.
+  gs_fcat_400-coltext = '####'.
+  gs_fcat_400-edit = 'X'.
+  gs_fcat_400-ref_field = 'BIRTH_DATE'.
+  gs_fcat_400-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_400 TO gt_fcat_400.
+
+  CLEAR gs_fcat_400.
+  gs_fcat_400-fieldname = 'MAJOR'.
+  gs_fcat_400-coltext = '####'.
+  gs_fcat_400-edit = 'X'.
+  gs_fcat_400-ref_field = 'MAJOR'.
+  gs_fcat_400-ref_table = 'ZTPERSON_01'.
+  APPEND gs_fcat_400 TO gt_fcat_400.
+
+  DO 50 TIMES.
+    CLEAR gs_data_400.
+    APPEND gs_data_400 TO gt_data_400.
+  ENDDO.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form save400_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM save400_data .
+  DATA: lv_numc9 TYPE n LENGTH 9,
+        lv_class_no TYPE ZTPERSON_01-class_no.
+
+  CALL METHOD go_alv_400-&gt;check_changed_data.
+
+  IF gt_data_400 IS INITIAL.
+    MESSAGE i101(zmccl2_02).
+    RETURN.
+  ENDIF.
+
+  LOOP AT gt_data_400 INTO gs_data_400.
+    IF gs_data_400-name      IS INITIAL AND
+      gs_data_400-gender     IS INITIAL AND
+      gs_data_400-mobile     IS INITIAL AND
+      gs_data_400-email      IS INITIAL AND
+      gs_data_400-birth_date IS INITIAL AND
+      gs_data_400-major      IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    IF gs_data_400-name      IS INITIAL OR
+      gs_data_400-gender     IS INITIAL OR
+      gs_data_400-mobile     IS INITIAL OR
+      gs_data_400-email      IS INITIAL OR
+      gs_data_400-birth_date IS INITIAL OR
+      gs_data_400-major      IS INITIAL.
+     MESSAGE i101(zmccl2_02).
+     RETURN.
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT gt_data_400 INTO gs_data_400.
+    IF gs_data_400-name      IS INITIAL AND
+      gs_data_400-gender     IS INITIAL AND
+      gs_data_400-mobile     IS INITIAL AND
+      gs_data_400-email      IS INITIAL AND
+      gs_data_400-birth_date IS INITIAL AND
+      gs_data_400-major      IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    CALL FUNCTION 'NUMBER_GET_NEXT'
+      EXPORTING
+        nr_range_nr   = '01'
+        object        = 'ZNRS02'
+        quantity      = '1'
+        ignore_buffer = 'X'
+      IMPORTING
+        number        = lv_numc9
+      EXCEPTIONS
+        OTHERS        = 1.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE 'Number Range ## ##' TYPE 'E'.
+    ELSE.
+      gs_data_400-personal_id = |S{ lv_numc9 }|.
+      CLEAR lv_numc9.
+    ENDIF.
+
+    APPEND gs_data_400 TO gt_data_200.
+  ENDLOOP.
+  gv_from_400 = 1.
+  PERFORM set_200_data.
+  CALL METHOD go_alv_200-&gt;refresh_table_display.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form update_data_400</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM update_data_200 USING lt_select_data TYPE LVC_T_ROW
+                           ls_select_data TYPE LVC_S_ROW.
+
+  LOOP AT gt_cell_200 INTO gs_cell_200 WHERE it_cell_style IS NOT INITIAL.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'NAME'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'GENDER'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'MOBILE'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'EMAIL'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'BIRTH_DATE'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'MAJOR'.
+    MODIFY gt_cell_200 FROM gs_cell_200 TRANSPORTING it_cell_style.
+  ENDLOOP.
+
+  "### Row #### #### ##
+  LOOP AT lt_select_data INTO ls_select_data.
+    CLEAR : gs_cell_200, gs_cell_style.
+    READ TABLE gt_data_200 INTO gs_data_200 INDEX ls_select_data-index.
+
+    IF sy-subrc = 0.
+      gs_cell_style-fieldname = 'NAME'.
+<font color ="#0000FF">*      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_disabled.</font>
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_cell_200-it_cell_style.
+
+      gs_cell_style-fieldname = 'GENDER'.
+<font color ="#0000FF">*      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_disabled.</font>
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_cell_200-it_cell_style.
+
+      gs_cell_style-fieldname = 'MOBILE'.
+<font color ="#0000FF">*      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_disabled.</font>
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_cell_200-it_cell_style.
+
+      gs_cell_style-fieldname = 'EMAIL'.
+<font color ="#0000FF">*      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_disabled.</font>
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_cell_200-it_cell_style.
+
+      gs_cell_style-fieldname = 'BIRTH_DATE'.
+<font color ="#0000FF">*      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_disabled.</font>
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_cell_200-it_cell_style.
+
+      gs_cell_style-fieldname = 'MAJOR'.
+<font color ="#0000FF">*      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_disabled.</font>
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_cell_200-it_cell_style.
+
+      MODIFY gt_cell_200 FROM gs_cell_200 INDEX ls_select_data-index
+      TRANSPORTING it_cell_style.
+    ENDIF.
+  ENDLOOP.
+
+  " Edit ###
+  CALL METHOD go_alv_200-&gt;set_ready_for_input
+    EXPORTING
+      i_ready_for_input = 1. "## ## 1 #### edit# ###
+
+  CALL METHOD go_alv_200-&gt;refresh_table_display.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form update_result_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM update_result_data .
+  LOOP AT gt_cell_200 INTO gs_cell_200 WHERE it_cell_style IS NOT INITIAL.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'NAME'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'GENDER'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'MOBILE'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'EMAIL'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'BIRTH_DATE'.
+    DELETE gs_cell_200-it_cell_style WHERE fieldname = 'MAJOR'.
+    MODIFY gt_cell_200 FROM gs_cell_200 TRANSPORTING it_cell_style.
+  ENDLOOP.
+
+  CALL METHOD go_alv_200-&gt;check_changed_data.
+  CLEAR gt_data_200.
+  LOOP AT gt_cell_200 INTO gs_cell_200.
+    CLEAR gs_data_200.
+    MOVE-CORRESPONDING gs_cell_200 TO gs_data_200.
+    APPEND gs_data_200 TO gt_data_200.
+  ENDLOOP.
+  "ALV Refresh
+  CALL METHOD go_alv_200-&gt;refresh_table_display.
+
+  MESSAGE i102(ZMCCL2_02).
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form delete_data_200</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM delete_data_200 USING lt_select_data TYPE LVC_T_ROW
+                           ls_select_data TYPE LVC_S_ROW.
+  SORT lt_select_data BY index DESCENDING.
+  LOOP AT lt_select_data INTO ls_select_data.
+    DELETE gt_cell_200 INDEX ls_select_data-index.
+    DELETE gt_data_200 INDEX ls_select_data-index.
+  ENDLOOP.
+
+  CALL METHOD go_alv_200-&gt;refresh_table_display.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form save_data_200</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM save_data_200 .
+  IF gt_data_200 IS INITIAL.
+    MESSAGE i103(zmccl2_02).
+    RETURN.
+  ENDIF.
+
+  LOOP AT gt_data_200 INTO gs_data_200.
+    IF gs_data_200-name      IS INITIAL AND
+      gs_data_200-gender     IS INITIAL AND
+      gs_data_200-mobile     IS INITIAL AND
+      gs_data_200-email      IS INITIAL AND
+      gs_data_200-birth_date IS INITIAL AND
+      gs_data_200-major      IS INITIAL.
+      CONTINUE.
+    ENDIF.
+
+    IF gs_data_200-name      IS INITIAL OR
+      gs_data_200-gender     IS INITIAL OR
+      gs_data_200-mobile     IS INITIAL OR
+      gs_data_200-email      IS INITIAL OR
+      gs_data_200-birth_date IS INITIAL OR
+      gs_data_200-major      IS INITIAL.
+
+     MESSAGE i103(zmccl2_02).
+     RETURN.
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT gt_data_200 INTO gs_data_200.
+    IF gs_data_200-course_id IS INITIAL.
+      gs_data_200-course_id = ZTCURRICULUM_02-COURSE_ID.
+      gs_data_200-generation = ZTCURRICULUM_02-GENERATION.
+      gs_data_200-class_no = gv_class_no.
+      MODIFY gt_data_200 FROM gs_data_200.
+    ELSE.
+      CONTINUE.
+    ENDIF.
+  ENDLOOP.
+
+  IF pa_scode2 IS INITIAL.
+    pa_scode2 = pa_scode200.
+  ENDIF.
+  IF pa_mcode2 IS INITIAL.
+    pa_mcode2 = pa_mcode200.
+  ENDIF.
+  IF PA_DATA_200-PA_MNAME2 IS INITIAL.
+    PA_DATA_200-PA_MNAME2 = pa_mname200.
+  ENDIF.
+  IF PA_DATA_200-PA_SNAME2 IS INITIAL.
+    PA_DATA_200-PA_SNAME2 = pa_sname200.
+  ENDIF.
+
+<font color ="#0000FF">***********************************************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  DATA: init_flag TYPE I VALUE 0.</font>
+<font color ="#0000FF">*  DATA: lv_max_class TYPE ZTCOURSE_01-class_no.</font>
+  DATA: lv_cnt TYPE i VALUE 0,
+        lv_max_id   TYPE ZTSHISTORY_01-history_id,
+        lv_num_part TYPE n LENGTH 9,
+        lv_curr_num TYPE i,
+        lv_curr_num_c TYPE n LENGTH 9,
+        lv_new_id   TYPE ZTSHISTORY_01-history_id..
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  DATA: lv_numc9 TYPE n LENGTH 9,</font>
+<font color ="#0000FF">*        lv_class_no TYPE NUMC2.</font>
+  DATA: lt_tea_history TYPE TABLE OF ztthistory_02,
+        ls_m_tea_history TYPE ZTTHISTORY_02,
+        ls_s_tea_history TYPE ZTTHISTORY_02.
+  DATA: ls_course TYPE ZTCOURSE_01.
+  DATA: ls_student TYPE ZTPERSON_01,
+        lt_student TYPE TABLE OF ZTPERSON_01,
+        ls_student_old TYPE ZTPERSON_01,
+        lt_student_old TYPE TABLE OF ZTPERSON_01.
+  DATA: lt_stu_history TYPE TABLE OF ZTSHISTORY_01,
+        ls_stu_history TYPE ZTSHISTORY_01,
+        lt_stu_history_old TYPE TABLE OF ZTSHISTORY_01,
+        ls_stu_history_old TYPE ZTSHISTORY_01.
+  DATA: ls_mteacher TYPE ZTPERSON_01,
+        ls_steacher TYPE ZTPERSON_01.
+
+
+<font color ="#0000FF">********* ## ##, #### ### #### *************************************************************</font>
+  " ### ##
+  SELECT SINGLE * FROM ZTPERSON_01
+    INTO ls_mteacher
+    WHERE personal_id = pa_mcode2.
+  ls_mteacher-course_id = ZTCURRICULUM_02-course_id.
+  ls_mteacher-generation = ZTCURRICULUM_02-generation.
+  ls_mteacher-class_no = gv_class_no.
+
+<font color ="#0000FF">*  " #### ##</font>
+  SELECT SINGLE * FROM ZTPERSON_01
+    INTO ls_steacher
+    WHERE personal_id = pa_scode2.
+  ls_steacher-course_id = ZTCURRICULUM_02-course_id.
+  ls_steacher-generation = ZTCURRICULUM_02-generation.
+  ls_steacher-class_no = gv_class_no.
+
+  " ## ##
+  DATA: lt_hist TYPE TABLE OF ztthistory_02,
+        ls_hist TYPE ztthistory_02,
+        lv_subject_id TYPE ztthistory_02-subject_id..
+
+  SELECT subject_id start_date
+    INTO CORRESPONDING FIELDS OF TABLE lt_hist
+    FROM ztthistory_02
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no   = gv_class_no.
+
+  SORT lt_hist BY start_date DESCENDING.
+
+  READ TABLE lt_hist INTO ls_hist INDEX 1.
+  IF sy-subrc = 0.
+    lv_subject_id = ls_hist-subject_id.
+  ENDIF.
+
+  DATA: ls_m_tea_old TYPE ZTTHISTORY_02,
+        ls_s_tea_old TYPE ZTTHISTORY_02,
+        lt_m_tea_old TYPE TABLE OF ZTTHISTORY_02,
+        lt_s_tea_old TYPE TABLE OF ZTTHISTORY_02.
+
+  SELECT * FROM ZTTHISTORY_02
+    INTO TABLE lt_m_tea_old
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no   = gv_class_no
+      AND pos_code = 'M'
+      AND status = 'A'.
+  SELECT * FROM ZTTHISTORY_02
+    INTO TABLE lt_s_tea_old
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no   = gv_class_no
+      AND pos_code = 'S'
+      AND status = 'A'.
+
+<font color ="#0000FF">*  " ### ## ####</font>
+  ls_m_tea_history-personal_id = pa_mcode2.
+  ls_m_tea_history-course_id = ZTCURRICULUM_02-course_id.
+  ls_m_tea_history-generation = ZTCURRICULUM_02-generation.
+  ls_m_tea_history-class_no = gv_class_no.
+  ls_m_tea_history-subject_id = lv_subject_id.
+  ls_m_tea_history-start_date = sy-datum.
+  ls_m_tea_history-end_date = '99991231'.
+  ls_m_tea_history-pos_code = 'M'.
+  ls_m_tea_history-status = 'A'.
+
+  " #### ## ####
+  ls_s_tea_history-personal_id = pa_scode2.
+  ls_s_tea_history-course_id = ZTCURRICULUM_02-course_id.
+  ls_s_tea_history-generation = ZTCURRICULUM_02-generation.
+  ls_s_tea_history-class_no = gv_class_no.
+  ls_s_tea_history-subject_id = lv_subject_id.
+  ls_s_tea_history-start_date = sy-datum.
+  ls_s_tea_history-end_date = '99991231'.
+  ls_s_tea_history-pos_code = 'S'.
+  ls_s_tea_history-status = 'A'.
+
+<font color ="#0000FF">********** #### ### #### *************************************************************</font>
+  SELECT SINGLE * FROM ZTCOURSE_01
+    INTO ls_course
+    WHERE course_id  = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no = gv_class_no.
+
+  LOOP AT gt_data_200 INTO gs_data_200.
+    IF gs_data_200 IS NOT INITIAL.
+      lv_cnt = lv_cnt + 1.
+    ENDIF.
+    CLEAR gs_data_300.
+  ENDLOOP.
+  ls_course-count_stu = lv_cnt.
+  ls_course-class_location = PA_DATA_200-PA_LOC2.
+
+<font color ="#0000FF">********** #######, ####(##) ### #### *************************************************************</font>
+  DATA: lt_db_person TYPE TABLE OF ztperson_01,
+        ls_db_person TYPE ztperson_01.
+  DATA: lt_delete_person TYPE TABLE OF ztperson_01,
+        ls_delete_person TYPE ztperson_01.
+  DATA: lt_delete_stu TYPE TABLE OF ZTSHISTORY_01,
+        ls_delete_stu TYPE ZTSHISTORY_01.
+
+" ##
+  SELECT * FROM ztperson_01
+    INTO TABLE lt_db_person
+    WHERE course_id = ZTCURRICULUM_02-course_id
+      AND generation = ZTCURRICULUM_02-generation
+      AND class_no   = gv_class_no
+      AND personal_id LIKE 'S%'.
+
+  LOOP AT lt_db_person INTO ls_db_person.
+    READ TABLE gt_data_200 INTO ls_delete_person
+      WITH KEY personal_id = ls_db_person-personal_id.
+
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR ls_delete_person.
+      SELECT SINGLE * FROM ztperson_01
+        INTO ls_delete_person
+        WHERE course_id = ZTCURRICULUM_02-course_id
+          AND generation = ZTCURRICULUM_02-generation
+          AND class_no   = gv_class_no
+          AND personal_id = ls_db_person-personal_id.
+
+      SELECT SINGLE * FROM ZTSHISTORY_01
+        INTO ls_delete_stu
+        WHERE course_id = ZTCURRICULUM_02-course_id
+          AND generation = ZTCURRICULUM_02-generation
+          AND class_no   = gv_class_no
+          AND personal_id = ls_db_person-personal_id.
+
+      APPEND ls_delete_person TO lt_delete_person.
+      APPEND ls_delete_stu TO lt_delete_stu.
+    ENDIF.
+    CLEAR: ls_delete_person, ls_delete_stu.
+  ENDLOOP.
+
+" ## # ####
+  DATA: lv_numc9 TYPE n LENGTH 9.
+  DATA: lv_personal_id TYPE ztperson_01-personal_id.
+
+  SELECT MAX( history_id ) FROM ZTSHISTORY_01
+    INTO lv_max_id.
+  lv_curr_num = lv_max_id+1(9).
+
+  LOOP AT gt_data_200 INTO gs_data_200.
+
+    SELECT SINGLE personal_id FROM ztperson_01
+      INTO lv_personal_id
+      WHERE personal_id = gs_data_200-personal_id.
+
+    IF sy-subrc &lt;&gt; 0.
+      " ####
+      ls_student = gs_data_200.
+
+      " ####
+      SELECT SINGLE * FROM ztshistory_01
+        INTO ls_stu_history
+        WHERE course_id  = ZTCURRICULUM_02-course_id
+          AND generation = ZTCURRICULUM_02-generation
+          AND class_no = gv_class_no.
+      ls_stu_history-status = 'I'.
+      ls_stu_history-getjob = 'X'.
+      ls_student-personal_id = gs_data_200-personal_id.
+      ls_stu_history-personal_id = ls_student-personal_id.
+
+      lv_curr_num = lv_curr_num + 1.
+      lv_curr_num_c = lv_curr_num.
+      lv_new_id = |H{ lv_curr_num_c }|.
+      ls_stu_history-history_id = lv_new_id.
+
+      APPEND ls_student TO lt_student.
+      APPEND ls_stu_history TO lt_stu_history.
+    ELSE.
+      " ### ####
+      ls_student_old = gs_data_200.
+
+      " ### ####
+      SELECT SINGLE * FROM ztshistory_01
+        INTO ls_stu_history_old
+        WHERE course_id  = ZTCURRICULUM_02-course_id
+          AND generation = ZTCURRICULUM_02-generation
+          AND class_no = gv_class_no
+          AND personal_id = lv_personal_id.
+      ls_stu_history_old-status = 'I'.
+      ls_stu_history_old-getjob = 'X'.
+      ls_stu_history_old-personal_id = lv_personal_id.
+
+      lv_curr_num = lv_curr_num + 1.
+      lv_curr_num_c = lv_curr_num.
+      lv_new_id = |H{ lv_curr_num_c }|.
+      ls_stu_history_old-history_id = lv_new_id.
+
+      APPEND ls_student_old TO lt_student_old.
+      APPEND ls_stu_history_old TO lt_stu_history_old.
+    ENDIF.
+  ENDLOOP.
+
+<font color ="#0000FF">*  BREAK-POINT.</font>
+<font color ="#0000FF">*</font>
+  INSERT ZTPERSON_01 FROM ls_mteacher.
+  INSERT ZTPERSON_01 FROM ls_steacher.
+  INSERT ZTTHISTORY_02 FROM ls_m_tea_history.
+  INSERT ZTTHISTORY_02 FROM ls_s_tea_history.
+  INSERT ZTPERSON_01 FROM TABLE lt_student.
+  INSERT ZTSHISTORY_01 FROM TABLE lt_stu_history.
+  MODIFY ZTPERSON_01 FROM TABLE lt_student_old.
+  MODIFY ZTSHISTORY_01 FROM TABLE lt_stu_history_old.
+
+  IF lt_delete_person IS NOT INITIAL.
+   DELETE ztperson_01 FROM TABLE lt_delete_person.
+  ENDIF.
+  IF lt_delete_stu IS NOT INITIAL.
+   DELETE ztshistory_01 FROM TABLE lt_delete_stu.
+  ENDIF.
+
+
+  IF lt_m_tea_old IS INITIAL.
+    INSERT ZTCOURSE_01 FROM ls_course.
+  ELSE.
+    LOOP AT lt_m_tea_old INTO ls_m_tea_old.
+      IF ls_m_tea_old-personal_id = pa_mcode2.
+        UPDATE ZTCOURSE_01 FROM ls_course.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+    DELETE ztthistory_02 FROM TABLE lt_m_tea_old.
+  ENDIF.
+
+  IF lt_s_tea_old IS INITIAL.
+    INSERT ZTCOURSE_01 FROM ls_course.
+  ELSE.
+    LOOP AT lt_s_tea_old INTO ls_s_tea_old.
+      IF ls_s_tea_old-personal_id = pa_scode2.
+        UPDATE ZTCOURSE_01 FROM ls_course.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+    DELETE ztthistory_02 FROM TABLE lt_s_tea_old.
+  ENDIF.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

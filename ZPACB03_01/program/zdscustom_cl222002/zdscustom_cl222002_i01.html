@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZDSCUSTOM_CL222002_I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZDSCUSTOM_CL222002_I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZDSCUSTOM_CL222_01_I01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZDSCUSTOM_CL222_01_I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+      "### #### #### ##
+      "## ## #### ## #### ### ##### ## ####,,..
+      "LEAVE TO TRANSACTION 'ZT'.
+    WHEN 'SEARCH'.
+      PERFORM get_data.
+    WHEN 'CHANGE'.
+      PERFORM change_data.
+    WHEN 'LOGOUT'.
+      LEAVE TO TRANSACTION 'ZTLOGIN_CL222_01'. "SUBMIT ZDLOGIN_CL222_01.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+  CASE ok_code.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'CANCEL'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0200  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0200 INPUT.
+  DATA: gs_data TYPE ZTSCUSTOM_CL22.
+
+  CASE OK_CODE.
+    WHEN 'PUSH'.
+      gs_data-id = ZTSCUSTOM_CL22-ID.
+      gs_data-name = ZTSCUSTOM_CL22-NAME.
+      gs_data-form = ZTSCUSTOM_CL22-FORM.
+      gs_data-street = ZTSCUSTOM_CL22-STREET.
+      gs_data-postbox = ZTSCUSTOM_CL22-POSTBOX.
+      gs_data-postcode = ZTSCUSTOM_CL22-POSTCODE.
+      gs_data-city = ZTSCUSTOM_CL22-CITY.
+      gs_data-country = ZTSCUSTOM_CL22-COUNTRY.
+      gs_data-region = ZTSCUSTOM_CL22-REGION.
+      gs_data-telephone = ZTSCUSTOM_CL22-TELEPHONE.
+      INSERT ZTSCUSTOM_CL22 FROM gs_data.
+      IF sy-subrc = 0.
+        APPEND gs_data TO gt_cust.
+        CALL METHOD go_alv-&gt;refresh_table_display.
+      ELSE.
+        MESSAGE '### ## ##' TYPE 'I'.
+      ENDIF.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

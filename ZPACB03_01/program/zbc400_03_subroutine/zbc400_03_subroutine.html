@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_03_SUBROUTINE</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_03_SUBROUTINE</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Calculator - Subroutine</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_03_SUBROUTINE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZBC400_03_SUBROUTINE.
+
+PARAMETERS: pa_int1 TYPE i,
+            pa_int2 TYPE i,
+            pa_op   TYPE c.
+
+TYPES: ty_result TYPE p LENGTH 16 DECIMALS 2.
+
+DATA gv_result TYPE ty_result.
+
+
+CASE pa_op.
+  WHEN '+'.
+    gv_result = pa_int1 + pa_int2.
+  WHEN '-'.
+    gv_result = pa_int1 - pa_int2.
+  WHEN '*'.
+    gv_result = pa_int1 * pa_int2.
+  WHEN '/'.
+    IF ( pa_int1 = 0 OR pa_int2 = 0 ).
+      MESSAGE '0# ## # ####.' TYPE 'E'.
+    ENDIF.
+    gv_result = pa_int1 / pa_int2.
+  WHEN '%'.
+    PERFORM CALC_PERCENTAGE USING pa_int1 pa_int2 CHANGING gv_result.
+  WHEN OTHERS.
+    MESSAGE '#### ## ######.' TYPE 'E'.
+ENDCASE.
+
+WRITE: gv_result.
+
+FORM CALC_PERCENTAGE USING VALUE(PV_ACT) TYPE I
+                           VALUE(PV_MAX) TYPE I
+                     CHANGING VALUE(CV_RESULT) TYPE ty_result.
+  IF ( PV_MAX = 0 ).
+    MESSAGE '0# ### # ####.' TYPE 'E'.
+  ELSE.
+    CV_RESULT = ( PV_ACT / PV_MAX ) * 100.
+  ENDIF.
+ENDFORM.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   0# ## # ####.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

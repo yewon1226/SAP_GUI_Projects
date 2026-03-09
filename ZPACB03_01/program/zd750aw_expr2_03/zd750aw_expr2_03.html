@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZD750AW_EXPR2_03</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZD750AW_EXPR2_03</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Template - CAST and Inline Declarations</b></font>
+<hr>
+<pre width="100">
+REPORT zd750aw_expr2_03.
+
+
+CLASS lcl_flights DEFINITION.
+  PUBLIC SECTION.
+    TYPES tt_flights TYPE STANDARD TABLE OF sflight WITH NON-UNIQUE KEY carrid connid fldate.
+    CLASS-METHODS get_flights IMPORTING iv_carrid      TYPE sflight-carrid
+                                        iv_connid      TYPE sflight-connid
+                              RETURNING VALUE(rt_list) TYPE d75aw_t_flights.
+  PRIVATE SECTION.
+    CLASS-METHODS read_flights IMPORTING iv_carrid         TYPE sflight-carrid
+                                         iv_connid         TYPE sflight-connid
+                               RETURNING VALUE(rt_flights) TYPE tt_flights.
+
+ENDCLASS.
+
+
+CLASS lcl_flights IMPLEMENTATION.
+  METHOD get_flights.
+    DATA ls_result  TYPE d75aw_s_flight.
+
+    DATA(lt_flights) = read_flights( iv_carrid = iv_carrid iv_connid = iv_connid ).
+    LOOP AT lt_flights ASSIGNING FIELD-SYMBOL(&lt;line&gt;).
+      MOVE-CORRESPONDING &lt;line&gt; TO ls_result.
+      TRY.
+          ls_result-percentage = ls_result-seatsocc / ls_result-seatsmax * 100.
+          APPEND ls_result TO rt_list.
+        CATCH cx_sy_zerodivide INTO DATA(lx_error).
+      ENDTRY.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD read_flights.
+    SELECT * FROM sflight INTO TABLE rt_flights WHERE carrid = iv_carrid AND connid = iv_connid.
+  ENDMETHOD.
+
+ENDCLASS.
+
+PARAMETERS: pa_car TYPE sflight-carrid DEFAULT 'LH',
+            pa_con TYPE sflight-connid DEFAULT '0400'.
+
+START-OF-SELECTION.
+  DATA(gt_flight_list) = lcl_flights=&gt;get_flights(
+                       iv_carrid =  pa_car
+                       iv_connid = pa_con ).
+
+  cl_salv_table=&gt;factory(
+    IMPORTING
+      r_salv_table   =  DATA(go_alv)   " Basis Class Simple ALV Tables
+    CHANGING
+      t_table        = gt_flight_list ).
+
+  go_alv-&gt;display( ).
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* PA_CAR D       .</font>
+<font color ="#0000FF">* PA_CON D       .</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

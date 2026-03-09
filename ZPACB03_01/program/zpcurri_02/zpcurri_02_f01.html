@@ -1,0 +1,439 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPCURRI_02_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPCURRI_02_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPCURRI_02_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPCURRI_02_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'WEEK'.
+  gs_fcat-coltext   = '##'.
+  gs_fcat-outputlen = 15.
+  gs_fcat-col_pos = 1.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CURRICULUM'.
+  gs_fcat-coltext   = '#####'.
+  gs_fcat-outputlen = 25.
+  gs_fcat-col_pos = 2.
+<font color ="#0000FF">*  gs_fcat-edit = 'X'.</font>
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'START_DATE'.
+  gs_fcat-coltext   = '#### ###'.
+  gs_fcat-outputlen = 15.
+  gs_fcat-col_pos = 3.
+<font color ="#0000FF">*  gs_fcat-edit = 'X'.</font>
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'END_DATE'.
+  gs_fcat-coltext   = '#### ###'.
+  gs_fcat-outputlen = 15.
+  gs_fcat-col_pos = 4.
+<font color ="#0000FF">*  gs_fcat-edit = 'X'.</font>
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+  DATA: gv_cnt TYPE i VALUE 1.
+
+  SELECT * FROM ztcurriculum_02
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    WHERE course_id = ztcurriculum_02-course_id
+      AND generation = ztcurriculum_02-generation.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE i002(zmccl2_02).
+  ELSE.
+    CLEAR gs_data.
+    LOOP AT gt_data INTO gs_data.
+      gs_data-week = gv_cnt && '##'.
+      MODIFY gt_data FROM gs_data TRANSPORTING week.
+      gv_cnt = gv_cnt + 1.
+      CLEAR gs_data.
+    ENDLOOP.
+  ENDIF.
+
+  "### ##
+  CLEAR gt_data4.
+  LOOP AT gt_data INTO DATA(ls_data).
+    CLEAR gs_data4.
+    MOVE-CORRESPONDING ls_data TO gs_data4.
+    APPEND gs_data4 TO gt_data4.
+  ENDLOOP.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form create_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_data .
+  CALL SCREEN 200.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form update_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM activate_data.
+  READ TABLE gt_data4 INTO gs_data4
+  WITH KEY course_id = ztcurriculum_02-course_id
+           generation = ztcurriculum_02-generation.
+
+<font color ="#0000FF">*******************************************************</font>
+
+  DATA : lt_index_rows TYPE lvc_t_row,
+         ls_index_row  TYPE lvc_s_row.
+
+  CALL METHOD go_alv-&gt;get_selected_rows
+    IMPORTING
+      et_index_rows = lt_index_rows.
+
+  IF lt_index_rows IS INITIAL.
+    MESSAGE '### #### #####' TYPE 'I'.
+    EXIT.
+  ENDIF.
+
+  "### ##### ###### ## ###
+  LOOP AT gt_data4 INTO gs_data4 WHERE it_cell_style IS NOT INITIAL.
+    DELETE gs_data4-it_cell_style WHERE fieldname = 'START_DATE'.
+    DELETE gs_data4-it_cell_style WHERE fieldname = 'END_DATE'.
+    DELETE gs_data4-it_cell_style WHERE fieldname = 'CURRICULUM'.
+    MODIFY gt_data4 FROM gs_data4 TRANSPORTING it_cell_style.
+  ENDLOOP.
+
+  "### Row #### #### ##
+  LOOP AT lt_index_rows INTO ls_index_row.
+    CLEAR : gs_data4, gs_cell_style.
+    READ TABLE gt_data4 INTO gs_data4 INDEX ls_index_row-index.
+    IF sy-subrc = 0.
+      gs_cell_style-fieldname = 'START_DATE'.
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_data4-it_cell_style.
+
+      gs_cell_style-fieldname = 'END_DATE'.
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_data4-it_cell_style.
+
+      gs_cell_style-fieldname = 'CURRICULUM'.
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_data4-it_cell_style.
+
+      MODIFY gt_data4 FROM gs_data4 INDEX ls_index_row-index
+      TRANSPORTING it_cell_style.
+    ENDIF.
+  ENDLOOP.
+
+  " Edit ###
+  CALL METHOD go_alv-&gt;set_ready_for_input
+    EXPORTING
+      i_ready_for_input = 1. "## ## 1 #### edit# ###
+
+  "ALV Refresh
+  CALL METHOD go_alv-&gt;refresh_table_display.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form delete_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM delete_data .
+  DATA : lt_data LIKE gt_data3,
+         ls_data LIKE gs_data3.
+  DATA : lt_select_data TYPE lvc_t_row,
+         ls_select_data TYPE lvc_s_row.
+
+
+  CALL METHOD go_alv-&gt;get_selected_rows
+    IMPORTING
+      et_index_rows = lt_select_data.
+
+  IF lt_select_data IS NOT INITIAL.
+    LOOP AT lt_select_data INTO ls_select_data.
+      READ TABLE gt_data INTO ls_data
+      INDEX ls_select_data-index.
+
+      IF sy-subrc = 0.
+        APPEND ls_data TO lt_data.
+        CLEAR ls_data.
+      ENDIF.
+    ENDLOOP.
+    "## ##
+    CALL FUNCTION 'POPUP_TO_CONFIRM'
+      EXPORTING
+        titlebar       = 'Information'
+        text_question  = '## ########??'
+      IMPORTING
+        answer         = gv_answer
+      EXCEPTIONS
+        text_not_found = 1
+        OTHERS         = 2.
+
+    IF gv_answer = '1'.
+      DELETE ztcurriculum_02 FROM TABLE lt_data.
+      CLEAR: lt_data, ls_data.
+    ELSE.
+    ENDIF.
+    PERFORM set_data.
+    PERFORM refresh.
+  ELSE.
+    MESSAGE 'Please Select record' TYPE 'E'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+  gs_layout-grid_title = '#### ###'.
+  gs_layout-sel_mode = 'A'.
+  gs_layout-stylefname = 'IT_CELL_STYLE'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat2 .
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'CURRICULUM'.
+  gs_fcat2-coltext   = '#####'.
+  gs_fcat2-col_pos = 1.
+  gs_fcat2-edit = 'X'.
+  gs_fcat2-outputlen = 15.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'START_DATE'.
+  gs_fcat2-coltext   = '#### ###'.
+  gs_fcat2-col_pos = 2.
+  gs_fcat2-edit = 'X'.
+  gs_fcat2-outputlen = 15.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'END_DATE'.
+  gs_fcat2-coltext   = '#### ###'.
+  gs_fcat2-col_pos = 3.
+  gs_fcat2-edit = 'X'.
+  gs_fcat2-outputlen = 15.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  DO 100 TIMES.
+    CLEAR gs_data2.
+    APPEND gs_data2 TO gt_data2.
+  ENDDO.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout2 .
+<font color ="#0000FF">*  gs_layout2-cwidth_ = 'X'.</font>
+<font color ="#0000FF">*  gs_layout2-zebra = 'X'.</font>
+<font color ="#0000FF">*  gs_layout2-sel_mode = 'A'.</font>
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form REFRESH</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM refresh .
+  CALL METHOD go_alv-&gt;refresh_table_display
+    EXCEPTIONS
+      finished = 1
+      OTHERS   = 2.
+  IF sy-subrc &lt;&gt; 0.
+<font color ="#0000FF">*   Implement suitable error handling here</font>
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_sorter</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_sorter .
+  IF  gt_sorter IS INITIAL.
+    CLEAR gs_sorter.
+    gs_sorter-fieldname = 'START_DATE'.
+    gs_sorter-up = 'X'.
+    APPEND gs_sorter TO gt_sorter.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CLEAR_ALV</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM clear_alv .
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form UPDATE_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM update_data .
+  " ======================================
+  " ## ##
+  " ======================================
+  DATA: lv_index1 TYPE sy-tabix,
+        lv_index2 TYPE sy-tabix,
+        ls_cmp    LIKE gs_data4,        " ### WA
+        ls_db     LIKE ztcurriculum_02,
+        lt_data   TYPE STANDARD TABLE OF ztcurriculum_02.
+
+  " ======================================
+  " 1. ALV ## ### ##
+  " ======================================
+  CALL METHOD go_alv-&gt;check_changed_data.
+
+  " ======================================
+  " 2. ALV ## row ## ##
+  " ======================================
+  DO LINES( gt_data4 ) TIMES.
+    lv_index1 = sy-index.
+
+    " ## row ##
+    READ TABLE gt_data4 INTO gs_data4 INDEX lv_index1.
+    IF sy-subrc &lt;&gt; 0.
+      CONTINUE.
+    ENDIF.
+
+    " ### ##
+    IF gs_data4-start_date IS INITIAL
+    OR gs_data4-end_date   IS INITIAL
+    OR gs_data4-curriculum IS INITIAL.
+      MESSAGE '# ####' TYPE 'E'.
+    ENDIF.
+
+    " ## ## ##
+    IF gs_data4-start_date &gt; gs_data4-end_date.
+      MESSAGE '#### ##### #' TYPE 'E'.
+    ENDIF.
+
+    " ======================================
+    " 2# ##: ## row# ## ##
+    " ======================================
+    DO LINES( gt_data4 ) TIMES.
+      lv_index2 = sy-index.
+
+      " ## ## ##
+      IF lv_index1 = lv_index2.
+        CONTINUE.
+      ENDIF.
+
+      " ### row ##
+      READ TABLE gt_data4 INTO ls_cmp INDEX lv_index2.
+      IF sy-subrc &lt;&gt; 0.
+        CONTINUE.
+      ENDIF.
+
+      " ## course_id, generation# ##
+      IF ls_cmp-course_id  = gs_data4-course_id
+     AND ls_cmp-generation = gs_data4-generation.
+
+        " ### row ##
+        IF ls_cmp-start_date IS INITIAL
+        OR ls_cmp-end_date   IS INITIAL.
+          CONTINUE.
+        ENDIF.
+
+        " ## ## ##
+        IF gs_data4-start_date &lt;= ls_cmp-end_date
+       AND gs_data4-end_date   &gt;= ls_cmp-start_date.
+          MESSAGE '### ### ####' TYPE 'E'.
+        ENDIF.
+
+      ENDIF.
+
+    ENDDO.
+
+  ENDDO.
+
+  " ======================================
+  " 3. DB ### ### ##
+  " ======================================
+  CLEAR lt_data.
+  LOOP AT gt_data4 INTO gs_data4.
+    CLEAR ls_db.
+    MOVE-CORRESPONDING gs_data4 TO ls_db.
+    ls_db-mandt = sy-mandt.
+    APPEND ls_db TO lt_data.
+  ENDLOOP.
+
+  " ======================================
+  " 4. DB UPDATE
+  " ======================================
+  MODIFY ztcurriculum_02 FROM TABLE lt_data.
+  COMMIT WORK.
+  CLEAR lt_data.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

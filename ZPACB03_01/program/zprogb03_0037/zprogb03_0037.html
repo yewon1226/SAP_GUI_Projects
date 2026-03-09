@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0037</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0037</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Class 2</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0037</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0037.
+
+CLASS lcl_grandparent DEFINITION.
+  PUBLIC SECTION.
+  METHODS: constructor IMPORTING iv_kimchi TYPE string,
+           cook. "#### ### ##
+  PROTECTED SECTION. "### ### ##(##+##)# ##### #
+  DATA: mv_kimchi TYPE string.
+ENDCLASS.
+
+CLASS lcl_grandparent IMPLEMENTATION.
+  METHOD constructor.
+      mv_kimchi = iv_kimchi.
+  ENDMETHOD.
+
+  METHOD cook.
+    WRITE:/ '### ## ##: ', mv_kimchi.
+  ENDMETHOD.
+ENDCLASS.
+
+<font color ="#0000FF">**********************************************************************</font>
+CLASS lcl_parent DEFINITION INHERITING FROM lcl_grandparent. "##
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING iv_kimchi TYPE string
+                                   iv_meat TYPE string.
+    METHODS: cook REDEFINITION. "## ###### #### ### ###
+  PRIVATE SECTION.
+    DATA: mv_meat TYPE string.
+ENDCLASS.
+
+CLASS lcl_parent IMPLEMENTATION.
+  METHOD constructor.
+    super-&gt;constructor( EXPORTING iv_kimchi = iv_kimchi ).
+    mv_meat = iv_meat.
+  ENDMETHOD.
+  METHOD cook.
+    super-&gt;cook( ).
+    WRITE:/ '## #### ## ##: ', mv_meat.
+  ENDMETHOD.
+ENDCLASS.
+
+<font color ="#0000FF">**********************************************************************</font>
+CLASS lcl_child DEFINITION INHERITING FROM lcl_parent. "##
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING iv_kimchi TYPE string
+                                   iv_meat TYPE string
+                                   iv_topping TYPE string.
+    METHODS: cook REDEFINITION. "## ###### #### ### ###
+  PRIVATE SECTION.
+    DATA: mv_topping TYPE string.
+ENDCLASS.
+
+CLASS lcl_child IMPLEMENTATION.
+  METHOD constructor.
+    super-&gt;constructor(
+      iv_kimchi = iv_kimchi
+      iv_meat   = iv_meat
+    ).
+    mv_topping = iv_topping.
+  ENDMETHOD.
+  METHOD cook.
+    super-&gt;cook( ).
+    WRITE:/ '### #### ###: ', mv_topping.
+<font color ="#0000FF">*    SKIP.</font>
+<font color ="#0000FF">*    WRITE:/ mv_kimchi. ### #### protected ### ## ##</font>
+  ENDMETHOD.
+ENDCLASS.
+
+<font color ="#0000FF">**********************************************************************</font>
+START-OF-SELECTION.
+  DATA: go_child TYPE REF TO lcl_child.
+
+  CREATE OBJECT go_child
+         EXPORTING iv_kimchi = '3## ###'
+                   iv_meat = '### ####'
+                   iv_topping = '##/## ##'.
+
+  go_child-&gt;cook( ).
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

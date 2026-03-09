@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZALV_SPFLI_B03_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZALV_SPFLI_B03_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZALV_SPFLI_B03_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZALV_SPFLI_B03_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form get_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_data .
+  DATA: gt_scarr TYPE TABLE OF scarr,
+        gs_scarr TYPE scarr.
+
+  SELECT carrid connid cityfrom cityto airpfrom airpto FROM spfli
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    WHERE carrid = pa_carr
+      AND connid IN so_con.
+  SELECT carrid carrname FROM scarr
+    INTO CORRESPONDING FIELDS OF TABLE gt_scarr
+    FOR ALL ENTRIES IN gt_data
+    WHERE carrid = gt_data-carrid.
+
+  LOOP AT gt_data INTO gs_data.
+    READ TABLE gt_scarr INTO gs_scarr WITH KEY carrid = gs_data-carrid
+      TRANSPORTING carrname.
+    gs_data-carrname = gs_scarr-carrname.
+    MODIFY gt_data FROM gs_data TRANSPORTING carrname.
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CARRID'.
+  gs_fcat-ref_field = 'CARRID'.
+  gs_fcat-ref_table = 'SPFLI'.
+  gs_fcat-hotspot = 'X'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CARRNAME'.
+  gs_fcat-ref_field = 'CARRNAME'.
+  gs_fcat-ref_table = 'SCARR'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CONNID'.
+  gs_fcat-ref_field = 'CONNID'.
+  gs_fcat-ref_table = 'SPFLI'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CITYFROM'.
+  gs_fcat-ref_field = 'CITYFROM'.
+  gs_fcat-ref_table = 'SPFLI'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CITYTO'.
+  gs_fcat-ref_field = 'CITYTO'.
+  gs_fcat-ref_table = 'SPFLI'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'AIRPFROM'.
+  gs_fcat-ref_field = 'AIRPFROM'.
+  gs_fcat-ref_table = 'SPFLI'.
+  APPEND gs_fcat TO gt_fcat.
+
+    CLEAR gs_fcat.
+  gs_fcat-fieldname = 'AIRPTO'.
+  gs_fcat-ref_field = 'AIRPTO'.
+  gs_fcat-ref_table = 'SPFLI'.
+  APPEND gs_fcat TO gt_fcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form get_sflight</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_sflight .
+  READ TABLE gt_data INTO gs_data INDEX gv_index.
+  SELECT * FROM sflight
+    INTO CORRESPONDING FIELDS OF TABLE gt_sflight
+    WHERE carrid = gs_data-carrid
+      AND connid = gs_data-connid.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form free_alv</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM free_alv .
+  IF GO_ALV2 IS NOT INITIAL.
+    GO_ALV2-&gt;FREE( ).
+  ENDIF.
+  IF GO_CONT2 IS NOT INITIAL.
+    GO_CONT2-&gt;FREE( ).
+  ENDIF.
+  FREE: GO_ALV2, GO_CONT2.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

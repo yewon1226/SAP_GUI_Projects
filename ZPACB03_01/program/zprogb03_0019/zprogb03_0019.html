@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0019</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0019</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Select-options + FOR ALL ENTRIES IN</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0019</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0019.
+
+<font color ="#0000FF">*DATA: gs_connect TYPE BC400_S_CONNECTION.</font>
+<font color ="#0000FF">*DATA: gv_dt TYPE S_DATE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*PARAMETERS: pa_car TYPE S_CARR_ID.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT-OPTIONS: so_con FOR gs_connect-connid,</font>
+<font color ="#0000FF">*                so_fdt FOR gv_dt.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT SINGLE *</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF gs_connect</font>
+<font color ="#0000FF">*  FROM SPFLI</font>
+<font color ="#0000FF">*  WHERE CARRID = PA_CAR.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ gs_connect-carrid, gs_connect-connid,</font>
+<font color ="#0000FF">*        gs_connect-fltime.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gt_flight TYPE TABLE OF sflight,</font>
+<font color ="#0000FF">*      gs_flight LIKE LINE OF gt_flight.</font>
+<font color ="#0000FF">*PARAMETERS: pa_car TYPE sflight-carrid.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT-OPTIONS: so_con FOR gs_flight-connid.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT *</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_flight</font>
+<font color ="#0000FF">*  FROM SFLIGHT</font>
+<font color ="#0000FF">*  WHERE carrid = pa_car</font>
+<font color ="#0000FF">*    AND connid IN so_con.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  cl_demo_output=&gt;display( gt_flight ).</font>
+<font color ="#0000FF">*ELSE.</font>
+<font color ="#0000FF">*  MESSAGE 'Error' TYPE 'E'.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gs_data TYPE SBOOK,</font>
+<font color ="#0000FF">*      gt_data LIKE TABLE OF gs_data.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*PARAMETERS: pa_car TYPE S_CARR_ID DEFAULT 'AZ',</font>
+<font color ="#0000FF">*            pa_con TYPE S_CONN_ID DEFAULT '0555'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT-OPTIONS: so_dat FOR gs_data-FLDATE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT * FROM SBOOK</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_data</font>
+<font color ="#0000FF">*  WHERE CARRID = pa_car</font>
+<font color ="#0000FF">*    AND CONNID = pa_con</font>
+<font color ="#0000FF">*    AND FLDATE IN so_dat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*LOOP AT gt_data INTO gs_data.</font>
+<font color ="#0000FF">*  WRITE:/ gs_data-CARRID, gs_data-CONNID, gs_data-FLDATE,</font>
+<font color ="#0000FF">*          gs_data-BOOKID, gs_data-CUSTOMID, gs_data-CUSTTYPE.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gt_data TYPE TABLE OF sflight,</font>
+<font color ="#0000FF">*      gt_result TYPE TABLE OF sflight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT carrid</font>
+<font color ="#0000FF">*  FROM sflight</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_data</font>
+<font color ="#0000FF">*  WHERE carrid IN ('AA', 'AZ', 'LH').</font>
+<font color ="#0000FF">*  " carrid# 'AA', 'AZ', 'LH'# #### #### ##</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF gt_data IS INITIAL.</font>
+<font color ="#0000FF">*  SORT gt_data BY carrid.   " carrid #### ##</font>
+<font color ="#0000FF">*  " gt_data# carrid# ### #### ##</font>
+<font color ="#0000FF">*  " =&gt; ## #### ####, ## #### ## DB ### ###</font>
+<font color ="#0000FF">*  " =&gt; ### ### #### ### ### SELECT ##</font>
+<font color ="#0000FF">*  " =&gt; ## # ##### ### ## ##.</font>
+<font color ="#0000FF">*  DELETE ADJACENT DUPLICATES FROM gt_data COMPARING carrid.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  SELECT * FROM sflight</font>
+<font color ="#0000FF">*    INTO CORRESPONDING FIELDS OF TABLE gt_result</font>
+<font color ="#0000FF">*    FOR ALL ENTRIES IN gt_data</font>
+<font color ="#0000FF">*    WHERE carrid = gt_data-carrid.</font>
+<font color ="#0000FF">*      " AND connid = gt_data-connid. ## ## ##</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    " ##! FOR ALL ~ # #### gt_data# #####</font>
+<font color ="#0000FF">*    " ### ### #####. ## #### Table# ##</font>
+<font color ="#0000FF">*    " #### ### # ##. ### gt_data# ## ###</font>
+<font color ="#0000FF">*    " ##### ## ####.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  IF sy-subrc = 0.</font>
+<font color ="#0000FF">*    cl_demo_output=&gt;display( gt_result ).</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gs_data   TYPE scarr,</font>
+<font color ="#0000FF">*      gt_data   LIKE TABLE OF gs_data,</font>
+<font color ="#0000FF">*      gt_result TYPE TABLE OF sflight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT-OPTIONS: so_car FOR gs_data-carrid.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT * FROM scarr</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_data</font>
+<font color ="#0000FF">*  WHERE carrid IN so_car.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT * FROM sflight</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_result</font>
+<font color ="#0000FF">*  FOR ALL ENTRIES IN gt_data</font>
+<font color ="#0000FF">*  WHERE carrid = gt_data-carrid.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*cl_demo_output=&gt;display( gt_result ).</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

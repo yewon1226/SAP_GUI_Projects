@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_CALLED</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_CALLED</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_CALLED</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_CALLED</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_CALLED.
+
+DATA: gt_sflight TYPE TABLE OF sflight,
+      gs_sflight LIKE LINE OF gt_sflight.
+
+PARAMETERS: pa_car2 TYPE s_carr_id MEMORY ID CAR1.
+SELECT-OPTIONS: so_con2 FOR gs_sflight-connid MEMORY ID CON1.
+
+START-OF-SELECTION.
+
+<font color ="#0000FF">*IMPORT s1 TO so_con2</font>
+<font color ="#0000FF">*       p1 TO pa_car2</font>
+<font color ="#0000FF">*       FROM MEMORY ID 'CARCON'.</font>
+
+SELECT * FROM sflight
+  INTO TABLE gt_sflight
+  WHERE carrid = pa_car2
+    AND connid IN so_con2.
+
+IF sy-subrc = 0.
+  LOOP AT gt_sflight INTO gs_sflight.
+    WRITE:/ gs_sflight-carrid,
+            gs_sflight-connid,
+            gs_sflight-fldate,
+            gs_sflight-seatsmax,
+            gs_sflight-seatsocc.
+    CLEAR: gs_sflight.
+  ENDLOOP.
+ELSE.
+  WRITE:/ 'No data'.
+ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

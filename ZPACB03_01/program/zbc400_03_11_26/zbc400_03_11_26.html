@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_03_11_26</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_03_11_26</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Event and function module</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_03_11_26</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZBC400_03_11_26.
+
+PARAMETERS: pa_car TYPE S_CARR_ID.
+DATA: gt_data TYPE STANDARD TABLE OF BC400_S_CONNECTION WITH NON-UNIQUE KEY CARRID CONNID.
+
+AT SELECTION-SCREEN.
+  IF pa_car IS INITIAL.
+    MESSAGE 'pa_car# #### #####.' TYPE 'E'.
+  ENDIF.
+
+START-OF-SELECTION.
+  call function <a href ="zget_connect03/zget_connect03.html">'ZGET_CONNECT03'</a>
+    EXPORTING
+      iv_carrid = pa_car
+    IMPORTING
+      ET_CONNECT = gt_data
+    EXCEPTIONS
+      NO_DATA   = 1
+      OTHERS    = 2.
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE 'No Data error!' TYPE 'E'.
+  ELSE.
+    cl_demo_output=&gt;display( gt_data ).
+  ENDIF.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   pa_car# #### #####.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

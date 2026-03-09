@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0009</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0009</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Subroutine</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0009</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0009.
+
+<font color ="#0000FF">*PARAMETERS: gv_num1 TYPE i,</font>
+<font color ="#0000FF">*            gv_op   TYPE c LENGTH 1,</font>
+<font color ="#0000FF">*            gv_num2 TYPE i.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: gv_result TYPE i.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*PERFORM get_compute USING gv_num1 gv_num2 gv_op</font>
+<font color ="#0000FF">*                    CHANGING gv_result.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: gv_result.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">** #### ##</font>
+<font color ="#0000FF">*FORM get_compute USING VALUE(p_pa_num1)</font>
+<font color ="#0000FF">*                       VALUE(p_pa_num2)</font>
+<font color ="#0000FF">*                       VALUE(p_pa_op)</font>
+<font color ="#0000FF">*                 CHANGING VALUE(p_pa_result).</font>
+<font color ="#0000FF">*  CASE p_pa_op.</font>
+<font color ="#0000FF">*    WHEN '+'.</font>
+<font color ="#0000FF">*      p_pa_result = p_pa_num1 + p_pa_num2.</font>
+<font color ="#0000FF">*    WHEN '-'.</font>
+<font color ="#0000FF">*      p_pa_result = p_pa_num1 - p_pa_num2.</font>
+<font color ="#0000FF">*    WHEN '*'.</font>
+<font color ="#0000FF">*      p_pa_result = p_pa_num1 * p_pa_num2.</font>
+<font color ="#0000FF">*    WHEN '/'.</font>
+<font color ="#0000FF">*      p_pa_result = p_pa_num1 / p_pa_num2.</font>
+<font color ="#0000FF">*    WHEN OTHERS.</font>
+<font color ="#0000FF">*  ENDCASE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ENDFORM.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*WRITE: sy-datum.  " yyyyMMdd</font>
+<font color ="#0000FF">*WRITE:/ sy-datum+0(4),</font>
+<font color ="#0000FF">*      / sy-datum+4(2),</font>
+<font color ="#0000FF">*      / sy-datum+6(2).</font>
+
+<font color ="#0000FF">* string ### ## gv_result ## ## ##</font>
+<font color ="#0000FF">* #### getToday ##. ## call by Value & Result #####</font>
+<font color ="#0000FF">* gv_result# ###.</font>
+<font color ="#0000FF">* #### ####, ### ####. ## #####</font>
+<font color ="#0000FF">* ### ### '###2025#11#20# ###' ## ## ### ####</font>
+<font color ="#0000FF">* ## ######, ### ###(####)# ##### ##.</font>
+
+<font color ="#0000FF">* ### ###</font>
+<font color ="#0000FF">* CONCATENATE ##1 ##2 ##2 INTO ####</font>
+
+<font color ="#0000FF">*DATA gv_result TYPE string.</font>
+<font color ="#0000FF">*PERFORM getToday CHANGING gv_result.</font>
+<font color ="#0000FF">*WRITE: gv_result.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*FORM getToday CHANGING VALUE(p_result).</font>
+<font color ="#0000FF">*  CONCATENATE '###' sy-datum+0(4) '#' sy-datum+4(2) '#' sy-datum+6(2) '# ###' INTO p_result.</font>
+<font color ="#0000FF">*ENDFORM.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS: pa_name TYPE string,</font>
+<font color ="#0000FF">*            pa_sc1  TYPE i,</font>
+<font color ="#0000FF">*            pa_sc2  TYPE i,</font>
+<font color ="#0000FF">*            pa_sc3  TYPE i.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: pa_avg TYPE I,</font>
+<font color ="#0000FF">*      pa_grad TYPE C LENGTH 1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*PERFORM calc_grade USING pa_sc1 pa_sc2 pa_sc3</font>
+<font color ="#0000FF">*                CHANGING pa_avg pa_grad.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:'###: ', pa_name,</font>
+<font color ="#0000FF">*      / '##: ', pa_avg,</font>
+<font color ="#0000FF">*      / '##: ', pa_grad.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*FORM calc_grade USING VALUE(p_sc1) TYPE i</font>
+<font color ="#0000FF">*                      VALUE(p_sc2) TYPE i</font>
+<font color ="#0000FF">*                      VALUE(p_sc3) TYPE i</font>
+<font color ="#0000FF">*                CHANGING VALUE(p_avg) TYPE i</font>
+<font color ="#0000FF">*                         VALUE(p_grade) TYPE c.</font>
+<font color ="#0000FF">*  IF ( p_sc1 &gt; 100 ).</font>
+<font color ="#0000FF">*    p_sc1 = 100.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*  IF ( p_sc2 &gt; 100 ).</font>
+<font color ="#0000FF">*    p_sc2 = 100.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*  IF ( p_sc3 &gt; 100 ).</font>
+<font color ="#0000FF">*    p_sc3 = 100.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  p_avg = ( p_sc1 + p_sc2 + p_sc3 ) / 3.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  IF ( p_avg &gt;= 90 ).</font>
+<font color ="#0000FF">*    p_grade = 'A'.</font>
+<font color ="#0000FF">*  ELSEIF ( p_avg &gt;= 80 ).</font>
+<font color ="#0000FF">*    p_grade = 'B'.</font>
+<font color ="#0000FF">*  ELSEIF ( p_avg &gt;= 70 ).</font>
+<font color ="#0000FF">*    p_grade = 'C'.</font>
+<font color ="#0000FF">*  ELSEIF ( p_avg &gt;= 60 ).</font>
+<font color ="#0000FF">*    p_grade = 'D'.</font>
+<font color ="#0000FF">*  ELSE.</font>
+<font color ="#0000FF">*    p_grade = 'F'.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ENDFORM.</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* PA_NAME         ## ##</font>
+<font color ="#0000FF">* PA_SC1         ##</font>
+<font color ="#0000FF">* PA_SC2         ##</font>
+<font color ="#0000FF">* PA_SC3         ##</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

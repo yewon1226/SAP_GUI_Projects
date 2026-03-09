@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_ITAB01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_ITAB01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  assignment1</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_B03_ITAB01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zbc400_b03_itab01.
+
+PARAMETERS: pa_car TYPE s_carr_id.
+
+DATA: BEGIN OF gs_data.
+        include structure <a href ="zsclb03_demo/dictionary-zsclb03_demo.html">ZSCLB03_DEMO</a>.
+DATA: SEATREMAIN TYPE INT4,
+      SEATREMAIN_B TYPE INT4,
+      SEATREMAIN_F TYPE INT4,
+      END OF gs_data.
+DATA: gt_data LIKE TABLE OF gs_data,
+      gv_carrname TYPE S_CARRNAME,
+      gv_cityfrom TYPE S_FROM_CIT,
+      gv_cityto TYPE S_TO_CITY.
+
+SELECT-OPTIONS: so_con FOR gs_data-CONNID,
+                so_dat FOR gs_data-FLDATE.
+
+IF sy-subrc &lt;&gt; 0.
+  MESSAGE 'Data is not found' TYPE 'E'.
+ENDIF.
+
+<font color ="#0000FF">*****    2. SFLIGHT Table## ##### ### Flight List Info# #### #### ####.</font>
+
+SELECT * FROM sflight
+  INTO CORRESPONDING FIELDS OF TABLE gt_data
+  WHERE carrid = pa_car AND connid IN so_con.
+
+<font color ="#0000FF">*****    3. SCARR Table## CARRNAME# #### #### ####.</font>
+
+SELECT SINGLE carrname FROM scarr
+  INTO gv_carrname
+  WHERE carrid = pa_car.
+
+LOOP AT gt_data INTO gs_data.
+  gs_data-carrname = gv_carrname.
+  MODIFY gt_data FROM gs_data.
+ENDLOOP.
+
+<font color ="#0000FF">*****    4. SPFLI Table## CITYFROM, CITYTO# #### #### ####.</font>
+
+SELECT SINGLE cityfrom cityto FROM spfli
+  INTO (gv_cityfrom, gv_cityto)
+  WHERE carrid = pa_car.
+
+LOOP AT gt_data INTO gs_data.
+  gs_data-cityfrom = gv_cityfrom.
+  gs_data-cityto = gv_cityto.
+  MODIFY gt_data FROM gs_data.
+ENDLOOP.
+
+<font color ="#0000FF">*******    5. economy class, business class, first class# # ## ### ###.</font>
+
+LOOP AT gt_data INTO gs_data.
+  gs_data-SEATREMAIN = gs_data-SEATSMAX - gs_data-SEATSOCC.
+  gs_data-SEATREMAIN_B = gs_data-SEATSMAX_B - gs_data-SEATSOCC_B.
+  gs_data-SEATREMAIN_F = gs_data-SEATSMAX_F - gs_data-SEATSOCC_F.
+  MODIFY gt_data FROM gs_data.
+ENDLOOP.
+
+IF sy-subrc &lt;&gt; 0.
+  MESSAGE 'Data is not found' TYPE 'E'.
+ELSE.
+  cl_demo_output=&gt;display_data( gt_data ).
+ENDIF.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   Data is not found</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

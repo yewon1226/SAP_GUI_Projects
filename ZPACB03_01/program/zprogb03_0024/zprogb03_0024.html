@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0024</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0024</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Deep Structure</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0024</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0024.
+
+TYPE-POOLS: ZTB03, COL, ICON.
+
+DATA: gv_percent TYPE ztb03_percentage.
+
+WRITE:/ 'BACKGROUND' COLOR COL_BACKGROUND,
+      / 'HEADING' COLOR COL_HEADING,
+      / 'NORMAL' COLOR COL_NORMAL,
+      / 'TOTAL' COLOR COL_TOTAL,
+      / 'KEY' COLOR COL_KEY,
+      / 'POSITIVE' COLOR COL_POSITIVE,
+      / 'NEGATIVE' COLOR COL_NEGATIVE,
+      / 'GROUP' COLOR COL_GROUP.
+
+WRITE:/ '5B' AS ICON,
+        '5C' AS ICON,
+        '5D' AS ICON.
+
+<font color ="#0000FF">*DATA: ls_person TYPE ZPERSON_B03,</font>
+<font color ="#0000FF">*      ls_phone TYPE LINE OF ZPERSON_B03-PHONE.    " table #### line of # ###### structure ##</font>
+<font color ="#0000FF">*" DATA: ls_phone TYPE STR_PHONE# ##</font>
+<font color ="#0000FF">*" DATA: ls_phone LIKE LINE OF ls_phone-PHONE# ##</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ls_person-fname = 'Hong'.</font>
+<font color ="#0000FF">*ls_person-lname = 'Gildong'.</font>
+<font color ="#0000FF">*ls_person-street = 'Gangnam'.</font>
+<font color ="#0000FF">*ls_person-city = 'Seoul'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ls_phone-p_type = 'TEL'.</font>
+<font color ="#0000FF">*ls_phone-p_number = '010-1234-5678'.</font>
+<font color ="#0000FF">*APPEND ls_phone TO ls_person-phone. " itab# 1###</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ls_phone-p_type = 'FAX'.</font>
+<font color ="#0000FF">*ls_phone-p_number = '02-214-3456'.</font>
+<font color ="#0000FF">*APPEND ls_phone TO ls_person-phone.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ls_phone-p_type = 'MOB'.</font>
+<font color ="#0000FF">*ls_phone-p_number = '010-9876-5432'.</font>
+<font color ="#0000FF">*APPEND ls_phone TO ls_person-phone.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: 'OKOK'.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS: pa_carr TYPE S_CARR_ID.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: gs_scar TYPE SCARR,</font>
+<font color ="#0000FF">*      gt_spfli TYPE ZSSCARR_B03-SPFLIINFO.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT SINGLE * FROM SCARR</font>
+<font color ="#0000FF">*  INTO gs_scar</font>
+<font color ="#0000FF">*  WHERE carrid = pa_carr.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*BREAK-POINT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT * FROM SPFLI</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_spfli</font>
+<font color ="#0000FF">*  WHERE carrid = pa_carr.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*BREAK-POINT.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

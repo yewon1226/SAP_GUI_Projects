@@ -1,0 +1,444 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_EXAMY2_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_EXAMY2_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_EXAMY_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_EXAMY_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+  DATA: gv_name TYPE scustom-name,
+        gv_carrname TYPE scarr-carrname,
+        gv_status TYPE ZTREQFOOD2_B03-status,
+        gv_reqdate TYPE ZTREQFOOD2_B03-reqdate.
+  DATA: gt_table TYPE TABLE OF ZTREQFOOD2_B03,
+        gs_table TYPE ZTREQFOOD2_B03.
+  DATA: gv_index_data TYPE I VALUE 1.
+
+  SELECT * FROM sbook
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    UP TO 100 ROWS
+    WHERE carrid = pa_car
+      AND connid IN pa_con
+      AND fldate IN pa_fld
+      AND cancelled NE 'X'.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE '## ### #### ####.' TYPE 'E'.
+  ELSE.
+    LOOP AT gt_data INTO gs_data.
+      SELECT SINGLE name FROM scustom
+        INTO gv_name
+        WHERE id = gs_data-customid.
+      SELECT SINGLE carrname FROM scarr
+        INTO gv_carrname
+        WHERE carrid = gs_data-carrid.
+      SELECT SINGLE status FROM ZTREQFOOD2_B03
+        INTO gv_status
+        WHERE carrid = gs_data-carrid
+          AND connid = gs_data-connid
+          AND fldate = gs_data-fldate
+          AND bookid = gs_data-bookid.
+      IF sy-subrc &lt;&gt; 0.
+        gs_data-status = 'A'.
+        gs_data-name = gv_name.
+        gs_data-carrname = gv_carrname.
+        MODIFY gt_data FROM gs_data TRANSPORTING name carrname status.
+      ELSE.
+        SELECT * FROM ZTREQFOOD2_B03
+          INTO CORRESPONDING FIELDS OF TABLE gt_table
+          WHERE carrid = gs_data-carrid
+             AND connid = gs_data-connid
+             AND fldate = gs_data-fldate
+             AND bookid = gs_data-bookid
+          ORDER BY reqdate DESCENDING.
+        READ TABLE gt_table INTO gs_table INDEX 1.
+        gs_data-status = gs_table-status.
+        gs_data-reqdate = gs_table-reqdate.
+        gs_data-name = gv_name.
+        gs_data-carrname = gv_carrname.
+        MODIFY gt_data FROM gs_data TRANSPORTING name carrname status reqdate.
+      ENDIF.
+      CLEAR: gv_name, gv_carrname, gs_data, gv_status, gv_reqdate.
+    ENDLOOP.
+    SORT gt_data BY bookid.
+
+<font color ="#0000FF">*    SELECT * FROM ZTREQFOOD2_B03</font>
+<font color ="#0000FF">*      INTO CORRESPONDING FIELDS OF TABLE gt_table.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    PERFORM set_data_plus.</font>
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'BOOKID'.
+  gs_fcat-coltext = 'Booking'.
+  gs_fcat-ref_field = 'BOOKID'.
+  gs_fcat-ref_table = 'SBOOK'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CUSTOMID'.
+  gs_fcat-ref_field = 'CUSTOMID'.
+  gs_fcat-ref_table = 'SBOOK'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'NAME'.
+  gs_fcat-ref_field = 'NAME'.
+  gs_fcat-ref_table = 'SCUSTOM'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'STATUS'.
+  gs_fcat-coltext = 'Status'.
+  gs_fcat-ref_field = 'STATUS'.
+  gs_fcat-ref_table = 'ZTREQFOOD2_B03'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'STATUS_TXT'.
+  gs_fcat-coltext = 'Status Text'.
+  gs_fcat-ref_field = 'STATUS_TXT'.
+  gs_fcat-ref_table = 'ZTREQFOOD2_B03'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'REQDATE'.
+  gs_fcat-coltext = 'Request Date'.
+  gs_fcat-ref_field = 'REQDATE'.
+  gs_fcat-ref_table = 'ZTREQFOOD2_B03'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CUSTTYPE'.
+  gs_fcat-ref_field = 'CUSTTYPE'.
+  gs_fcat-ref_table = 'SBOOK'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CLASS'.
+  gs_fcat-ref_field = 'CLASS'.
+  gs_fcat-ref_table = 'SBOOK'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'FLDATE'.
+  gs_fcat-ref_field = 'FLDATE'.
+  gs_fcat-ref_table = 'SBOOK'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CONNID'.
+  gs_fcat-ref_field = 'CONNID'.
+  gs_fcat-ref_table = 'SBOOK'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CARRID'.
+  gs_fcat-ref_field = 'CARRID'.
+  gs_fcat-ref_table = 'SBOOK'.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CARRNAME'.
+  gs_fcat-coltext = 'Airline'.
+  gs_fcat-ref_field = 'CARRNAME'.
+  gs_fcat-ref_table = 'SCARR'.
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fixedvalue</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fixedvalue .
+  DATA: lt_domain_values TYPE TABLE OF DD07V,
+        ls_domain_value LIKE LINE OF lt_domain_values.
+  CALL FUNCTION 'GET_DOMAIN_VALUES'
+    EXPORTING
+      domname               = 'ZDOREQSTATUS'
+    TABLES
+      VALUES_TAB            = lt_domain_values
+    EXCEPTIONS
+      NO_VALUES_FOUND       = 1
+      OTHERS                = 2.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE '#### fixed value #### ##' TYPE 'E'.
+  ELSE.
+    DATA: gv_statpos TYPE NUMC4.
+    CLEAR: gs_data.
+    LOOP AT gt_data INTO gs_data.
+      IF gs_data-status = 'A'.
+        gv_statpos = 1.
+      ELSEIF gs_data-status = 'B'.
+        gv_statpos = 2.
+      ELSEIF gs_data-status = 'C'.
+        gv_statpos = 3.
+      ENDIF.
+      READ TABLE lt_domain_values INTO ls_domain_value
+        WITH KEY valpos = gv_statpos.
+      CHECK sy-subrc = 0.
+      gs_data-status_txt = ls_domain_value-ddtext.
+      MODIFY gt_data FROM gs_data TRANSPORTING status_txt.
+    ENDLOOP.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+  gs_layout-sel_mode = 'A'.
+  gs_layout-zebra = 'X'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data2 .
+  DATA: gv_apptxt TYPE S_MEALTEXT,
+        gv_maintxt TYPE S_MEALTEXT,
+        gv_desstxt TYPE S_MEALTEXT.
+  CLEAR gs_data.
+
+  READ TABLE gt_data INTO gs_data INDEX gv_index.
+  MOVE-CORRESPONDING gs_data TO SBOOK.
+
+  SELECT * FROM smenu
+    INTO CORRESPONDING FIELDS OF TABLE gt_smenu
+    WHERE carrid = gs_data-carrid.
+
+  LOOP AT gt_smenu INTO gs_smenu.
+    gs_smenu-carrname = gs_data-carrname.
+    SELECT SINGLE TEXT FROM smealt
+      INTO gv_apptxt
+      WHERE carrid = gs_smenu-carrid
+        AND MEALNUMBER = gs_smenu-STARTER.
+    SELECT SINGLE TEXT FROM smealt
+      INTO gv_maintxt
+      WHERE carrid = gs_smenu-carrid
+        AND MEALNUMBER = gs_smenu-MAINCOURSE.
+    SELECT SINGLE TEXT FROM smealt
+      INTO gv_desstxt
+      WHERE carrid = gs_smenu-carrid
+        AND MEALNUMBER = gs_smenu-DESSERT.
+    gs_smenu-app_txt = gv_apptxt.
+    gs_smenu-main_txt = gv_maintxt.
+    gs_smenu-dess_txt = gv_desstxt.
+    MODIFY gt_smenu FROM gs_smenu TRANSPORTING carrname app_txt main_txt dess_txt.
+  ENDLOOP.
+
+  SORT gt_smenu BY menunumber.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat2</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat2 .
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'CARRID'.
+  gs_fcat2-col_pos = 1.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'CARRNAME'.
+  gs_fcat2-coltext = 'Airline'.
+  gs_fcat2-ref_field = 'CARRNAME'.
+  gs_fcat2-ref_table = 'SCARR'.
+  gs_fcat2-col_pos = 2.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'MENUNUMBER'.
+  gs_fcat2-col_pos = 3.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'STARTER'.
+  gs_fcat2-col_pos = 4.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'APP_TXT'.
+  gs_fcat2-coltext = 'Dish description'.
+  gs_fcat2-ref_field = 'SMEALT'.
+  gs_fcat2-ref_table = 'TEXT'.
+  gs_fcat2-col_pos = 5.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'MAINCOURSE'.
+  gs_fcat2-col_pos = 6.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'MAIN_TXT'.
+  gs_fcat2-coltext = 'Dish description'.
+  gs_fcat2-ref_field = 'SMEALT'.
+  gs_fcat2-ref_table = 'TEXT'.
+  gs_fcat2-col_pos = 7.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'DESSERT'.
+  gs_fcat2-col_pos = 8.
+  APPEND gs_fcat2 TO gt_fcat2.
+
+  CLEAR gs_fcat2.
+  gs_fcat2-fieldname = 'DESS_TXT'.
+  gs_fcat2-coltext = 'Dish description'.
+  gs_fcat2-ref_field = 'SMEALT'.
+  gs_fcat2-ref_table = 'TEXT'.
+  gs_fcat2-col_pos = 9.
+  APPEND gs_fcat2 TO gt_fcat2.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form update_reqtable</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM update_reqtable .
+  CLEAR: gs_data, gs_smenu, gs_req.
+  DATA: gv_reqdate TYPE ZTREQFOOD2_B03-reqdate.
+  DATA: gt_temp TYPE TABLE OF ZTREQFOOD2_B03.
+
+  READ TABLE gt_data INTO gs_data INDEX gv_index.
+<font color ="#0000FF">*  gv_reqdate = ZTREQFOOD2_B03-REQDATE.</font>
+
+  SELECT * FROM ZTREQFOOD2_B03
+    INTO TABLE gt_temp
+    WHERE carrid = gs_data-carrid
+      AND connid = gs_data-connid
+      AND fldate = gs_data-fldate
+      AND bookid = gs_data-bookid
+    ORDER BY reqdate DESCENDING.
+
+  IF sy-subrc = 0.
+    READ TABLE gt_temp INTO gs_req INDEX 1.
+    IF gs_req-status = 'B' AND gs_req-reqdate NE sy-datum.
+      gs_req-status = 'C'.
+      gs_req-enddate = sy-datum - 1.
+      UPDATE ZTREQFOOD2_B03 FROM gs_req.
+      PERFORM set_data.
+      PERFORM set_fixedvalue.
+
+      CLEAR: gs_req, gs_smenu.
+      READ TABLE gt_smenu INTO gs_smenu INDEX gv_index_req.
+      gs_req-carrid = gs_data-carrid.
+      gs_req-connid = gs_data-connid.
+      gs_req-fldate = gs_data-fldate.
+      gs_req-bookid = gs_data-bookid.
+      gs_req-status = 'B'.
+      gs_req-REQDATE = sy-datum.
+      gs_req-MENUNUMBER = gs_smenu-MENUNUMBER.
+      gs_req-ENDDATE = '99991231'.
+      INSERT ZTREQFOOD2_B03 FROM gs_req.
+      gs_data-reqdate = sy-datum.
+      gs_data-status = 'B'.
+      APPEND gs_data TO gt_data.
+      PERFORM set_data.
+      PERFORM set_fixedvalue.
+    ELSEIF gs_req-status = 'C' AND gs_req-reqdate EQ sy-datum.
+      CLEAR: gs_req, gs_smenu.
+      READ TABLE gt_smenu INTO gs_smenu INDEX gv_index_req.
+      gs_req-carrid = gs_data-carrid.
+      gs_req-connid = gs_data-connid.
+      gs_req-fldate = gs_data-fldate.
+      gs_req-bookid = gs_data-bookid.
+      gs_req-status = 'B'.
+      gs_req-REQDATE = sy-datum.
+      gs_req-MENUNUMBER = gs_smenu-MENUNUMBER.
+      gs_req-ENDDATE = '99991231'.
+      UPDATE ZTREQFOOD2_B03 FROM gs_req.
+      PERFORM set_data.
+      PERFORM set_fixedvalue.
+    ENDIF.
+  ELSE.
+    CLEAR: gs_req, gs_smenu.
+    READ TABLE gt_smenu INTO gs_smenu INDEX gv_index_req.
+    gs_req-carrid = gs_data-carrid.
+    gs_req-connid = gs_data-connid.
+    gs_req-fldate = gs_data-fldate.
+    gs_req-bookid = gs_data-bookid.
+    gs_req-status = 'B'.
+    gs_req-REQDATE = sy-datum.
+    gs_req-MENUNUMBER = gs_smenu-MENUNUMBER.
+    gs_req-ENDDATE = '99991231'.
+    INSERT ZTREQFOOD2_B03 FROM gs_req.
+    PERFORM set_data.
+    PERFORM set_fixedvalue.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data_plus</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data_plus .
+  DATA: ls_data TYPE ZTREQFOOD2_B03,
+        lt_data TYPE TABLE OF ZTREQFOOD2_B03.
+  DATA: lv_index TYPE I.
+  SELECT * FROM  ZTREQFOOD2_B03
+    INTO CORRESPONDING FIELDS OF TABLE lt_data.
+  LOOP AT gt_data INTO gs_data.
+    LOOP AT lt_data INTO ls_data.
+      IF gs_data-carrid = ls_data-carrid AND gs_data-connid = ls_data-connid
+        AND gs_data-fldate = ls_data-fldate AND gs_data-bookid = ls_data-bookid
+        AND gs_data-reqdate NE ls_data-reqdate.
+        gs_data-reqdate = ls_data-reqdate.
+        gs_data-status = ls_data-status.
+        APPEND gs_data TO gt_data.
+      ENDIF.
+    ENDLOOP.
+  ENDLOOP.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPYEXAM3_B03_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPYEXAM3_B03_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPYEXAM3_B03_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPYEXAM3_B03_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+  IF INPUT_DATA-TRAVELID IS INITIAL.
+    SELECT FROM ZDYTRAVEL_CR_B03
+      FIELDS TravelId, AgencyId, Agencyname, BeginDate, EndDate, DurationDays,
+             CurrencyCode, TotalPrice, TravelStatus, TravelStatusText, BookingGrade
+      INTO CORRESPONDING FIELDS OF TABLE @gt_data.
+  ELSE.
+    SELECT FROM ZDYTRAVEL_CR_B03
+      FIELDS TravelId, AgencyId, Agencyname, BeginDate, EndDate, DurationDays,
+             CurrencyCode, TotalPrice, TravelStatus, TravelStatusText, BookingGrade
+      WHERE travelid = @INPUT_DATA-TRAVELID
+      INTO CORRESPONDING FIELDS OF TABLE @gt_data.
+  ENDIF.
+
+  SORT gt_data BY travelid.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'TRAVELID'.
+  gs_fcat-coltext   = '## ID'.
+  gs_fcat-col_pos = 1.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'AGENCYID'.
+  gs_fcat-coltext   = '### ID'.
+  gs_fcat-col_pos = 2.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'AGENCYNAME'.
+  gs_fcat-coltext   = '####'.
+  gs_fcat-col_pos = 3.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'BEGINDATE'.
+  gs_fcat-coltext   = '###'.
+  gs_fcat-col_pos = 4.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'ENDDATE'.
+  gs_fcat-coltext   = '###'.
+  gs_fcat-col_pos = 5.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'DURATIONDAYS'.
+  gs_fcat-coltext   = '##(day)'.
+  gs_fcat-col_pos = 6.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'TOTALPRICE'.
+  gs_fcat-coltext   = '##'.
+  gs_fcat-col_pos = 7.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CURRENCYCODE'.
+  gs_fcat-coltext   = '###'.
+  gs_fcat-col_pos = 8.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'TRAVELSTATUS'.
+  gs_fcat-coltext   = '##'.
+  gs_fcat-col_pos = 9.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'TRAVELSTATUSTEXT'.
+  gs_fcat-coltext   = '###'.
+  gs_fcat-col_pos = 10.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'BOOKINGGRADE'.
+  gs_fcat-coltext   = '####'.
+  gs_fcat-col_pos = 11.
+  APPEND gs_fcat TO gt_fcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat200</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat200 .
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'TRAVELID'.
+  gs_fcat200-coltext   = '## ID'.
+  gs_fcat200-col_pos = 1.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'BOOKINGID'.
+  gs_fcat200-coltext   = '## ID'.
+  gs_fcat200-col_pos = 2.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'BOOKINGDATE'.
+  gs_fcat200-coltext   = '###'.
+  gs_fcat200-col_pos = 3.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'CUSTOMERID'.
+  gs_fcat200-coltext   = '## ID'.
+  gs_fcat200-col_pos = 4.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'CARRIERID'.
+  gs_fcat200-coltext   = '###'.
+  gs_fcat200-col_pos = 5.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'CONNECTIONID'.
+  gs_fcat200-coltext   = '###'.
+  gs_fcat200-col_pos = 6.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'FLIGHTDATE'.
+  gs_fcat200-coltext   = '###'.
+  gs_fcat200-col_pos = 7.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'FLIGHTPRICE'.
+  gs_fcat200-coltext   = '##'.
+  gs_fcat200-col_pos = 8.
+  APPEND gs_fcat200 TO gt_fcat200.
+
+  CLEAR gs_fcat200.
+  gs_fcat200-fieldname = 'CURRENCYCODE'.
+  gs_fcat200-coltext   = '###'.
+  gs_fcat200-col_pos = 9.
+  APPEND gs_fcat200 TO gt_fcat200.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data_200</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data_200 .
+  SELECT FROM ZDYBOOK_CR_B03
+      FIELDS *
+      WHERE travelid = @INPUT_DATA2-TRAVELID
+      INTO TABLE @gt_book.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+  gs_layout200-zebra = 'X'.
+  gs_layout200-sel_mode = 'A'.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

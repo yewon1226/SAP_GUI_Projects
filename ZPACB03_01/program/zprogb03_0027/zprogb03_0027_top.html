@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0027_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0027_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_0027_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_0027_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+TABLES sscrfields.
+
+DATA: gs_flight TYPE dv_flights,
+      gt_flight TYPE TABLE OF dv_flights,
+      gv_mode TYPE C VALUE '1'.
+
+" 2025-12-24: SALV ## ## ##
+DATA: go_salv TYPE REF TO cl_salv_table.
+
+PARAMETERS: pa_carr LIKE gs_flight-carrid DEFAULT 'AA',
+            pa_conn TYPE s_conn_id MEMORY ID con.
+
+SELECTION-SCREEN SKIP 2. "## ###
+
+SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME TITLE TEXT-001.
+  SELECTION-SCREEN SKIP 2.
+  "## ##. ###:gv_text, ####: ON
+  SELECTION-SCREEN PUSHBUTTON pos_low(20) gv_text USER-COMMAND ON.
+
+  PARAMETERS: pa_rad1 RADIOBUTTON GROUP rad,
+              pa_rad2 RADIOBUTTON GROUP rad DEFAULT 'X',
+              pa_rad3 RADIOBUTTON GROUP rad.
+  SELECT-OPTIONS: so_car FOR gs_flight-carrid DEFAULT 'AA' TO 'LH' OPTION BT SIGN E,
+                  so_con FOR gs_flight-connid DEFAULT '0017' NO-EXTENSION. " NO INTERVALS
+
+SELECTION-SCREEN END OF BLOCK blk1.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk2 WITH FRAME.
+
+  SELECTION-SCREEN BEGIN OF LINE.
+    SELECTION-SCREEN COMMENT 1(8) TEXT-002.
+    PARAMETERS: pa_name AS CHECKBOX DEFAULT 'X'.
+    SELECTION-SCREEN COMMENT 20(8) TEXT-003.
+    PARAMETERS: pa_curr AS CHECKBOX.
+  SELECTION-SCREEN END OF LINE.
+
+SELECTION-SCREEN END OF BLOCK blk2.
+
+SELECTION-SCREEN BEGIN OF SCREEN 101 AS SUBSCREEN.
+  SELECT-OPTIONS: so_fdt FOR gs_flight-fldate.
+SELECTION-SCREEN END OF SCREEN 101.
+
+SELECTION-SCREEN BEGIN OF SCREEN 102 AS SUBSCREEN.
+  PARAMETERS: pa_chk1 AS CHECKBOX.
+SELECTION-SCREEN END OF SCREEN 102.
+
+SELECTION-SCREEN BEGIN OF SCREEN 103 AS SUBSCREEN.
+  PARAMETERS: pa_chk2 AS CHECKBOX.
+SELECTION-SCREEN END OF SCREEN 103.
+
+"TAB STRIP + Sub screen ##
+SELECTION-SCREEN BEGIN OF TABBED BLOCK tab_strip FOR 5 LINES.
+  SELECTION-SCREEN TAB (20) TEXT-SB1
+    USER-COMMAND comm1 DEFAULT SCREEN 101.
+  SELECTION-SCREEN TAB (20) TEXT-SB2
+    USER-COMMAND comm2 DEFAULT SCREEN 102.
+  SELECTION-SCREEN TAB (20) TEXT-SB3
+    USER-COMMAND comm3 DEFAULT SCREEN 103.
+SELECTION-SCREEN END OF BLOCK tab_strip.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

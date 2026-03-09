@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0033</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0033</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Open sql + db update</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0033</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0033.
+
+<font color ="#0000FF">*DATA: gt_scarr TYPE TABLE OF scarr,</font>
+<font color ="#0000FF">*      gs_scarr LIKE LINE OF gt_scarr.</font>
+
+" ###
+<font color ="#0000FF">*SELECT * INTO TABLE gt_scarr</font>
+<font color ="#0000FF">*  FROM scarr.</font>
+<font color ="#0000FF">*  CLIENT SPECIFIED.</font>
+<font color ="#0000FF">*  WHERE MANDT = '100'.</font>
+<font color ="#0000FF">*  WHERE MANDT BETWEEN '000' AND '900'.</font>
+
+" ###
+<font color ="#0000FF">*SELECT * INTO TABLE @gt_scarr</font>
+<font color ="#0000FF">*  FROM scarr</font>
+<font color ="#0000FF">*  USING CLIENT '000'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ 'MANDT',</font>
+<font color ="#0000FF">*      15 'CARRID',</font>
+<font color ="#0000FF">*      30 'CARRNAME'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*LOOP AT gt_scarr INTO gs_scarr.</font>
+<font color ="#0000FF">*  WRITE:/ gs_scarr-mandt,</font>
+<font color ="#0000FF">*        15 gs_scarr-carrid,</font>
+<font color ="#0000FF">*        30 gs_scarr-carrname.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gt_scustom TYPE TABLE OF ZTSCUSTOM_B03,</font>
+<font color ="#0000FF">*      gs_scustom TYPE ZTSCUSTOM_B03.</font>
+<font color ="#0000FF">*DELETE FROM ZTSCUSTOM_B03.</font>
+
+<font color ="#0000FF">*SELECT * FROM scustom</font>
+<font color ="#0000FF">*  INTO TABLE gt_scustom</font>
+<font color ="#0000FF">*  WHERE ID BETWEEN 1 AND 70.</font>
+
+<font color ="#0000FF">*SELECT SINGLE *</font>
+<font color ="#0000FF">*  FROM SCUSTOM</font>
+<font color ="#0000FF">*  INTO gs_scustom</font>
+<font color ="#0000FF">*  WHERE ID = 1.</font>
+
+" ## ### ## - UPDATE ~ FROM
+<font color ="#0000FF">*gs_scustom-id = 1.</font>
+<font color ="#0000FF">*gs_scustom-name = 'change name'.</font>
+<font color ="#0000FF">*UPDATE ZTSCUSTOM_B03 FROM gs_scustom.</font>
+
+" ## ### ## - UPDATE ~ SET ~ WHERE
+<font color ="#0000FF">*gs_scustom-id = 2.</font>
+<font color ="#0000FF">*gs_scustom-name = 'second change'.</font>
+<font color ="#0000FF">*UPDATE ZTSCUSTOM_B03</font>
+<font color ="#0000FF">*   SET name = gs_scustom-name</font>
+<font color ="#0000FF">*       street = 'hihi'</font>
+<font color ="#0000FF">*   WHERE ID = gs_scustom-id.</font>
+
+" ### ### ##
+<font color ="#0000FF">*gs_scustom-name = '### ####!'.</font>
+<font color ="#0000FF">*UPDATE ZTSCUSTOM_B03</font>
+<font color ="#0000FF">*  SET name = gs_scustom-name</font>
+<font color ="#0000FF">*      form = 'before form'</font>
+<font color ="#0000FF">*  WHERE id BETWEEN 1 AND 20.</font>
+
+<font color ="#0000FF">*SELECT * FROM scustom</font>
+<font color ="#0000FF">*  INTO TABLE gt_scustom</font>
+<font color ="#0000FF">*  WHERE ID BETWEEN 1 AND 10.</font>
+<font color ="#0000FF">*SELECT * FROM scustom</font>
+<font color ="#0000FF">*  INTO TABLE gt_scustom.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">**  UPDATE ZTSCUSTOM_B03</font>
+<font color ="#0000FF">**    SET form = 'My form'</font>
+<font color ="#0000FF">**        city = 'Walldorf'</font>
+<font color ="#0000FF">**        country = 'DE'</font>
+<font color ="#0000FF">**    WHERE id BETWEEN 10 AND 20.</font>
+<font color ="#0000FF">**</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  LOOP AT gt_scustom INTO gs_scustom.</font>
+<font color ="#0000FF">*    IF gs_scustom-id BETWEEN 10 AND 20.</font>
+<font color ="#0000FF">*      gs_scustom-form = 'My form'.</font>
+<font color ="#0000FF">*      gs_scustom-city = 'Walldorf'.</font>
+<font color ="#0000FF">*      gs_scustom-country = 'DE'.</font>
+<font color ="#0000FF">*    ENDIF.</font>
+<font color ="#0000FF">*    MODIFY gt_scustom FROM gs_scustom.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*  UPDATE ZTSCUSTOM_B03 FROM TABLE gt_scustom.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " ### ### ##</font>
+<font color ="#0000FF">**  UPDATE ZTSCUSTOM_B03 FROM TABLE gt_scustom.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " ## ### ##</font>
+<font color ="#0000FF">**  INSERT INTO ZTSCUSTOM_B03 VALUES gs_scustom.</font>
+<font color ="#0000FF">**  INSERT ZTSCUSTOM_B03 FROM gs_scustom.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  " ### ### ##</font>
+<font color ="#0000FF">**INSERT ZTSCUSTOM_B03 FROM TABLE gt_scustom</font>
+<font color ="#0000FF">**  ACCEPTING DUPLICATE KEYS.</font>
+<font color ="#0000FF">*  IF sy-subrc = 0.</font>
+<font color ="#0000FF">*    WRITE: '##'.</font>
+<font color ="#0000FF">*  ELSE.</font>
+<font color ="#0000FF">*    WRITE: '##'.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gt_scustom TYPE TABLE OF ZTSCUSTOM_B03,</font>
+<font color ="#0000FF">*      gs_scustom TYPE ZTSCUSTOM_B03.</font>
+
+<font color ="#0000FF">*SELECT SINGLE *</font>
+<font color ="#0000FF">*  FROM scustom</font>
+<font color ="#0000FF">*  INTO gs_scustom</font>
+<font color ="#0000FF">*  WHERE id = 1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_scustom-id = 500.</font>
+<font color ="#0000FF">*gs_scustom-form = '##~~'.</font>
+<font color ="#0000FF">*gs_scustom-name = 'MODIFY ##~~'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" ## #### #### #### update ### ####</font>
+<font color ="#0000FF">*" #### ## #### #### insert ### ####</font>
+<font color ="#0000FF">*MODIFY ZTSCUSTOM_B03 FROM gs_scustom.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT * FROM scustom</font>
+<font color ="#0000FF">*  INTO TABLE gt_scustom</font>
+<font color ="#0000FF">*  WHERE ID BETWEEN 1 AND 5.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" ### 1~5# #### ## name ## ##</font>
+<font color ="#0000FF">*gs_scustom-name = 'modify name'.</font>
+<font color ="#0000FF">*MODIFY gt_scustom FROM gs_scustom</font>
+<font color ="#0000FF">*TRANSPORTING name WHERE id &lt;&gt; space.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" scustom## 193, 195, 197 ### #### gt_scustom# ##</font>
+<font color ="#0000FF">*SELECT *</font>
+<font color ="#0000FF">*  APPENDING TABLE gt_scustom</font>
+<font color ="#0000FF">*  FROM scustom</font>
+<font color ="#0000FF">*  WHERE ID IN ( 193, 195, 197 ).</font>
+<font color ="#0000FF">*" ### itab# db tab# modify</font>
+<font color ="#0000FF">*MODIFY ZTSCUSTOM_B03 FROM TABLE gt_scustom.</font>
+
+<font color ="#0000FF">*gs_scustom-id = 1.</font>
+<font color ="#0000FF">*DELETE ZTSCUSTOM_B03 FROM gs_scustom.</font>
+
+<font color ="#0000FF">*DELETE FROM ZTSCUSTOM_B03 WHERE ID = 2.</font>
+
+<font color ="#0000FF">*DELETE FROM ZTSCUSTOM_B03 " (##) ## ##</font>
+
+<font color ="#0000FF">*SELECT * FROM ZTSCUSTOM_B03</font>
+<font color ="#0000FF">*  INTO TABLE gt_scustom</font>
+<font color ="#0000FF">*  WHERE ID &lt;= 50.</font>
+<font color ="#0000FF">*DELETE ZTSCUSTOM_B03 FROM TABLE gt_scustom.</font>
+
+<font color ="#0000FF">*DELETE FROM ZTSCUSTOM_B03</font>
+<font color ="#0000FF">*  WHERE ID BETWEEN 55 AND 60.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  MESSAGE 'Success' TYPE 'I'.</font>
+<font color ="#0000FF">*ELSE.</font>
+<font color ="#0000FF">*  MESSAGE 'fail' TYPE 'I'.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

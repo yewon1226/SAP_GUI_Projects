@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC430_03_DATA_ELEMENTS</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC430_03_DATA_ELEMENTS</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program ZBC430_03_DATA_ELEMENTS</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC430_03_DATA_ELEMENTS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZBC430_03_DATA_ELEMENTS.
+
+PARAMETERS: pa_fname TYPE ZFIRSTNAME03,
+            pa_lname TYPE ZLASTNAME03,
+            pa_activ TYPE ZASSETS03,
+            pa_liabs TYPE ZLIABILITIES03.
+DATA: gv_result TYPE P LENGTH 10 DECIMALS 2.
+
+
+gv_result = pa_activ - pa_liabs.
+WRITE:/ 'FIrst Name: ', pa_fname,
+      / 'Last Name: ', pa_lname,
+      / 'Assets: ', pa_activ,
+      / 'Liabilities: ', pa_liabs,
+      / 'Assets - Liabilities : ', gv_result.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

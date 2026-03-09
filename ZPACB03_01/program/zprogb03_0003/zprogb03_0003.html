@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0003</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0003</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Operator</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0003</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0003.
+
+<font color ="#0000FF">*PARAMETERS: pa_num TYPE i.</font>
+<font color ="#0000FF">*DATA: gv_data TYPE i.</font>
+<font color ="#0000FF">*MOVE pa_num TO gv_data.</font>
+<font color ="#0000FF">** gv_data = pa_num. # ##</font>
+<font color ="#0000FF">** gv_data = pa_num + 1. # ## ## ##. MOVE TO# ####</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ gv_data.</font>
+
+<font color ="#0000FF">*PARAMETERS: pa_num1 TYPE i,</font>
+<font color ="#0000FF">*            pa_num2 TYPE i.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: gv_result TYPE i.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gv_result = pa_num1 + pa_num2.    " 5 + 2 = 7</font>
+<font color ="#0000FF">*gv_result = pa_num1 - pa_num2.    " 5 - 2 = 3</font>
+<font color ="#0000FF">*gv_result = pa_num1 * pa_num2.    " 5 + 2 = 7</font>
+<font color ="#0000FF">*gv_result = pa_num1 / pa_num2.    " 5 / 2 = 3 -&gt; #### ### # ###</font>
+<font color ="#0000FF">*gv_result = pa_num1 ** pa_num2.   " 5 ** 2 = 25</font>
+<font color ="#0000FF">*gv_result = pa_num1 DIV pa_num2.  " 5 DIV 2 = 2 -&gt; ### ##</font>
+<font color ="#0000FF">*gv_result = pa_num1 MOD pa_num2.  " 5 MOD 2 = 1</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ gv_result.</font>
+<font color ="#0000FF">**Pretty printer(####) ### Shift + F1</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+PARAMETERS: pa_c TYPE ZDECLASS_B03 VALUE CHECK,
+            pa_g TYPE ZDEGENDER_B03 VALUE CHECK.
+
+WRITE: pa_c, pa_g.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

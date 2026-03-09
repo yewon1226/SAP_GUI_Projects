@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_PRACTICE1_CALLED_O01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_PRACTICE1_CALLED_O01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC400_PRACTICE1_CALLED_O01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC400_PRACTICE1_CALLED_O01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0100 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0100 OUTPUT.
+ SET PF-STATUS 'S100'.
+ SET TITLEBAR 'T100'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv OUTPUT.
+  IF go_docking IS INITIAL.
+    SELECT * FROM sflight
+      INTO TABLE ZREADSFLIGHT_B03
+      WHERE carrid = pa_car
+        AND connid = pa_con.
+
+    CREATE OBJECT go_docking
+      EXPORTING
+        side      = cl_gui_docking_container=&gt;dock_at_bottom
+        extension = 300
+        repid     = sy-repid
+        dynnr     = sy-dynnr.
+    CREATE OBJECT go_alv EXPORTING i_parent = go_docking.
+
+    CALL METHOD go_alv-&gt;set_table_for_first_display
+      EXPORTING
+        i_structure_name              = 'SFLIGHT'
+      CHANGING
+        it_outtab                     = ZREADSFLIGHT_B03
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE '### ## # ## ##' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

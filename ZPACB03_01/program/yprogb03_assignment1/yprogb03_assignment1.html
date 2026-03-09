@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>YPROGB03_ASSIGNMENT1</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: YPROGB03_ASSIGNMENT1</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program YPROGB03_ASSIGNMENT1</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report YPROGB03_ASSIGNMENT1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT yprogb03_assignment1.
+
+PARAMETERS: pa_cour TYPE zstcourse_b03.
+
+DATA: gs_data TYPE ztraining_cb03,
+      gt_Data LIKE TABLE OF gs_data.
+
+SELECT * FROM ztraining_cb03
+  INTO TABLE gt_data WHERE course_id = pa_cour.
+
+LOOP AT gt_data INTO gs_data.
+  WRITE:/ gs_data-stu_id,
+          gs_data-course_id.
+  IF gs_data-class = 'C2'.
+    WRITE gs_data-class COLOR COL_TOTAL.
+  ELSE.
+    WRITE gs_data-class.
+  ENDIF.
+  WRITE: gs_data-status,
+         gs_data-fname,
+         gs_data-lname.
+ENDLOOP.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

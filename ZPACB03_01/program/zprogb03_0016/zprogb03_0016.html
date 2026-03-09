@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0016</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0016</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Internal table - Multi Record</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0016</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0016.
+
+TYPES: BEGIN OF ty_person,
+         fname TYPE s_fname,
+         lname TYPE s_lname,
+       END OF ty_person.
+
+DATA: gs_data  TYPE ty_person,
+      gt_itab1  TYPE TABLE OF ty_person,
+      gt_itab2 LIKE gt_itab1.
+
+gs_data-fname = 'Hong'.
+gs_data-lname = 'Gildong'.
+APPEND gs_data TO gt_itab1.
+
+gs_data-fname = 'Kim'.
+gs_data-lname = 'donggu'.
+APPEND gs_data TO gt_itab1.
+
+" itab1# ## #### itab2# ##
+APPEND LINES OF gt_itab1 TO gt_itab2.
+INSERT LINES OF gt_itab1 INTO TABLE gt_itab2.
+
+" ### #### ## ## #### #### ##
+APPEND LINES OF gt_itab1 FROM 1 TO 2 TO gt_itab2.
+INSERT LINES OF gt_itab1 FROM 2 INTO TABLE gt_itab2.
+INSERT LINES OF gt_itab1 TO 2 INTO TABLE gt_itab2.
+
+" Loop### ### modify
+LOOP AT gt_itab2 INTO gs_data.
+  gs_data-fname = '##'.
+  MODIFY gt_itab2 FROM gs_data.
+ENDLOOP.
+
+" Modify ## #, ### Internal table# Loop #### #####
+LOOP AT gt_itab2 INTO gs_data.
+  WRITE:/ sy-tabix,
+          gs_data-fname,
+          gs_data-lname.
+ENDLOOP.
+
+ULINE.
+
+" ### #### ##
+DELETE gt_itab2 WHERE lname = 'Gildong'.
+
+" LOOP AT gt_itab2 INTO gs_data WHERE lname = 'Yewon'.
+LOOP AT gt_itab2 INTO gs_data.
+  WRITE:/ sy-tabix,
+          gs_data-fname,
+          gs_data-lname.
+ENDLOOP.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

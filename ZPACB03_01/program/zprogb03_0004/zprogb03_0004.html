@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0004</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0004</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  IF CASE</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0004</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0004.
+
+<font color ="#0000FF">*PARAMETERS pa_age TYPE I.</font>
+
+<font color ="#0000FF">*IF pa_age IS NOT INITIAL AND pa_age &gt;= 8.</font>
+<font color ="#0000FF">*  MESSAGE '8# #####.' TYPE 'I'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  else.</font>
+<font color ="#0000FF">*    " ELSE## ## ##</font>
+<font color ="#0000FF">*    MESSAGE '8# ### ######.' type 'E'.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">*PARAMETERS pa_age TYPE I.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF pa_age IS INITIAL.</font>
+<font color ="#0000FF">*    MESSAGE '### ######' TYPE 'E'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ELSEIF pa_age GE 8 AND pa_age LE 13.</font>
+<font color ="#0000FF">*    WRITE '#######.'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ELSEIF pa_age GT 13 AND pa_age LE 16.</font>
+<font color ="#0000FF">*    WRITE '######.'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ELSEIF pa_age GT 16 AND pa_age LT 20.</font>
+<font color ="#0000FF">*    WRITE '#######.'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ELSE.</font>
+<font color ="#0000FF">*    WRITE '#####.'.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS pa_curr TYPE C LENGTH 3.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CASE pa_curr.</font>
+<font color ="#0000FF">*  WHEN 'USD'.</font>
+<font color ="#0000FF">*    WRITE: '### #######.'.</font>
+<font color ="#0000FF">*  WHEN 'EUR'.</font>
+<font color ="#0000FF">*    WRITE: '### #######.'.</font>
+<font color ="#0000FF">*  WHEN 'KRW'.</font>
+<font color ="#0000FF">*    WRITE: '### #######.'.</font>
+<font color ="#0000FF">*  WHEN OTHERS.</font>
+<font color ="#0000FF">*    MESSAGE 'USD, EUR, KRW # ### #####' TYPE 'E'.</font>
+<font color ="#0000FF">*ENDCASE.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS: pa_check AS CHECKBOX.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CASE 'X'.</font>
+<font color ="#0000FF">*  WHEN pa_check.  " ##### ## ## #</font>
+<font color ="#0000FF">*    WRITE: '#######'.</font>
+<font color ="#0000FF">*  WHEN OTHERS.    " ##### ### ### #</font>
+<font color ="#0000FF">*    WRITE: '#### #####.'.</font>
+<font color ="#0000FF">*ENDCASE.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+DATA: gv_num TYPE I,
+      gv_len TYPE string,
+      gv_sqrt TYPE I,
+      gv_ipow TYPE I.
+
+gv_num = abs( -20 ).
+gv_len = strlen( 'Hello World' ).
+gv_sqrt = sqrt( abs( 9 ) ).
+gv_ipow = ipow( base = 5 exp = 3 ).
+
+write:/ '### abs : ', gv_num,     " 20
+      / '##### len : ', gv_len,  " 11
+      / '### sqrt : ', gv_sqrt,   " 3
+      / '## ipow : ', gv_ipow.    " 125
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

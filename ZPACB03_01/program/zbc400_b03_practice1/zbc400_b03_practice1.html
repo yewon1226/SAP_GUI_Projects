@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE1</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE1</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Report ZBC400_B03_PRACTICE1</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_B03_PRACTICE1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zbc400_b03_practice1 MESSAGE-ID zmcb03.
+
+
+TYPES: BEGIN OF ty_scarr,
+         carrid   TYPE scarr-carrid,
+         carrname TYPE scarr-carrname,
+       END OF ty_scarr.
+TYPES: BEGIN OF ty_sfli.
+         INCLUDE TYPE sflight.
+TYPES:   percentage TYPE p DECIMALS 2,
+       END OF ty_sfli.
+
+TYPES: ty_cah TYPE HASHED TABLE OF ty_scarr WITH UNIQUE KEY carrid,
+       ty_fls TYPE SORTED TABLE OF ty_sfli WITH NON-UNIQUE KEY carrid fldate.
+
+
+DATA: gt_carr_hash   TYPE ty_cah,
+      gs_carr_hash LIKE LINE OF gt_carr_hash,
+      ts_flight_row  TYPE ty_sfli,
+      gt_flight_sort TYPE ty_fls,
+      gs_flight_sort LIKE LINE OF gt_flight_sort,
+      gv_carrid TYPE sflight-carrid,
+      gv_carrconn_result TYPE string.
+DATA: BEGIN OF gs_result_avg,
+        connid TYPE sflight-connid,
+        AVG TYPE F,
+      END OF gs_result_avg,
+      gt_result_avg LIKE TABLE OF gs_result_avg.
+DATA: BEGIN OF gs_result_max,
+        carrid TYPE sflight-carrid,
+        MAX TYPE sflight-seatsmax,
+      END OF gs_result_max,
+      gt_result_max LIKE TABLE OF gs_result_max.
+
+PARAMETERS: pa_auth AS CHECKBOX,
+            pa_carr TYPE s_carr_id DEFAULT 'LH'.
+
+SELECT-OPTIONS: so_con FOR ts_flight_row-connid.
+
+INITIALIZATION.
+  so_con-sign = 'I'.
+  so_con-option = 'BT'.
+  so_con-low = '0001'.
+  so_con-high = '0099'.
+
+  APPEND so_con.
+
+AT SELECTION-SCREEN.
+  IF pa_auth = 'X'.
+    AUTHORITY-CHECK OBJECT 'S_CARRID'
+      ID 'ACTVT' FIELD '03'.
+  ELSE.
+    MESSAGE '### ####.' TYPE 'E'.
+  ENDIF.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+START-OF-SELECTION.
+  PERFORM GET_MASTER_DATA CHANGING gt_carr_hash.
+  PERFORM GET_FLIGHT_DATA CHANGING gt_flight_sort.
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE '#### ####.' TYPE 'W'.
+  ENDIF.
+
+  LOOP AT gt_flight_sort INTO gs_flight_sort.
+    gs_flight_sort-percentage = gs_flight_sort-seatsocc / gs_flight_sort-seatsmax * 100.
+    MODIFY gt_flight_sort FROM gs_flight_sort.
+  ENDLOOP.
+
+  CLEAR gs_flight_sort.
+  READ TABLE gt_flight_sort INTO gs_flight_sort INDEX 1.
+  IF sy-subrc = 0.
+    gv_carrid = gs_flight_sort-carrid.
+<font color ="#0000FF">*    BREAK-POINT.</font>
+    READ TABLE gt_carr_hash INTO gs_carr_hash WITH KEY carrid = gv_carrid.
+  ENDIF.
+
+  SELECT connid AVG( PRICE ) INTO TABLE gt_result_avg
+    FROM sflight
+    GROUP BY connid
+    HAVING COUNT( * ) &gt;= 2.
+
+  DO 5 TIMES.
+    SELECT carrid MAX( seatsmax ) INTO TABLE gt_result_max
+      FROM sflight
+      GROUP BY carrid.
+    WRITE: / '--- 2. MAX(SEATSMAX) ## (DO ##', sy-index, '##) ---'.
+
+    LOOP AT gt_result_max INTO gs_result_max.
+      WRITE:/ gs_result_max-carrid, gs_result_max-max.
+
+    ENDLOOP.
+  ENDDO.
+
+<font color ="#0000FF">*  SORT gt_flight_sort BY carrid fldate.</font>
+<font color ="#0000FF">* ## ##### # ## ###</font>
+  DELETE gt_flight_sort FROM 1 TO 10.
+
+  DELETE gt_flight_sort WHERE price &lt; 100.
+
+  READ TABLE gt_flight_sort INTO gs_flight_sort INDEX 1.
+  TRY.
+    CALL METHOD zcl_util=&gt;concat_carrid
+      EXPORTING
+        iv_carrid = gs_flight_sort-carrid
+        iv_connid = gs_flight_sort-connid
+      IMPORTING
+        rv_result = gv_carrconn_result.
+
+    WRITE: / '5-1. ### ID (Class Method): ', gv_carrconn_result.
+  CATCH cx_root.
+    MESSAGE 'Class Method ## # ## ##' TYPE 'E'.
+  ENDTRY.
+
+  ULINE.
+  WRITE: 10(4) pa_carr.
+  ULINE.
+  cl_demo_output=&gt;display( gt_flight_sort ).
+
+  FREE gt_carr_hash.
+  FREE gt_flight_sort.
+  FREE gt_result_avg.
+  FREE gt_result_max.
+
+  FORM GET_MASTER_DATA CHANGING VALUE(pt_carr_hash) TYPE ty_cah.
+    SELECT carrid, carrname FROM SCARR
+      INTO CORRESPONDING FIELDS OF TABLE @pt_carr_hash.
+  ENDFORM.
+
+  FORM GET_FLIGHT_DATA CHANGING VALUE(pt_flight_sort) TYPE ty_fls.
+    SELECT * FROM sflight
+      INTO TABLE pt_flight_sort
+      WHERE connid IN so_con.
+  ENDFORM.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   ### ####.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

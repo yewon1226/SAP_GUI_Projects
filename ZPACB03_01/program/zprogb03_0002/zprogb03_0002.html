@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0002</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0002</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Data Object</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0002</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0002.
+
+<font color ="#0000FF">*TYPES: ty_age TYPE N LENGTH 3.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: gv_age TYPE ty_age,      " Local data type</font>
+<font color ="#0000FF">*      gv_carr TYPE S_CARR_ID.   " Global data type</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA gv_char TYPE C LENGTH 10.  " Standard data type</font>
+
+" ## ## #
+" =&gt; gv_ ### Data obj
+" =&gt; lv_ ## Data obj
+" ## ## #
+" =&gt; tv_ : Type value
+" #### ## #
+" =&gt; pv_ : # ### Parameter ## P
+" ## ## #
+" =&gt; gc_ : # ### Constants ##
+
+" ##
+<font color ="#0000FF">*TYPES: tv_char(10) TYPE C,</font>
+<font color ="#0000FF">*       tv_dec TYPE P LENGTH 3 DECIMALS 2.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*PARAMETERS: pv_data TYPE C LENGTH 3 DEFAULT 'HI'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: gv_dec TYPE tv_dec,</font>
+<font color ="#0000FF">*      gv_date TYPE D,</font>
+<font color ="#0000FF">*      gv_char2 TYPE tv_char,</font>
+<font color ="#0000FF">*      gv_num TYPE I VALUE 20,</font>
+<font color ="#0000FF">*      gv_carrname TYPE S_CARRNAME,</font>
+<font color ="#0000FF">*      gv_conn TYPE S_CONN_ID.</font>
+<font color ="#0000FF">*DATA: gv_carrname2 LIKE gv_carrname VALUE 'TEST'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CONSTANTS: gc_str TYPE string VALUE 'OKOK',</font>
+<font color ="#0000FF">*           gc_num TYPE I VALUE 100.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: 'My selected variable : '(GRE),</font>
+<font color ="#0000FF">*       gc_num,</font>
+<font color ="#0000FF">*       text-001.</font>
+
+" Message Class / Text symbols # #### ### ### ###,
+" Text symbols ### ## ### # ##
+" ## ##### Message Class# ####
+
+PARAMETERS name(10) TYPE C.
+WRITE: name, 'trainee can learn ABAP programming.'(GRE).
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* GRE trainee can learn ABAP programming.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

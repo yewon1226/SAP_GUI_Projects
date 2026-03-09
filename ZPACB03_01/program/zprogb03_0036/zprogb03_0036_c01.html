@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0036_C01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0036_C01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_0036_C01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_0036_C01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+CLASS lcl_vehicle DEFINITION.
+  PUBLIC SECTION.  " #### ### ##
+   DATA: gv_data(2) TYPE C VALUE 'OK'.
+   CLASS-DATA: gv_cdata(2) TYPE C VALUE 'HI'.
+<font color ="#0000FF">*   METHODS: set_attribute IMPORTING iv_make TYPE s_make</font>
+<font color ="#0000FF">*                                    iv_mode TYPE s_model.</font>
+   METHODS: display_attributes,
+            constructor IMPORTING iv_make TYPE s_make
+                                  iv_model TYPE s_model
+                        EXCEPTIONS wrong_planetype.
+   CLASS-METHODS: display_global_vehicles,
+                  add_vehicles IMPORTING lv_num TYPE I
+                               RETURNING VALUE(rv_veh) TYPE I,
+                  class_constructor.
+  PRIVATE SECTION. " #### ### ###
+   DATA: mv_make TYPE s_make,
+         mv_model TYPE s_model.
+   CLASS-DATA: gv_vehicles TYPE I.
+ENDCLASS.
+
+CLASS lcl_vehicle IMPLEMENTATION.
+  METHOD class_constructor.
+    gv_vehicles = 100.
+    BREAK-POINT.
+  ENDMETHOD.
+
+  METHOD constructor.
+    mv_make = iv_make.
+    mv_model = iv_model.
+
+    gv_vehicles = gv_vehicles + 1.
+  ENDMETHOD.
+
+  METHOD add_vehicles.
+    rv_veh = lv_num + gv_vehicles.
+    gv_vehicles = gv_vehicles + rv_veh.
+  ENDMETHOD.
+
+<font color ="#0000FF">*  METHOD set_attribute.  " instance Method</font>
+<font color ="#0000FF">*    mv_make = iv_make.</font>
+<font color ="#0000FF">*    mv_model = iv_mode.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    gv_vehicles = gv_vehicles + 1.</font>
+<font color ="#0000FF">*  ENDMETHOD.</font>
+
+  METHOD display_attributes. " instance Method
+    WRITE:/ 'Make: ', mv_make,
+          / 'Model: ', mv_model.
+  ENDMETHOD.
+
+  METHOD display_global_vehicles.  " Static Method
+    WRITE:/ 'Number of vehicle: ', gv_vehicles.
+  ENDMETHOD.
+ENDCLASS.
+
+<font color ="#0000FF">**********************************************************************</font>
+
+CLASS lcl_truck DEFINITION INHERITING FROM lcl_vehicle.
+  PUBLIC SECTION.
+  METHODS display_attributes REDEFINITION.
+  METHODS constructor IMPORTING iv_make TYPE s_make
+                                iv_model TYPE s_model
+                                iv_cargo TYPE s_plan_car.
+
+  PRIVATE SECTION.
+  DATA: mv_cargo TYPE s_plan_car.
+ENDCLASS.
+
+CLASS lcl_truck IMPLEMENTATION.
+  METHOD display_attributes.
+    super-&gt;display_attributes( ).
+    write:/ 'Cargo: ', mv_cargo.
+  ENDMETHOD.
+
+  METHOD constructor.
+    super-&gt;constructor(
+      EXPORTING
+        iv_make         = iv_make
+        iv_model        = iv_model
+      EXCEPTIONS
+        wrong_planetype = 1
+        others          = 2
+    ).
+    mv_cargo = iv_cargo.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_bus DEFINITION INHERITING FROM lcl_vehicle.
+ENDCLASS.
+
+CLASS lcl_bus IMPLEMENTATION.
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

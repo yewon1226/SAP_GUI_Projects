@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0008</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0008</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Subroutine</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0008</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0008.
+
+
+DATA: gv_a TYPE C VALUE 'A',
+      gv_b TYPE C VALUE 'B',
+      gv_c TYPE C VALUE 'C',
+      gv_d TYPE C VALUE 'D'.
+
+<font color ="#0000FF">* #### ##</font>
+PERFORM test USING gv_a gv_b
+             CHANGING gv_c gv_d.
+
+NEW-LINE.
+WRITE: 'PERFORM IN : ', gv_a, gv_b, gv_c, gv_d.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form test</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      --&gt; GV_A</font>
+<font color ="#0000FF">*&      --&gt; GV_B</font>
+<font color ="#0000FF">*&      &lt;-- GV_C</font>
+<font color ="#0000FF">*&      &lt;-- GV_D</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM test  USING    VALUE(fa)
+                    fb
+           CHANGING VALUE(fc)
+                    fd.
+  fa = 'W'.
+  fb = 'X'.
+  fc = 'Y'.
+  fd = 'Z'.
+  WRITE: 'PERFORM END : ', fa, fb, fc, fd.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

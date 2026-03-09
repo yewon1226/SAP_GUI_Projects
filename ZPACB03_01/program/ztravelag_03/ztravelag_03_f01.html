@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZTRAVELAG_03_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZTRAVELAG_03_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">***INCLUDE BC414_SQL_TRAVELAG_SF01</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_SELECTED_LINES</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;PT_TRAVELAG      text</font>
+<font color ="#0000FF">*      &lt;--CT_TRAVELAG_SEL  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM get_selected_lines  USING    pt_travelag     TYPE gty_t_stravelag
+                         CHANGING ct_travelag_sel TYPE gty_t_stravelag.
+
+  DATA lt_ids      TYPE lvc_t_roid.
+  DATA ls_id       TYPE lvc_s_roid.
+  DATA ls_travelag TYPE stravelag.
+
+  CLEAR ct_travelag_sel.
+
+  go_alv-&gt;get_selected_rows(
+    IMPORTING
+      et_row_no     = lt_ids ).
+
+  LOOP AT lt_ids INTO ls_id.
+    READ TABLE pt_travelag INTO ls_travelag INDEX ls_id-row_id.
+    APPEND ls_travelag TO ct_travelag_sel.
+  ENDLOOP.
+
+ENDFORM.                    " GET_SELECTED_LINES
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  POPUP_TO_CONFIRM_LOSS_OF_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM popup_to_confirm_loss_of_data.
+
+  DATA lv_result TYPE c length 1.
+
+  CALL FUNCTION 'POPUP_TO_CONFIRM'
+    EXPORTING
+      titlebar              = text-009
+      text_question         = text-008
+      display_cancel_button = space
+    IMPORTING
+      answer                = lv_result.
+  CASE lv_result.
+    WHEN '1'.
+      LEAVE TO SCREEN '0000'.
+    WHEN '2'.
+      LEAVE TO SCREEN '0200'.
+  ENDCASE.
+
+ENDFORM.                               " POPUP_TO_CONFIRM_LOSS_OF_DATA
+
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  READ_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      &lt;--CT_TRAVELAG  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM read_data CHANGING ct_travelag TYPE gty_t_stravelag.
+  MODIFY stravelag FROM TABLE ct_travelag.
+ENDFORM.                               " READ_DATA
+
+
+<font color ="#0000FF">************************************************************************</font>
+<font color ="#0000FF">********************************* YOUR CODE ****************************</font>
+<font color ="#0000FF">************************************************************************</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SAVE_CHANGES</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      &lt;-- GT_TRAVELAG_SEL</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM save_changes  CHANGING p_gt_travelag_sel TYPE gty_t_stravelag.
+  UPDATE stravelag FROM TABLE p_gt_travelag_sel.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE I048.
+  ELSE.
+    MESSAGE S030.
+  ENDIF.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

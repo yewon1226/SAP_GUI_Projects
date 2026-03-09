@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_PRACTICE1_B03_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_PRACTICE1_B03_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC400_PRACTICE1_B03_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC400_PRACTICE1_B03_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form insert_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM insert_data .
+  CLEAR gs_data.
+  gs_data-carrid = pa_car.
+  gs_data-connid = pa_con.
+  gs_data-carrname = pa_name.
+  gs_data-cityfrom = pa_cityf.
+  gs_data-airpfrom = pa_airpf.
+  gs_data-cityto = pa_cityt.
+  gs_data-airpto = pa_airpt.
+  gs_data-ernam = sy-uname.
+  gs_data-erdat = sy-datum.
+  gs_data-erzet = sy-uzeit.
+
+  INSERT ZTMYCARRIER_B03 FROM gs_data.
+  IF sy-subrc = 0.
+    PERFORM set_data.
+  ELSE.
+    MESSAGE 'INSERT ##' TYPE 'E'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form update_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM update_data .
+  CLEAR gs_data.
+  SELECT SINGLE * FROM ZTMYCARRIER_B03
+    INTO gs_data WHERE carrid = pa_car.
+  gs_data-carrid = pa_car.
+  gs_data-connid = pa_con.
+  gs_data-carrname = pa_name.
+  gs_data-cityfrom = pa_cityf.
+  gs_data-airpfrom = pa_airpf.
+  gs_data-cityto = pa_cityt.
+  gs_data-airpto = pa_airpt.
+  gs_data-aenam = sy-uname.
+  gs_data-aedat = sy-datum.
+  gs_data-aezet = sy-uzeit.
+
+  UPDATE ZTMYCARRIER_B03 FROM gs_data.
+  IF sy-subrc = 0.
+    PERFORM set_data.
+  ELSE.
+    MESSAGE 'UPDATE ##' TYPE 'E'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form delete_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM delete_data USING lt_select_data TYPE LVC_T_ROW
+                       ls_select_data TYPE LVC_S_ROW.
+  CLEAR gs_data.
+  LOOP AT lt_select_data INTO ls_select_data.
+    READ TABLE gt_data INTO gs_data INDEX ls_select_data-index.
+    DELETE ZTMYCARRIER_B03 FROM gs_data.
+  ENDLOOP.
+  IF sy-subrc = 0.
+    PERFORM set_data.
+  ELSE.
+    MESSAGE 'DELETE ##' TYPE 'E'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+  SELECT * FROM ZTMYCARRIER_B03
+    INTO TABLE gt_data.
+  SORT gt_data BY carrid.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form refresh_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM refresh_data .
+  CALL METHOD go_alv-&gt;refresh_table_display
+    EXCEPTIONS
+      finished       = 1
+      others         = 2.
+  IF sy-subrc &lt;&gt; 0.
+<font color ="#0000FF">*   Implement suitable error handling here</font>
+  ENDIF.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

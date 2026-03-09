@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_03_COMP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_03_COMP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Calculator - Function Module</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_03_COMP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZBC400_03_COMP.
+
+TYPES tv_result TYPE p LENGTH 16 DECIMALS 2.
+
+PARAMETERS:
+  pa_int1  TYPE i,
+  pa_op    TYPE c LENGTH 1,
+  pa_int2  TYPE i.
+
+DATA gv_result TYPE tv_result.
+
+IF ( pa_op = '+' OR
+     pa_op = '-' OR
+     pa_op = '*' OR
+     pa_op = '/' AND pa_int2 &lt;&gt; 0 OR
+     pa_op = '%' OR
+     pa_op = 'P' ).
+
+  CASE pa_op.
+    WHEN '+'.
+      gv_result = pa_int1 + pa_int2.
+    WHEN '-'.
+      gv_result = pa_int1 - pa_int2.
+    WHEN '*'.
+      gv_result = pa_int1 * pa_int2.
+    WHEN '/'.
+      gv_result = pa_int1 / pa_int2.
+    WHEN '%'.
+      PERFORM calc_percentage
+        USING
+          pa_int1
+          pa_int2
+        CHANGING
+          gv_result.
+
+      call function <a href ="z_bc400_03_comp_percentage/z_bc400_03_comp_percentage.html">'Z_BC400_03_COMP_PERCENTAGE'</a>
+        EXPORTING
+          iv_act = pa_int1
+          iv_max = pa_int2
+        IMPORTING
+          EV_PERCENTAGE          = gv_result
+        EXCEPTIONS
+          DIVISION_BY_ZERO       = 1
+          OTHERS = 2.
+
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE 'error!' TYPE 'E'.
+      ENDIF.
+
+    WHEN 'P'.
+      CALL FUNCTION 'BC400_MOS_POWER'
+        EXPORTING
+          iv_base               = pa_int1
+          iv_power              = pa_int2
+        IMPORTING
+          ev_result             = gv_result
+        EXCEPTIONS
+          power_value_too_high  = 1
+          result_value_too_high = 2
+          OTHERS                = 3.
+      CASE sy-subrc.
+        WHEN 0.
+<font color ="#0000FF">*         no action needed</font>
+        WHEN 1.
+          WRITE 'Max value of power is 4'(mvp).
+        WHEN 2.
+          WRITE 'Result value too high'(rvh).
+        WHEN 3.
+          WRITE 'Unknown error'(uer).
+      ENDCASE.
+  ENDCASE.
+
+  WRITE: 'Result:'(res), gv_result.
+
+ELSEIF  pa_op = '/'  AND  pa_int2 = 0.
+  WRITE: 'No division by zero!'(dbz).
+ELSE.
+  WRITE: 'Invalid operator!'(iop).
+ENDIF.
+
+FORM calc_percentage  USING    pv_act TYPE i
+                               pv_max TYPE i
+                      CHANGING cv_result TYPE tv_result.
+
+<font color ="#0000FF">*Simple Error Handling</font>
+  IF pv_max = 0.
+    cv_result = 0.
+    WRITE 'Error in percentage calculation'(epc).
+  ELSE.
+<font color ="#0000FF">*Calculate result</font>
+    cv_result = pv_act / pv_max * 100.
+  ENDIF.
+
+ENDFORM.                    " calc_percentage
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   error!</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

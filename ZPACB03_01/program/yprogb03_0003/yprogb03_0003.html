@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>YPROGB03_0003</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: YPROGB03_0003</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Report YPROGB03_0003</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report YPROGB03_0003</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT yprogb03_0003.
+
+<font color ="#0000FF">*PARAMETERS: pa_score TYPE I, pa_age TYPE I.</font>
+<font color ="#0000FF">*PARAMETERS: pa_check AS CHECKBOX,</font>
+<font color ="#0000FF">*            pa_rad1 RADIOBUTTON GROUP rad1 DEFAULT 'X',</font>
+<font color ="#0000FF">*            pa_rad2 RADIOBUTTON GROUP rad1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( pa_score &lt;= 100 AND pa_score &gt;= 80 ).</font>
+<font color ="#0000FF">*  IF pa_check EQ 'X'.</font>
+<font color ="#0000FF">*    WRITE '## : A ###'.</font>
+<font color ="#0000FF">*  else.</font>
+<font color ="#0000FF">*    WRITE '## : A'.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*ELSEIF ( pa_score &lt; 80 AND pa_score &gt;= 60 ).</font>
+<font color ="#0000FF">*  WRITE '## : B'.</font>
+<font color ="#0000FF">*ELSEIF ( pa_score &lt; 60 AND pa_score &gt;= 40 ).</font>
+<font color ="#0000FF">*  WRITE '## : C'.</font>
+<font color ="#0000FF">*ELSE.</font>
+<font color ="#0000FF">*  WRITE '## : F'.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( pa_age &gt;= 20 ).</font>
+<font color ="#0000FF">*  IF ( pa_rad1 = 'X' ).</font>
+<font color ="#0000FF">*    WRITE '## ##'.</font>
+<font color ="#0000FF">*  else.</font>
+<font color ="#0000FF">*    WRITE '## ##'.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*else.</font>
+<font color ="#0000FF">*    IF ( pa_rad1 = 'X' ).</font>
+<font color ="#0000FF">*      WRITE '##'.</font>
+<font color ="#0000FF">*    else.</font>
+<font color ="#0000FF">*      WRITE '##'.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS: numinput TYPE i OBLIGATORY,</font>
+<font color ="#0000FF">*            tinput   TYPE string DEFAULT 'SAP' LOWER CASE VISIBLE LENGTH 4,</font>
+<font color ="#0000FF">*            option1  RADIOBUTTON GROUP rad1 DEFAULT 'X',</font>
+<font color ="#0000FF">*            option2  RADIOBUTTON GROUP rad1,</font>
+<font color ="#0000FF">*            d_check  AS CHECKBOX.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA result TYPE i.</font>
+<font color ="#0000FF">*MOVE numinput TO result.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*if ( numinput &lt; 0 ).</font>
+<font color ="#0000FF">*  MESSAGE '##!!!!' type 'E'.</font>
+<font color ="#0000FF">*elseIF ( option1 = 'X' ).</font>
+<font color ="#0000FF">*  result = result + 10.</font>
+<font color ="#0000FF">*else.</font>
+<font color ="#0000FF">*  result = result - 10.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( d_check = 'X' ).</font>
+<font color ="#0000FF">*  result = result * 2.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*write: 'text_input: ', tinput,</font>
+<font color ="#0000FF">*       / 'result : ', result.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS: ordqty TYPE I OBLIGATORY,</font>
+<font color ="#0000FF">*            prodcd TYPE c DEFAULT 'sap01' LOWER CASE LENGTH 5,</font>
+<font color ="#0000FF">*            custcd TYPE c LOWER CASE LENGTH 8 VISIBLE LENGTH 4,</font>
+<font color ="#0000FF">*            opt1 RADIOBUTTON GROUP rad DEFAULT 'X',</font>
+<font color ="#0000FF">*            opt2 RADIOBUTTON GROUP rad,</font>
+<font color ="#0000FF">*            vipchk AS CHECKBOX.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF ( ordqty &lt; 0 ).</font>
+<font color ="#0000FF">*  MESSAGE '##!!!' type 'E'.</font>
+<font color ="#0000FF">*ELSEif ( opt1 = 'X' ).</font>
+<font color ="#0000FF">*  ADD 5 to ordqty.</font>
+<font color ="#0000FF">*ELSEif ( opt2 = 'X' ).</font>
+<font color ="#0000FF">*  SUBMIT 3 to ordqty.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+TYPES: gb_type type i, gb_type2 type c.
+
+DATA: gb_da type i, gb_da2 type c.
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* OPTION1         10 ###</font>
+<font color ="#0000FF">* OPTION2         10 ##</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

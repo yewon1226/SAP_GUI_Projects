@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0010</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0010</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Function Module</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0010</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0010.
+
+TYPES tv_result TYPE P LENGTH 16 DECIMALS 2.
+
+PARAMETERS: pa_int1 TYPE I,
+            pa_int2 TYPE I.
+
+DATA: gv_result TYPE tv_result.
+
+<font color ="#0000FF">*CALL FUNCTION 'BC400_MOS_POWER'</font>
+<font color ="#0000FF">* EXPORTING</font>
+<font color ="#0000FF">*   iv_base                     = 5</font>
+<font color ="#0000FF">*   IV_POWER                    = 2</font>
+<font color ="#0000FF">* IMPORTING</font>
+<font color ="#0000FF">*   EV_RESULT                   = gv_result</font>
+<font color ="#0000FF">* EXCEPTIONS</font>
+<font color ="#0000FF">*   POWER_VALUE_TOO_HIGH        = 1</font>
+<font color ="#0000FF">*   RESULT_VALUE_TOO_HIGH       = 2</font>
+<font color ="#0000FF">*   OTHERS                      = 3.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE gv_result.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc &lt;&gt; 0.</font>
+<font color ="#0000FF">**Implement suitable error handling here</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+TRY.
+CALL METHOD cl_bc400_compute=&gt;get_power
+  EXPORTING
+    iv_base  = pa_int1
+    iv_power = pa_int2
+  IMPORTING
+   ev_result = gv_result
+  .
+  CATCH cx_bc400_power_too_high.
+    MESSAGE 'Power too high!!' TYPE 'E'.
+  CATCH cx_bc400_result_too_high.
+    MESSAGE 'Result too high!!' TYPE 'E.'.
+ENDTRY.
+
+WRITE:/ gv_result.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   Power too high!!</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

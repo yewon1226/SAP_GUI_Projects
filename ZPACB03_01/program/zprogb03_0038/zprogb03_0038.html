@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0038</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0038</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  FIELD-SYMBOLS</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0038</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0038.
+
+<font color ="#0000FF">* Field Symbols ###</font>
+<font color ="#0000FF">*FIELD-SYMBOLS &lt;fs&gt;. " TYPE ANY# ###</font>
+<font color ="#0000FF">*FIELD-SYMBOLS: &lt;fs_all&gt; TYPE ANY,</font>
+<font color ="#0000FF">*               &lt;fs_data&gt; TYPE SIMPLE,</font>
+<font color ="#0000FF">*               &lt;fs_flight&gt; TYPE SFLIGHT,</font>
+<font color ="#0000FF">*               &lt;fs_tab&gt; TYPE ANY TABLE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">** Assign ## ### ####</font>
+<font color ="#0000FF">** Assign ## ### ### ### #### #</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: lv_text(10) TYPE C VALUE 'Hello'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ASSIGN lv_text TO &lt;fs&gt;.</font>
+<font color ="#0000FF">*" IS ASSIGNED ## ###, sy-subrc # ## ##</font>
+<font color ="#0000FF">*" ASSIGN ## ## # 0, ## # 4 # ###</font>
+<font color ="#0000FF">*IF &lt;fs&gt; IS ASSIGNED.</font>
+<font color ="#0000FF">*  &lt;fs&gt; = 'Symbols~~'. " ## ## ##</font>
+<font color ="#0000FF">*  WRITE: &lt;fs&gt;.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">**FIELD-SYMBOLS &lt;gs_flight&gt; TYPE sflight.</font>
+<font color ="#0000FF">*DATA: gt_flight TYPE TABLE OF sflight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT MANDT CARRID CONNID FLDATE</font>
+<font color ="#0000FF">*  FROM SFLIGHT</font>
+<font color ="#0000FF">*  INTO TABLE gt_flight</font>
+<font color ="#0000FF">*  WHERE CARRID EQ 'AA'</font>
+<font color ="#0000FF">*    AND CONNID EQ '17'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">** LOOP.... ASSIGNING ...</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**LOOP AT gt_flight INTO DATA(wa_flight).</font>
+<font color ="#0000FF">**  wa_flight-connid = 20.</font>
+<font color ="#0000FF">**  " internal table# modify ## ##</font>
+<font color ="#0000FF">**  WRITE:/ wa_flight-carrid,</font>
+<font color ="#0000FF">**          wa_flight-connid,</font>
+<font color ="#0000FF">**          wa_flight-fldate.</font>
+<font color ="#0000FF">**ENDLOOP.</font>
+<font color ="#0000FF">*LOOP AT gt_flight ASSIGNING FIELD-SYMBOL(&lt;gs_flight&gt;).</font>
+<font color ="#0000FF">*  &lt;gs_flight&gt;-connid = '20'.</font>
+<font color ="#0000FF">*  WRITE:/ &lt;gs_flight&gt;-carrid,</font>
+<font color ="#0000FF">*          &lt;gs_flight&gt;-connid,</font>
+<font color ="#0000FF">*          &lt;gs_flight&gt;-fldate.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*cl_demo_output=&gt;display( gt_flight ).</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*TYPES: BEGIN OF ty_date,</font>
+<font color ="#0000FF">*        year TYPE N LENGTH 4,</font>
+<font color ="#0000FF">*        month TYPE N LENGTH 2,</font>
+<font color ="#0000FF">*        dat TYPE N LENGTH 2,</font>
+<font color ="#0000FF">*       END OF ty_date.</font>
+<font color ="#0000FF">*FIELD-SYMBOLS &lt;fs&gt; TYPE ty_date.</font>
+<font color ="#0000FF">*DATA: gv_date TYPE D.</font>
+<font color ="#0000FF">*gv_date = sy-datum.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ASSIGN gv_date TO &lt;fs&gt; CASTING.</font>
+<font color ="#0000FF">*&lt;fs&gt;-year = 2023.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ '### ##: ', sy-datum,</font>
+<font color ="#0000FF">*      / 'gs_date: ', gv_date.</font>
+
+" ## ##
+<font color ="#0000FF">*TYPES: BEGIN OF ty_user,</font>
+<font color ="#0000FF">*        id(5) TYPE C,</font>
+<font color ="#0000FF">*        name(10) TYPE C,</font>
+<font color ="#0000FF">*       END OF ty_user.</font>
+<font color ="#0000FF">*DATA: gv_data(20) TYPE C VALUE 'C0001HONGGILD'.</font>
+<font color ="#0000FF">*FIELD-SYMBOLS &lt;fs_user&gt; TYPE ANY.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ASSIGN gv_data TO &lt;fs_user&gt; CASTING TYPE ty_user.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: gv_data.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+FIELD-SYMBOLS &lt;fs&gt; TYPE SIMPLE.
+
+SELECT SINGLE * FROM SPFLI
+  INTO @DATA(gs_spfli)
+  WHERE CARRID = 'AA'
+    AND CONNID = '17'.
+
+DO.
+  " gs_spfli ##### # Component ### sy-index# ####
+  " Field symbol# ###
+  ASSIGN COMPONENT sy-index OF STRUCTURE gs_spfli TO &lt;fs&gt;.
+  IF sy-subrc &lt;&gt; 0. " ## ASSIGN# #### 0# ###
+    EXIT.
+  ENDIF.
+  IF &lt;fs&gt; IS ASSIGNED.
+    WRITE: &lt;fs&gt;.
+    UNASSIGN &lt;fs&gt;. " &lt;fs&gt; ## ##
+  ENDIF.
+
+  IF &lt;fs&gt; IS NOT ASSIGNED. " UNASSIGN ## ### OK
+  ENDIF.
+ENDDO.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

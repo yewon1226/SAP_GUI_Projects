@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE7_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE7_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC400_B03_PRACTICE7_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC400_B03_PRACTICE7_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+DATA: OK_CODE TYPE sy-ucomm.
+
+DATA: go_cont TYPE REF TO cl_gui_custom_container,
+      go_alv TYPE REF TO cl_gui_alv_grid.
+
+DATA: BEGIN OF gs_data.
+        include structure <a href ="zscarrflight_b03/dictionary-zscarrflight_b03.html">ZSCARRFLIGHT_B03</a>.
+DATA: seatsrem TYPE INT4,
+      class TYPE sbook-CLASS,
+      END OF gs_data.
+DATA: gt_data LIKE TABLE OF gs_data,
+      gt_sflight TYPE TABLE OF sflight,
+      gt_scarr TYPE TABLE OF scarr,
+      gs_scarr LIKE LINE OF gt_scarr,
+      gt_sbook TYPE TABLE OF sbook,
+      gs_sbook LIKE LINE OF gt_sbook.
+
+DATA: gt_fcat TYPE LVC_T_FCAT,
+      gs_fcat TYPE LVC_S_FCAT,
+      gt_sort TYPE LVC_T_SORT,
+      gs_sort TYPE LVC_S_SORT.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME.
+  SELECT-OPTIONS: so_car FOR gs_data-carrid,
+                  so_con FOR gs_data-connid,
+                  so_fdt FOR gs_data-fldate.
+SELECTION-SCREEN END OF BLOCK blk1.
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*AT SELECTION-SCREEN ON BLOCK blk1.</font>
+<font color ="#0000FF">*  IF so_car IS INITIAL AND so_con IS INITIAL AND so_fdt IS INITIAL.</font>
+<font color ="#0000FF">*    MESSAGE '## #### #####.' TYPE 'E'.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*START-OF-SELECTION.</font>
+<font color ="#0000FF">*  PERFORM set_data.</font>
+<font color ="#0000FF">*  CALL SCREEN 100.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

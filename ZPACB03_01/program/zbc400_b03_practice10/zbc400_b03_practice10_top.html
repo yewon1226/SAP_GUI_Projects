@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE10_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE10_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC400_B03_PRACTICE10_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC400_B03_PRACTICE10_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+TYPE-POOLS VRM.
+TABLES: SMENU, ZTVENDER_B03, ZTPRAC_MEALB03, ZTSK03REQ.
+
+DATA: OK_CODE TYPE sy-ucomm,
+      go_cont TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      go_alv TYPE REF TO CL_GUI_ALV_GRID,
+      go_cont_200 TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      go_alv_200 TYPE REF TO CL_GUI_ALV_GRID,
+      gv_index TYPE NUMC10.
+DATA: gt_fcat TYPE lvc_t_fcat,
+      gs_fcat TYPE lvc_s_fcat,
+      gs_layout TYPE lvc_s_layo.
+DATA gv_flag TYPE I.
+
+DATA: BEGIN OF gs_data.
+        include structure <a href ="ztvender_b03/dictionary-ztvender_b03.html">ZTVENDER_B03</a>.
+DATA: mstat TYPE ZTSK03REQ-mstat,
+      mstat_txt TYPE CHAR40,
+      custtype_txt TYPE CHAR40,
+      class_txt TYPE CHAR40,
+      END OF gs_data.
+DATA: gt_data LIKE TABLE OF gs_data.
+DATA: gt_meal TYPE TABLE OF ZTPRAC_MEALB03,
+      gs_meal TYPE ZTPRAC_MEALB03.
+
+DATA: gs_req TYPE ZTSK03REQ,
+      gs_smenu TYPE SMENU.
+
+SELECTION-SCREEN BEGIN OF SCREEN 110 AS SUBSCREEN.
+  SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME TITLE text-001.
+    SELECTION-SCREEN BEGIN OF LINE.
+      SELECTION-SCREEN COMMENT 1(15) text-c01 FOR FIELD pa_car.
+      PARAMETERS: pa_car TYPE sbook-carrid OBLIGATORY DEFAULT 'AA'.
+      SELECTION-SCREEN COMMENT 50(15) text-c02 FOR FIELD pa_book.
+      PARAMETERS: pa_book TYPE sbook-bookid.
+    SELECTION-SCREEN END OF LINE.
+    SELECTION-SCREEN BEGIN OF LINE.
+      SELECTION-SCREEN COMMENT 1(15) text-c03 FOR FIELD pa_con.
+      PARAMETERS: pa_con TYPE sbook-connid OBLIGATORY DEFAULT '17'.
+      SELECTION-SCREEN COMMENT 50(15) text-c04 FOR FIELD pa_cus.
+      PARAMETERS: pa_cus TYPE scustom-id.
+    SELECTION-SCREEN END OF LINE.
+    SELECTION-SCREEN BEGIN OF LINE.
+      SELECTION-SCREEN COMMENT 1(15) text-c05 FOR FIELD pa_fld.
+      PARAMETERS: pa_fld TYPE sbook-fldate OBLIGATORY DEFAULT '20250508'.
+      SELECTION-SCREEN COMMENT 50(15) text-c06 FOR FIELD pa_stat.
+      PARAMETERS: pa_stat TYPE ZTSK03REQ-mstat AS LISTBOX VISIBLE LENGTH 20.
+    SELECTION-SCREEN END OF LINE.
+  SELECTION-SCREEN END OF BLOCK blk1.
+SELECTION-SCREEN END OF SCREEN 110.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

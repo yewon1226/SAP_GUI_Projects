@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0041</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0041</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  New 1</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0041</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0041.
+
+<font color ="#0000FF">*TYPES: BEGIN OF ty_data,</font>
+<font color ="#0000FF">*         id(20)   TYPE c,</font>
+<font color ="#0000FF">*         name(20) TYPE c,</font>
+<font color ="#0000FF">*       END OF ty_data,</font>
+<font color ="#0000FF">*       ty_list TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.</font>
+<font color ="#0000FF">*DATA: gs_data TYPE ty_data,</font>
+<font color ="#0000FF">*      gt_data TYPE TABLE OF ty_data.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">******* ## ### ### # ## (itab ##)</font>
+<font color ="#0000FF">** ty_list TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.</font>
+<font color ="#0000FF">** Table type# ## ## ## ### #### #### #</font>
+<font color ="#0000FF">*DATA(gt_list) = VALUE ty_list(</font>
+<font color ="#0000FF">* ( id = '001' name = 'KIM' )</font>
+<font color ="#0000FF">* ( id = '002' name = 'LEE' )</font>
+<font color ="#0000FF">* ( id = '003' name = 'PARK' )</font>
+<font color ="#0000FF">*).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">******* Structure ### # ##</font>
+<font color ="#0000FF">**DATA(gs_data) = VALUE ty_data( id = '001' name = 'KIM' ).</font>
+<font color ="#0000FF">*gs_data = VALUE #( id = '001' name = 'KIM' ).</font>
+<font color ="#0000FF">*gs_data = VALUE #( BASE gs_data name = 'Gildong' ).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">******* Internal table ### # ##</font>
+<font color ="#0000FF">*gt_data = VALUE #(</font>
+<font color ="#0000FF">*  ( id = '001' name = 'KIM' )</font>
+<font color ="#0000FF">*  ( id = '002' name = 'LEE' )</font>
+<font color ="#0000FF">*  ( id = '003' name = 'PARK' )</font>
+<font color ="#0000FF">* ).</font>
+<font color ="#0000FF">*gt_data = VALUE #( BASE gt_data</font>
+<font color ="#0000FF">*                  ( id = '004' name = 'MOON' )</font>
+<font color ="#0000FF">*                 ).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">******* # ##</font>
+<font color ="#0000FF">*cl_demo_output=&gt;display(</font>
+<font color ="#0000FF">*  data    = gt_data</font>
+<font color ="#0000FF">*  name    = 'Results'</font>
+<font color ="#0000FF">*).</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: BEGIN OF gs_data,</font>
+<font color ="#0000FF">*        carrid   TYPE s_carr_id,</font>
+<font color ="#0000FF">*        connid   TYPE s_conn_id,</font>
+<font color ="#0000FF">*        fldate   TYPE s_date,</font>
+<font color ="#0000FF">*        carrname TYPE s_carrname,</font>
+<font color ="#0000FF">*      END OF gs_data.</font>
+<font color ="#0000FF">*DATA: ref_all TYPE REF TO data.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_data = VALUE #(</font>
+<font color ="#0000FF">*  carrid = 'AA' connid = '17' fldate = '20250101'</font>
+<font color ="#0000FF">*).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" ### ### #### (REF)</font>
+<font color ="#0000FF">*GET REFERENCE OF gs_data INTO ref_all. " ###</font>
+<font color ="#0000FF">*ref_all = REF #( gs_data ). " ###</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" # #, ref_all ## ### ### ## #####?</font>
+<font color ="#0000FF">*WRITE: ref_all-&gt;*. " ###</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" ##) #### ### ## ##</font>
+<font color ="#0000FF">*FIELD-SYMBOLS: &lt;fs&gt;.</font>
+<font color ="#0000FF">*ASSIGN ref_all-&gt;* TO &lt;fs&gt;. " ref_all ### ### #### ###</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*TYPES ty_str TYPE C LENGTH 2.</font>
+<font color ="#0000FF">*DATA lv_num TYPE I.</font>
+<font color ="#0000FF">*lv_num = 100.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" ### ##</font>
+<font color ="#0000FF">*DATA(lv_str) = CONV ty_str( lv_num ).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" ### ##</font>
+<font color ="#0000FF">*DATA(lv_str) = EXACT ty_str( lv_num ).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: lv_str.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* EXACT ## ##</font>
+<font color ="#0000FF">*DATA: gv_connid TYPE s_conn_id.</font>
+<font color ="#0000FF">*gv_connid = 'ABCD'.</font>
+<font color ="#0000FF">*WRITE: gv_connid. "0000 ## (### ##)</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ULINE.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gv_connid = EXACT #( 'ABCD' ). " ### ### ##### ####</font>
+<font color ="#0000FF">*gv_connid = EXACT #( '1234' ). " ### ### #### (##-&gt;#####) ## + ## ##</font>
+<font color ="#0000FF">*WRITE: gv_connid.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+" CORRESPONDING ##
+
+<font color ="#0000FF">*DATA: BEGIN OF gs_data,</font>
+<font color ="#0000FF">*        carrid   TYPE s_carr_id,</font>
+<font color ="#0000FF">*        connid   TYPE s_conn_id,</font>
+<font color ="#0000FF">*        fldate   TYPE s_date,</font>
+<font color ="#0000FF">*        carrname TYPE s_carrname,</font>
+<font color ="#0000FF">*      END OF gs_data.</font>
+<font color ="#0000FF">*DATA: gs_carrier TYPE scarr,</font>
+<font color ="#0000FF">*      gs_flight  TYPE sflight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">** ## ## !</font>
+<font color ="#0000FF">*" #### ####, ## ### ## #####</font>
+<font color ="#0000FF">*" gs_carrier ## carrid, carrname</font>
+<font color ="#0000FF">*" gs_flight ## carrid, connid, fldate</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_carrier = VALUE #( carrid = 'LH' carrname = 'Airline' ).</font>
+<font color ="#0000FF">*gs_flight = VALUE #( carrid = 'AA' connid = '400' fldate = sy-datum ).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_data = CORRESPONDING #( gs_carrier ).</font>
+<font color ="#0000FF">**gs_data = CORRESPONDING #( gs_flight ). " ## ### ##</font>
+<font color ="#0000FF">**gs_data = CORRESPONDING #( BASE ( gs_data ) gs_flight ). " ## ### ##</font>
+<font color ="#0000FF">*gs_data = CORRESPONDING #( BASE ( gs_data ) gs_flight EXCEPT carrid ). " carrid ## #### ##</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: gs_data-carrid, gs_data-carrname, gs_data-connid, gs_data-fldate.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+" COND (=IF#), SWITCH (=CASE#)
+
+DATA: BEGIN OF ls_list,
+        ID(20) TYPE C,
+        name(20) TYPE C,
+      END OF ls_list.
+DATA: lt_list LIKE TABLE OF ls_list.
+DATA: lv_score TYPE I VALUE 88,
+      lv_vip TYPE C VALUE 'X'.
+
+" ### ## ### #### ### ##
+DATA(lv_grade) = COND string(
+  WHEN lv_score &gt;= 90 THEN 'A'
+  WHEN lv_score &gt;= 80 THEN 'B'
+  ELSE 'C'
+).
+
+lt_list = VALUE #(
+  BASE lt_list " ## ### (###) ##
+  ( id = '001' name = 'BASIC' ) " ### ##
+<font color ="#0000FF">*  ( COND #( WHEN lv_vip = 'X' " ### ## ##</font>
+<font color ="#0000FF">*            THEN VALUE #( id = '101' name = 'VIP' )</font>
+<font color ="#0000FF">*            ELSE VALUE #( id = '102' name = 'BASIC' )</font>
+<font color ="#0000FF">*           )</font>
+<font color ="#0000FF">*  )</font>
+  ( SWITCH #( lv_vip
+              WHEN 'X' THEN VALUE #( id = '101' name = 'VIP' )
+              ELSE VALUE #( id = '102' name = 'BASIC' )
+            )
+  )
+).
+cl_demo_output=&gt;display( lt_list ).
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0029_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0029_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_0029_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_0029_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_OPTIONS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_options.
+  so_fdt-sign = 'I'.
+  so_fdt-option = 'BT'.
+  so_fdt-low = sy-datum(4) && '0101'. " ## ###
+  so_fdt-high = sy-datum(4) && '1231'. " ## ####
+  APPEND so_fdt.
+
+  so_car-sign = 'I'.
+  so_car-option = 'GT'.
+  so_car-low = 'QF'.
+  APPEND so_car.
+
+  CLEAR so_car.
+  so_car-sign = 'E'.
+  so_car-option = 'EQ'.
+  so_car-low = 'LH'.
+  APPEND so_car.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form GET_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_data.
+  DATA: BEGIN OF ls_custom,
+          ID TYPE S_CUSTOMER,
+          TELEPHONE TYPE S_PHONENO,
+        END OF ls_custom.
+  DATA: lt_custom LIKE TABLE OF ls_custom.
+
+  SELECT * FROM SBOOK
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    WHERE carrid IN so_car
+      AND connid IN so_con
+      AND fldate IN so_fdt.
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE '#### #### ####.' TYPE 'E'.
+  ELSE.
+    SORT gt_data BY CARRID CONNID FLDATE.
+    SELECT ID TELEPHONE
+      FROM SCUSTOM
+      INTO TABLE lt_custom
+      FOR ALL ENTRIES IN gt_data
+      WHERE ID EQ gt_data-customid
+        AND TELEPHONE NE space.
+
+    LOOP AT gt_data INTO gs_data.
+      IF gs_data-loccuram &lt; 500.
+        gs_data-EXCP_FLD = '1'. " ##
+      ELSEIF gs_data-loccuram &gt;= 500 AND gs_data-loccuram &lt;= 800.
+        gs_data-EXCP_FLD = '2'. " ##
+      ELSE.
+        gs_data-EXCP_FLD = '3'. " ##
+
+        "excp_fld ### #, ### ##### #
+        gs_cell_style-fieldname = 'DISPLAY_BOOKINGS'.
+        gs_cell_Style-style = cl_gui_alv_grid=&gt;MC_STYLE_BUTTON.
+        APPEND gs_cell_style TO gs_data-it_cell_style.
+        gs_data-display_bookings = 'Detail'. "##Text
+      ENDIF.
+
+      IF gs_data-smoker = 'X'.
+        gs_data-col_fld = 'C' && col_negative && '10'.
+
+<font color ="#0000FF">*        smoker ### ## ## ##</font>
+        ls_scol-fname = 'SMOKER'.
+        ls_scol-color-col = '3'.
+        ls_scol-color-int = '1'.
+        ls_scol-color-inv = '0'.
+
+        APPEND ls_scol TO gs_data-lt_scol.
+      ENDIF.
+
+      " Cancelled icon ##
+      IF gs_data-cancelled = 'X'.
+        gs_data-cancelled_icon = ICON_CANCEL.
+      ENDIF.
+
+      " SCUSTOM-TELEPHONE ##
+      READ TABLE lt_custom INTO ls_custom WITH KEY ID = gs_data-customid TRANSPORTING telephone.
+      IF sy-subrc = 0.
+        gs_data-phone = ls_custom-telephone.
+      ENDIF.
+
+      MODIFY gt_data FROM gs_data.
+      CLEAR: gs_data, ls_custom, gs_cell_style.
+    ENDLOOP.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout.
+  gs_layout-grid_title = 'Booking List'. " Title ##
+  gs_layout-zebra = 'X'.  " Row ### ##
+  gs_layout-cwidth_opt = 'X'. " #### ###
+<font color ="#0000FF">*  gs_layout-totals_bef = 'X'. " ## # ##</font>
+  gs_layout-sel_mode = 'A'. " _,A,B,C,D ####
+
+  gs_layout-excp_fname = 'EXCP_FLD'. " ### ###
+  gs_layout-excp_led = 'X'.
+  gs_layout-info_fname = 'COL_FLD'. " ### ###
+  gs_layout-ctab_fname = 'LT_SCOL'. " ### ###
+<font color ="#0000FF">*  gs_layout-no_toolbar = 'X'.\</font>
+
+  gs_layout-stylefname = 'IT_CELL_STYLE'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_sorter</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_sorter .
+  IF gt_sorter IS INITIAL.
+    gs_sorter-fieldname = 'ORDER_DATE'.
+    gs_sorter-spos = 1.
+    gs_sorter-up = 'X'. " #### (##)
+<font color ="#0000FF">*    gs_sorter-subtot = 'X'. " ##### ####</font>
+    APPEND gs_sorter TO gt_sorter. " itab # #### ##
+
+    CLEAR gs_sorter.
+    gs_sorter-fieldname = 'LOCCURAM'.
+    gs_sorter-spos = 2.
+    gs_sorter-down = 'X'. " ####
+    APPEND gs_sorter TO gt_sorter.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_filter</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_filter .
+  CLEAR: gt_filter, gs_filter.
+
+  IF so_car2 IS NOT INITIAL.
+    LOOP AT so_car2.
+      gs_filter-fieldname = 'CARRID'.
+      gs_filter-sign = so_car2-sign.
+      gs_filter-option = so_car2-option.
+      gs_filter-low = so_car2-low.
+      gs_filter-high = so_car2-high.
+      APPEND gs_filter TO gt_filter.
+    ENDLOOP.
+  ENDIF.
+
+  IF so_con2 IS NOT INITIAL.
+    CLEAR gs_filter.
+    LOOP AT so_con2.
+      gs_filter-fieldname = 'CONNID'.
+      gs_filter-sign = so_con2-sign.
+      gs_filter-option = so_con2-option.
+      gs_filter-low = so_con2-low.
+      gs_filter-high = so_con2-high.
+      APPEND gs_filter TO gt_filter.
+    ENDLOOP.
+  ENDIF.
+
+  " ## sorter# ## ## ### ##### ###,
+  " =&gt; set_sorter_criteria ##
+  CALL METHOD go_alv-&gt;set_filter_criteria
+    EXPORTING
+      it_filter = gt_filter
+    EXCEPTIONS
+      no_fieldcatalog_available = 1
+      OTHERS                    = 2.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE 'Filter ## # ## ##' TYPE 'E'.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_uifunc</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_uifunc .
+  APPEND cl_gui_alv_grid=&gt;mc_mb_sum TO gt_uifunc.
+  APPEND cl_gui_alv_grid=&gt;mc_fc_filter TO gt_uifunc.
+<font color ="#0000FF">*  APPEND cl_gui_alv_grid=&gt;mc_fc_excl_all TO gt_uifunc.</font>
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fieldcat USING pv_type TYPE C
+                        pv_fname TYPE ANY
+                        pv_value TYPE ANY.
+<font color ="#0000FF">* PERFORM set_fieldcat USING:</font>
+<font color ="#0000FF">*                    'S'  'FIELDNAME'  'CANCELLED_ICON',</font>
+<font color ="#0000FF">*                    ' '  'ICON'       'X',</font>
+<font color ="#0000FF">*                    'E'  'COLTEXT'    'Cancelled'.</font>
+
+FIELD-SYMBOLS &lt;fs&gt; TYPE ANY.
+
+IF pv_type = 'S'. "Start
+  CLEAR gs_fcat.
+ENDIF.
+
+ASSIGN gs_fcat-(pv_fname) TO &lt;fs&gt;.
+&lt;fs&gt; = pv_value.
+
+IF pv_type = 'E'. "End
+  APPEND gs_fcat TO gt_fcat.
+ENDIF.
+
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'CANCELLED_ICON'.</font>
+<font color ="#0000FF">*  gs_fcat-icon = 'X'.</font>
+<font color ="#0000FF">*  gs_fcat-coltext = 'Cancelled'.</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'CANCELLED'.</font>
+<font color ="#0000FF">*  gs_fcat-no_out = 'X'. "#### ####</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'PASSFORM'.</font>
+<font color ="#0000FF">*  gs_fcat-no_out = 'X'. "#### ####</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'PASSBIRTH'.</font>
+<font color ="#0000FF">*  gs_fcat-no_out = 'X'. "#### ####</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'PHONE'.</font>
+<font color ="#0000FF">*  gs_fcat-ref_field = 'TELEPHONE'."####</font>
+<font color ="#0000FF">*  gs_fcat-ref_table = 'SCUSTOM'."#####</font>
+<font color ="#0000FF">*  gs_fcat-col_pos = 4. "## ##</font>
+<font color ="#0000FF">*  gs_fcat-hotspot = 'X'. "##(##) ##</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'SMOKER'.</font>
+<font color ="#0000FF">*  gs_fcat-checkbox = 'X'. "##### ##</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'INVOICE'.</font>
+<font color ="#0000FF">*  gs_fcat-checkbox = 'X'. "##### ##</font>
+<font color ="#0000FF">**  gs_fcat-edit = 'X'.</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'CLASS'.</font>
+<font color ="#0000FF">*  gs_fcat-emphasize = 'C510'. "## ## ##</font>
+<font color ="#0000FF">**  gs_fcat-edit = 'X'.</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'LOCCURAM'.</font>
+<font color ="#0000FF">**  gs_fcat-do_sum = 'X'. "## ##</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  CLEAR gs_fcat.</font>
+<font color ="#0000FF">*  gs_fcat-fieldname = 'DISPLAY_BOOKINGS'.</font>
+<font color ="#0000FF">*  gs_fcat-col_pos = 3.</font>
+<font color ="#0000FF">*  gs_fcat-coltext = 'Display Detail'.</font>
+<font color ="#0000FF">*  APPEND gs_fcat TO gt_fcat.</font>
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_edit_rows</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_edit_rows .
+  DATA: lt_index_rows TYPE lvc_t_row,
+        ls_index_row TYPE lvc_s_row.
+
+  CALL METHOD go_alv-&gt;get_selected_rows
+    IMPORTING
+      et_index_rows = lt_index_rows.
+
+  IF lt_index_rows IS INITIAL.
+    MESSAGE '### #### #####' TYPE 'I'.
+    EXIT.
+  ENDIF.
+
+  " ### ##### ###### ## ###
+  LOOP AT gt_data INTO gs_data WHERE it_cell_style IS NOT INITIAL.
+    DELETE gs_data-it_cell_style WHERE fieldname = 'INVOICE'.
+    MODIFY gt_data FROM gs_data TRANSPORTING it_cell_style.
+  ENDLOOP.
+
+  " ### Row #### #### ##
+  LOOP AT lt_index_rows INTO ls_index_row.
+    CLEAR: gs_data, gs_cell_style.
+    READ TABLE gt_data INTO gs_data INDEX ls_index_row-index.
+    IF sy-subrc = 0.
+      gs_cell_style-fieldname = 'INVOICE'.
+      gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+      INSERT gs_cell_style INTO TABLE gs_data-it_cell_style.
+      MODIFY gt_data FROM gs_data INDEX ls_index_row-index
+      TRANSPORTING it_cell_style.
+    ENDIF.
+  ENDLOOP.
+
+  " Edit ###
+  CALL METHOD go_alv-&gt;set_ready_for_input
+    EXPORTING i_ready_for_input = 1.
+
+  " ALV Refresh
+  CALL METHOD go_alv-&gt;refresh_table_display.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

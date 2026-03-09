@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_B03_PRACTICE7_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_B03_PRACTICE7_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZBC400_B03_PRACTICE7_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZBC400_B03_PRACTICE7_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data.
+  SELECT *
+    FROM sflight
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    WHERE carrid IN so_car
+      AND connid IN so_con
+      AND fldate IN so_fdt.
+
+  SELECT *
+    FROM scarr
+    INTO CORRESPONDING FIELDS OF TABLE gt_scarr
+    FOR ALL ENTRIES IN gt_data
+    WHERE carrid = gt_data-carrid.
+
+  SELECT *
+    FROM sbook
+    INTO CORRESPONDING FIELDS OF TABLE gt_sbook
+    FOR ALL ENTRIES IN gt_data
+    WHERE carrid = gt_data-carrid
+      AND connid = gt_data-connid
+      AND fldate = gt_data-fldate.
+  SORT gt_sbook.  " ### #### class# #####
+
+  LOOP AT gt_data INTO gs_data.
+    READ TABLE gt_scarr INTO gs_scarr WITH KEY carrid = gs_data-carrid
+      TRANSPORTING carrname currcode.
+    READ TABLE gt_sbook INTO gs_sbook
+      WITH KEY carrid = gs_data-carrid
+               connid = gs_data-connid
+               fldate = gs_data-fldate
+      TRANSPORTING class.
+    gs_data-class = gs_sbook-class.
+    gs_data-carrname = gs_scarr-carrname.
+    gs_data-currcode = gs_scarr-currcode.
+    gs_data-seatsrem = gs_data-seatsmax - gs_data-seatsocc.
+    MODIFY gt_data FROM gs_data TRANSPORTING carrname currcode seatsrem class.
+    CLEAR gs_data.
+  ENDLOOP.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'SEATSREM'.
+  gs_fcat-coltext = 'Seats Remain'.
+  gs_fcat-col_pos = 3.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'CLASS'.
+  gs_fcat-ref_field = 'CLASS'.
+  gs_fcat-ref_table = 'SBOOK'.
+  gs_fcat-col_pos = 2.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'PRICE'.
+  gs_fcat-do_sum = 'X'.
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_sort</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_sort .
+  CLEAR gs_sort.
+  gs_sort-fieldname = 'CLASS'.
+  gs_sort-spos = 1.
+  gs_sort-up = 'X'.
+  gs_sort-subtot = 'X'.
+  APPEND gs_sort TO gt_sort.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPTEACHERDISPLAY_02_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPTEACHERDISPLAY_02_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPTEACHERDISPLAY_02_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPTEACHERDISPLAY_02_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+  SELECT * FROM ztperson_02
+    WHERE ( COURSE_ID = @ZTCURRICULUM_02-COURSE_ID OR @ZTCURRICULUM_02-COURSE_ID IS INITIAL )
+      AND ( GENERATION = @ZTCURRICULUM_02-GENERATION OR @ZTCURRICULUM_02-GENERATION IS INITIAL )
+      AND ( NAME = @ZTPERSON_02-NAME OR @ZTPERSON_02-NAME IS INITIAL )
+      AND personal_id LIKE 'T%'
+    INTO CORRESPONDING FIELDS OF TABLE @gt_data.
+
+  CLEAR: gs_data.
+  LOOP AT gt_data INTO gs_data.
+    CLEAR gs_history.
+    SELECT POS_CODE STATUS
+      FROM ZTTHISTORY_02
+      UP TO 1 ROWS
+      INTO CORRESPONDING FIELDS OF TABLE gt_history
+      WHERE PERSONAL_ID = gs_data-personal_id
+      ORDER BY start_date DESCENDING.
+    READ TABLE gt_history INTO gs_history INDEX 1.
+    IF gs_history-pos_code = 'M'.
+      gs_data-pos_code_txt = '####'.
+    ELSEIF gs_history-pos_code = 'S'.
+      gs_data-pos_code_txt = '####'.
+    ENDIF.
+
+    IF gs_history-status = 'A'.
+      gs_data-status_txt = '###'.
+    ELSEIF gs_history-status = 'B'.
+      gs_data-status_txt = '## ##'.
+    ELSEIF gs_history-status = 'C'.
+      gs_data-status_txt = '## ##'.
+    ELSEIF gs_history-status = 'D'.
+      gs_data-status_txt = '##'.
+    ELSEIF gs_history-status = 'E'.
+      gs_data-status_txt = '##'.
+    ENDIF.
+
+    IF gs_data-birth_date+4(4) = sy-datum+4(4).
+      gs_data-birth_icon = ICON_EXTRA.
+    ENDIF.
+
+    MODIFY gt_data FROM gs_data TRANSPORTING pos_code_txt status_txt birth_icon.
+    CLEAR gs_data.
+  ENDLOOP.
+ENDFORM.
+<font color ="#0000FF">**&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">**& Form set_fcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'PERSONAL_ID'.
+  gs_fcat-coltext   = '####'.
+  gs_fcat-col_pos = 1.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'NAME'.
+  gs_fcat-coltext   = '##'.
+  gs_fcat-col_pos = 2.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'GENDER'.
+  gs_fcat-coltext   = '##'.
+  gs_fcat-col_pos = 3.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'POS_CODE_TXT'.
+  gs_fcat-coltext   = '####'.
+  gs_fcat-col_pos = 4.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'STATUS_TXT'.
+  gs_fcat-coltext   = '####'.
+  gs_fcat-col_pos = 5.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'MOBILE'.
+  gs_fcat-coltext   = '####'.
+  gs_fcat-col_pos = 6.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'EMAIL'.
+  gs_fcat-coltext   = '###'.
+  gs_fcat-col_pos = 7.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'BIRTH_DATE'.
+  gs_fcat-coltext   = '####'.
+  gs_fcat-col_pos = 8.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'BIRTH_ICON'.
+  gs_fcat-coltext   = '# ###'.
+  gs_fcat-col_pos = 9.
+  gs_fcat-icon = 'X'.
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPTEACHERDISPLAY_02_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPTEACHERDISPLAY_02_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPTEACHERDISPLAY_02_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPTEACHERDISPLAY_02_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+TABLES: ZTCURRICULUM_02, ZTPERSON_02.
+
+DATA: OK_CODE TYPE sy-ucomm.
+DATA: go_cont TYPE REF TO cl_gui_custom_container,
+      go_alv  TYPE REF TO cl_gui_alv_grid.
+DATA: gt_fcat TYPE lvc_t_fcat,
+      gs_fcat TYPE lvc_s_fcat.
+
+DATA: BEGIN OF gs_data.
+        include structure <a href ="ztperson_02/dictionary-ztperson_02.html">ZTPERSON_02</a>.
+DATA: POS_CODE TYPE ZTTHISTORY_02-pos_code,
+      POS_CODE_TXT TYPE CHAR10,
+      STATUS TYPE ZTTHISTORY_02-status,
+      STATUS_TXT TYPE CHAR10,
+      BIRTH_ICON TYPE icon-id,
+      END OF gs_data.
+DATA: gt_data LIKE TABLE OF gs_data.
+
+DATA: gt_history TYPE TABLE OF ZTTHISTORY_02,
+      gs_history TYPE ZTTHISTORY_02.
+
+"Main Program # ## ##(NCODE-B-08)
+DATA lv_tea TYPE c.
+
+GET PARAMETER ID 'ZTEA' FIELD lv_tea.
+
+IF lv_tea = 'X'.
+  GET PARAMETER ID 'ZCOU' FIELD ztcurriculum_02-course_id.
+  GET PARAMETER ID 'ZGEN' FIELD ztcurriculum_02-generation.
+ENDIF.
+
+SET PARAMETER ID 'ZTEA' FIELD space.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

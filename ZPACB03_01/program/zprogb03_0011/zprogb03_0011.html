@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0011</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0011</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Structure</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0011</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zprogb03_0011.
+
+<font color ="#0000FF">*" Structure: #### ##### ### Work Area (####)</font>
+<font color ="#0000FF">*" Global data type# #### structure ## ##</font>
+<font color ="#0000FF">*DATA: gs_data   TYPE bc400_s_flight,</font>
+<font color ="#0000FF">*      gs_data2  LIKE gs_data,</font>
+<font color ="#0000FF">*      gs_flight TYPE zsflight_b03,</font>
+<font color ="#0000FF">*      gs_scarr  TYPE zscarr_b03.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_scarr-carrid = 'AA'.</font>
+<font color ="#0000FF">*gs_scarr-carrname = 'Hello'.</font>
+<font color ="#0000FF">*gs_scarr-currcode = 'KRW'.</font>
+<font color ="#0000FF">*gs_scarr-url = 'www.naver.com'.    " ### structure# #### ##</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ gs_scarr-carrid,</font>
+<font color ="#0000FF">*      / gs_scarr-carrname.</font>
+
+<font color ="#0000FF">** Local type structure</font>
+<font color ="#0000FF">*TYPES: BEGIN OF ts_flight,</font>
+<font color ="#0000FF">*          CARRID TYPE S_CARR_ID,</font>
+<font color ="#0000FF">*          CONNID TYPE S_CONN_ID,</font>
+<font color ="#0000FF">*          FLDATE TYPE S_DATE,</font>
+<font color ="#0000FF">*          CITYFROM TYPE S_FROM_CIT,</font>
+<font color ="#0000FF">*          CITYTO TYPE S_TO_CITY,</font>
+<font color ="#0000FF">*       END OF ts_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: gs_flight TYPE ts_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_flight-carrid = 'AA'.</font>
+<font color ="#0000FF">*gs_flight-connid = '0017'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ gs_flight-carrid,</font>
+<font color ="#0000FF">*      / gs_flight-connid.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">* DB Table# ### ## ## # Structure ### ### #.</font>
+<font color ="#0000FF">* =&gt; #### ### ## ### ##</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">* ## global structure ### custom component ####</font>
+<font color ="#0000FF">* Local Structure ##</font>
+
+<font color ="#0000FF">*DATA: BEGIN OF gs_flight.</font>
+<font color ="#0000FF">*  INCLUDE TYPE BC400_S_FLIGHT.</font>
+<font color ="#0000FF">*DATA: custom TYPE CHAR1,</font>
+<font color ="#0000FF">*      custom2 TYPE CHAR1,</font>
+<font color ="#0000FF">*      END OF gs_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*BREAK-POINT.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: 'okok'.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">* 1##</font>
+<font color ="#0000FF">*DATA: gs_flight TYPE ZSFLIGHT_B03.</font>
+<font color ="#0000FF">*gs_flight-carrid = 'AA'.</font>
+<font color ="#0000FF">*gs_flight-connid = '0017'.</font>
+<font color ="#0000FF">*gs_flight-fldate = sy-datum.</font>
+<font color ="#0000FF">*gs_flight-cityfrom = 'Incheon'.</font>
+<font color ="#0000FF">*gs_flight-cityto = 'Seoul'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ gs_flight-carrid,</font>
+<font color ="#0000FF">*      / gs_flight-connid,</font>
+<font color ="#0000FF">*      / gs_flight-fldate,</font>
+<font color ="#0000FF">*      / gs_flight-cityfrom,</font>
+<font color ="#0000FF">*      / gs_flight-cityto.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">** 2##</font>
+<font color ="#0000FF">*DATA: gs_b_flight TYPE BC400_S_FLIGHT.</font>
+<font color ="#0000FF">*MOVE-CORRESPONDING gs_flight TO gs_b_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE:/ gs_b_flight-carrid,</font>
+<font color ="#0000FF">*      / gs_b_flight-connid,</font>
+<font color ="#0000FF">*      / gs_b_flight-fldate.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

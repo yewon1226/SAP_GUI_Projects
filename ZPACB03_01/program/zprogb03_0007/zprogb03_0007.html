@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0007</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0007</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Debugger</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0007</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0007.
+
+CONSTANTS: GC_QF TYPE S_CARR_ID VALUE 'QF'.
+
+DATA: GV_CARRID1 TYPE S_CARR_ID,
+      GV_CARRID2 TYPE S_CARR_ID VALUE 'LH',
+      GV_COUNT   TYPE I.
+
+MOVE GC_QF TO GV_CARRID1.
+GV_CARRID2 = GV_CARRID1.
+
+ADD 1 TO gv_count.
+gv_count = gv_count + 1.
+
+clear: gv_count, gv_carrid1, gv_carrid2.
+
+WRITE: 'END'.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

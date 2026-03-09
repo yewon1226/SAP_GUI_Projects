@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0020</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0020</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Open SQL 2</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0020</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0020.
+
+<font color ="#0000FF">*DATA: gs_sflight TYPE sflight,</font>
+<font color ="#0000FF">*      gt_sflight TYPE TABLE OF sflight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">** Key ### ##</font>
+<font color ="#0000FF">*SELECT *</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_sflight</font>
+<font color ="#0000FF">*  FROM SFLIGHT</font>
+<font color ="#0000FF">*  ORDER BY SEATSMAX DESCENDING.</font>
+<font color ="#0000FF">** ORDER BY PRIMARY KEY.</font>
+<font color ="#0000FF">** ORDER BY carrid DESCENDING connid ASCENDING</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  cl_demo_output=&gt;display( gt_sflight ).</font>
+<font color ="#0000FF">**  LOOP AT gt_sflight INTO gs_sflight.</font>
+<font color ="#0000FF">**    WRITE:/ gs_sflight-carrid,</font>
+<font color ="#0000FF">**            gs_sflight-connid,</font>
+<font color ="#0000FF">**            gs_sflight-fldate.</font>
+<font color ="#0000FF">**  ENDLOOP.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gs_sflight TYPE sflight,</font>
+<font color ="#0000FF">*      gt_sflight TYPE TABLE OF sflight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">** Key ### ##</font>
+<font color ="#0000FF">*SELECT DISTINCT CARRID CONNID</font>
+<font color ="#0000FF">*  INTO CORRESPONDING FIELDS OF TABLE gt_sflight</font>
+<font color ="#0000FF">*  FROM SFLIGHT</font>
+<font color ="#0000FF">*  ORDER BY CARRID CONNID.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  LOOP AT gt_sflight INTO gs_sflight.</font>
+<font color ="#0000FF">*    WRITE:/ gs_sflight-carrid,</font>
+<font color ="#0000FF">*            gs_sflight-connid.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">** MIN, MAX, SUM, AVG, COUNT# ## ##</font>
+<font color ="#0000FF">** ## COUNT( DISTINCT ### ) ## #</font>
+<font color ="#0000FF">** ### ### ### ### ## # ##</font>
+<font color ="#0000FF">*DATA: BEGIN OF gs_data,</font>
+<font color ="#0000FF">*        MIN TYPE sflight-seatsocc,</font>
+<font color ="#0000FF">*        MAX TYPE sflight-seatsocc,</font>
+<font color ="#0000FF">*        SUM TYPE sflight-seatsocc,</font>
+<font color ="#0000FF">*        AVG TYPE F,</font>
+<font color ="#0000FF">*        CNT TYPE I,</font>
+<font color ="#0000FF">*      END OF gs_data.</font>
+<font color ="#0000FF">*DATA: gv_cnt TYPE I.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT MIN( SEATSOCC ) MAX( SEATSOCC )</font>
+<font color ="#0000FF">*       SUM( SEATSOCC ) AVG( SEATSOCC )</font>
+<font color ="#0000FF">*       COUNT( * )</font>
+<font color ="#0000FF">*  FROM SFLIGHT</font>
+<font color ="#0000FF">*  INTO gs_data</font>
+<font color ="#0000FF">*  WHERE carrid = 'LH'</font>
+<font color ="#0000FF">*    AND connid = '0400'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT COUNT( DISTINCT connid )</font>
+<font color ="#0000FF">*  FROM SFLIGHT</font>
+<font color ="#0000FF">*  INTO gv_cnt</font>
+<font color ="#0000FF">*  WHERE carrid = 'AA'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE: 'gv_cnt', gv_cnt.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  WRITE:/ 'MIN', 10 gs_data-MIN,</font>
+<font color ="#0000FF">*        / 'MAX', 10 gs_data-MAX,</font>
+<font color ="#0000FF">*        / 'SUM', 10 gs_data-SUM,</font>
+<font color ="#0000FF">*        / 'AVG', 10 gs_data-AVG,</font>
+<font color ="#0000FF">*        / 'CNT', 10 gs_data-CNT.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+DATA: BEGIN OF gs_data,
+        connid TYPE sflight-connid,
+        minvar TYPE sflight-seatsocc,
+        maxvar TYPE sflight-seatsocc,
+        sumvar TYPE sflight-seatsocc,
+        avgvar TYPE P LENGTH 3 DECIMALS 2,
+      END OF gs_data.
+DATA: gt_data LIKE TABLE OF gs_data.
+
+SELECT CONNID MIN( seatsocc ) MAX( seatsocc )
+       SUM( seatsocc ) AVG( seatsocc )
+  FROM SFLIGHT
+  INTO TABLE gt_data
+  WHERE carrid = 'LH'   " carrid# LH# ## ####
+  GROUP BY connid       " # #, connid# #####
+  HAVING SUM( seatsocc ) &gt;= 300.
+  " #### ## ### ##, SUM( seatsocc )### 300 ### #### ####
+
+IF sy-subrc = 0.
+  cl_demo_output=&gt;display( gt_data ).
+ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0022</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0022</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Events</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0022</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0022.
+
+DATA: gt_flight TYPE TABLE OF SFLIGHT,
+      gs_flight LIKE LINE OF gt_flight.
+
+SELECT-OPTIONS: so_con FOR gs_flight-connid.
+PARAMETERS: pa_car TYPE sflight-carrid,
+            pa_chk TYPE CHAR01 AS CHECKBOX DEFAULT 'X'.
+
+INITIALIZATION.
+  pa_car = 'LH'.
+  so_con-SIGN = 'I'.
+  so_con-OPTION = 'EQ'.
+  so_con-LOW = '0400'.
+  so_con-HIGH = '0402'.
+  APPEND so_con. " ## APPEND SO_CON TO SO_SON ##
+                 " TO~### ### ###, Select-options#
+                 " Header Line ## itab ### ##
+  CLEAR so_con.  " Header(Structure)# ###
+
+  so_con-SIGN = 'E'.
+  so_con-OPTION = 'EQ'.
+  so_con-LOW = '0400'.      " 0400 #### ##
+  APPEND so_con.
+  CLEAR so_con.
+
+AT SELECTION-SCREEN.
+  IF pa_chk = 'X' AND pa_car IS INITIAL.
+    MESSAGE 'carrid# #####~~~~' TYPE 'E'.
+  ENDIF.
+
+START-OF-SELECTION.
+  SELECT *
+    FROM SFLIGHT
+    INTO TABLE gt_flight
+    WHERE CARRID = PA_CAR
+      AND CONNID IN SO_CON.
+
+  IF sy-subrc = 0.
+    cl_demo_output=&gt;display( gt_flight ).
+  ENDIF.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   carrid# #####~~~~</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

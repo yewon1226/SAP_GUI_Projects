@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_03_PRACTICE1</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_03_PRACTICE1</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  PRACTICE1</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_03_PRACTICE1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZBC400_03_PRACTICE1.
+
+<font color ="#0000FF">* ## # #### ##</font>
+PARAMETERS: pa_car TYPE S_CARR_ID.
+
+
+
+
+TYPES: BEGIN OF ts_fli.
+        INCLUDE TYPE SFLIGHT.
+TYPES: carrname     TYPE scarr-carrname,     " SCARR (## ##)
+       cityfrom     TYPE spfli-cityfrom,     " SPFLI (## ##)
+       cityto       TYPE spfli-cityto,       " SPFLI (## ##)
+       seatremain   TYPE i,                   " Economy ## ## (## ##)
+       seatrem_b    TYPE i,                   " Business ## ## (## ##)
+       seatrem_f    TYPE i,                   " First ## ## (## ##)
+       END OF ts_fli.
+TYPES: tt_fli TYPE TABLE OF ts_fli.
+
+<font color ="#0000FF">*DATA: BEGIN OF gs_fli.</font>
+<font color ="#0000FF">*        INCLUDE TYPE SFLIGHT.</font>
+<font color ="#0000FF">*DATA: carrname     TYPE scarr-carrname,     " SCARR (## ##)</font>
+<font color ="#0000FF">*       cityfrom     TYPE spfli-cityfrom,     " SPFLI (## ##)</font>
+<font color ="#0000FF">*       cityto       TYPE spfli-cityto,       " SPFLI (## ##)</font>
+<font color ="#0000FF">*       seatremain   TYPE i,                   " Economy ## ## (## ##)</font>
+<font color ="#0000FF">*       seatrem_b    TYPE i,                   " Business ## ## (## ##)</font>
+<font color ="#0000FF">*       seatrem_f    TYPE i,                   " First ## ## (## ##)</font>
+<font color ="#0000FF">*       END OF gs_fli.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: gt_fli LIKE TABLE OF gs_fli.</font>
+<font color ="#0000FF">* # ##</font>
+
+DATA: gs_fli TYPE ts_fli,
+      gt_fli TYPE tt_fli,
+      gt_scar TYPE TABLE OF SCARR,
+      gs_scar LIKE LINE OF gt_scar,
+      gt_spf TYPE TABLE OF SPFLI,
+      gs_spf LIKE LINE OF gt_spf.
+
+SELECT-OPTIONS: so_con FOR gs_fli-CONNID,
+                so_dat FOR gs_fli-FLDATE.
+
+<font color ="#0000FF">* INITIALIZATION</font>
+INITIALIZATION.
+  pa_car = 'LH'.
+  so_dat-sign = 'I'.
+  so_dat-option = 'GE'.
+  so_dat-low = '20250101'.
+  APPEND so_dat.
+
+<font color ="#0000FF">* AT SELECTION-SCREEN</font>
+AT SELECTION-SCREEN.
+  IF pa_car IS INITIAL.
+    MESSAGE 'carrid #### ####!' TYPE 'E'.
+  ENDIF.
+
+<font color ="#0000FF">* START-OF-SELECTION</font>
+START-OF-SELECTION.
+  PERFORM get_data.
+
+  IF gt_fli IS INITIAL.
+    MESSAGE 'Data is not found' TYPE 'I'.
+    STOP.
+  ENDIF.
+
+  PERFORM process_data CHANGING gt_fli.
+
+  SORT gt_fli BY FLDATE ASCENDING.
+  ULINE.
+  cl_demo_output=&gt;display( gt_fli ).
+  ULINE.
+  FREE gt_fli.
+
+<font color ="#0000FF">* ##</font>
+  FORM get_data.
+    SELECT * FROM SFLIGHT
+      INTO TABLE gt_fli
+      WHERE carrid = pa_car
+        AND connid IN so_con
+        AND fldate IN so_dat.
+
+    IF gt_fli IS NOT INITIAL.
+      SELECT carrid carrname FROM SCARR
+        INTO CORRESPONDING FIELDS OF TABLE gt_scar
+        FOR ALL ENTRIES IN gt_fli
+        WHERE carrid = gt_fli-carrid.
+      SORT gt_scar BY carrid.
+
+      SELECT carrid connid cityfrom cityto FROM SPFLI
+        INTO CORRESPONDING FIELDS OF TABLE gt_spf
+        FOR ALL ENTRIES IN gt_fli
+        WHERE carrid = gt_fli-carrid
+          AND connid = gt_fli-connid.
+      SORT gt_spf BY carrid connid.
+    ENDIF.
+  ENDFORM.
+
+<font color ="#0000FF">* FORM process_data CHANGING gt_data LIKE gt_fli. # ##</font>
+  FORM process_data CHANGING gt_data TYPE tt_fli.
+    DATA: gs_data LIKE LINE OF gt_data.
+
+    LOOP AT gt_data INTO gs_data.
+      READ TABLE gt_scar INTO gs_scar WITH KEY carrid = gs_data-carrid BINARY SEARCH.
+      IF sy-subrc = 0.
+        gs_data-carrname = gs_scar-carrname.
+      ENDIF.
+      MODIFY gt_data FROM gs_data.
+
+      READ TABLE gt_spf INTO gs_spf
+        WITH KEY carrid = gs_data-carrid
+                 connid = gs_data-connid BINARY SEARCH.
+      IF sy-subrc = 0.
+        gs_data-cityfrom = gs_spf-cityfrom.
+        gs_data-cityto = gs_spf-cityto.
+      ENDIF.
+      MODIFY gt_data FROM gs_data.
+
+      gs_data-seatremain  = gs_data-seatsmax - gs_data-seatsocc.
+      gs_data-seatrem_b = gs_data-seatsmax_b - gs_data-seatsocc_b.
+      gs_data-seatrem_f = gs_data-seatsmax_f - gs_data-seatsocc_f.
+      MODIFY gt_data FROM gs_data.
+
+    ENDLOOP.
+
+  ENDFORM.
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   carrid #### ####!</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

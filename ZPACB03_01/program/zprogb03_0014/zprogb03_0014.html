@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0014</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0014</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Internal Table - Single record</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0014</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0014.
+
+<font color ="#0000FF">*DATA: gs_flight TYPE SFLIGHT,</font>
+<font color ="#0000FF">*      gt_flight LIKE TABLE OF gs_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_flight-carrid = 'AA'.</font>
+<font color ="#0000FF">*gs_flight-connid = '0017'.</font>
+<font color ="#0000FF">*gs_flight-fldate = '20250501'.</font>
+<font color ="#0000FF">*gs_flight-price = '10000'.</font>
+<font color ="#0000FF">*gs_flight-currency = 'USD'.</font>
+<font color ="#0000FF">*gs_flight-seatsmax = 400.</font>
+<font color ="#0000FF">*gs_flight-seatsocc = 200.</font>
+<font color ="#0000FF">*APPEND gs_flight TO gt_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_flight-carrid = 'BB'.</font>
+<font color ="#0000FF">*gs_flight-connid = '0027'.</font>
+<font color ="#0000FF">*gs_flight-fldate = '20260501'.</font>
+<font color ="#0000FF">*gs_flight-price = '1000'.</font>
+<font color ="#0000FF">*gs_flight-currency = 'EUR'.</font>
+<font color ="#0000FF">*gs_flight-seatsmax = 550.</font>
+<font color ="#0000FF">*gs_flight-seatsocc = 20.</font>
+<font color ="#0000FF">*APPEND gs_flight TO gt_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_flight-carrid = 'AB'.</font>
+<font color ="#0000FF">*gs_flight-connid = '0064'.</font>
+<font color ="#0000FF">*gs_flight-fldate = '20270501'.</font>
+<font color ="#0000FF">*gs_flight-price = '2500'.</font>
+<font color ="#0000FF">*gs_flight-currency = 'EUR'.</font>
+<font color ="#0000FF">*gs_flight-seatsmax = 300.</font>
+<font color ="#0000FF">*gs_flight-seatsocc = 250.</font>
+<font color ="#0000FF">*INSERT gs_flight INTO TABLE gt_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_flight-carrid = 'AC'.</font>
+<font color ="#0000FF">*gs_flight-connid = '0224'.</font>
+<font color ="#0000FF">*gs_flight-fldate = '20280501'.</font>
+<font color ="#0000FF">*gs_flight-price = '3000'.</font>
+<font color ="#0000FF">*gs_flight-currency = 'EUR'.</font>
+<font color ="#0000FF">*gs_flight-seatsmax = 60.</font>
+<font color ="#0000FF">*gs_flight-seatsocc = 5.</font>
+<font color ="#0000FF">*INSERT gs_flight INTO gt_flight INDEX 1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*LOOP AT gt_flight INTO gs_flight.</font>
+<font color ="#0000FF">*  WRITE:/ gs_flight-carrid,</font>
+<font color ="#0000FF">*          gs_flight-connid,</font>
+<font color ="#0000FF">*          gs_flight-fldate,</font>
+<font color ="#0000FF">*          gs_flight-price,</font>
+<font color ="#0000FF">*          gs_flight-currency,</font>
+<font color ="#0000FF">*          gs_flight-seatsmax,</font>
+<font color ="#0000FF">*          gs_flight-seatsocc.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: gs_tab TYPE TABLE OF ZSCLB03_DEMO,    " ## TABLE OF ## standard</font>
+<font color ="#0000FF">*      gs_line TYPE ZSCLB03_DEMO.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_line-CARRID = 'AA'.</font>
+<font color ="#0000FF">*gs_line-CARRNAME = '###'.</font>
+<font color ="#0000FF">*gs_line-CONNID = '0017'.</font>
+<font color ="#0000FF">*gs_line-CITYFROM = '##'.</font>
+<font color ="#0000FF">*gs_line-CITYTO = '##'.</font>
+<font color ="#0000FF">*APPEND gs_line TO gs_tab.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_line-CARRID = 'BB'.</font>
+<font color ="#0000FF">*gs_line-CARRNAME = '###'.</font>
+<font color ="#0000FF">*gs_line-CONNID = '0016'.</font>
+<font color ="#0000FF">*gs_line-CITYFROM = '##'.</font>
+<font color ="#0000FF">*gs_line-CITYTO = '##'.</font>
+<font color ="#0000FF">*INSERT gs_line INTO TABLE gs_tab.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*gs_line-CARRID = 'CC'.</font>
+<font color ="#0000FF">*gs_line-CARRNAME = '###'.</font>
+<font color ="#0000FF">*gs_line-CONNID = '0015'.</font>
+<font color ="#0000FF">*gs_line-CITYFROM = '##'.</font>
+<font color ="#0000FF">*gs_line-CITYTO = '##'.</font>
+<font color ="#0000FF">*INSERT gs_line INTO gs_tab INDEX 1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CLEAR gs_line.</font>
+<font color ="#0000FF">*LOOP AT gs_tab INTO gs_line.</font>
+<font color ="#0000FF">*  WRITE:/ gs_line-CARRID,</font>
+<font color ="#0000FF">*          gs_line-CARRNAME,</font>
+<font color ="#0000FF">*          gs_line-CONNID,</font>
+<font color ="#0000FF">*          gs_line-CITYFROM,</font>
+<font color ="#0000FF">*          gs_line-CITYTO.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

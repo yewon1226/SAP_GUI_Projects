@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZB03005_I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZB03005_I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZB03005_I01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZB03005_I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      CALL FUNCTION 'POPUP_TO_CONFIRM'
+        EXPORTING
+          titlebar =  'Information'
+          text_question               = 'Are you sure?'
+        IMPORTING
+          ANSWER                      = gv_answer
+        EXCEPTIONS
+          TEXT_NOT_FOUND              = 1
+          OTHERS                      = 2.
+
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE '## ##' TYPE 'E'.
+      ELSE.
+        IF gv_answer = 1.
+          LEAVE TO SCREEN 0.
+        ENDIF.
+      ENDIF.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  CHECK_INPUT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE check_input INPUT.
+  IF SCARR-CARRID IS NOT INITIAL.
+    SELECT SINGLE CARRID
+      FROM SPFLI " ### AB## ##
+      INTO SCARR-CARRID
+      WHERE CARRID = SCARR-CARRID.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE '## ### #### #### ####.' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  CHECK_INPUTS  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE check_inputs INPUT.
+  IF SDYN_CONN-CARRID IS NOT INITIAL AND
+     SDYN_CONN-CONNID IS NOT INITIAL.
+    SELECT SINGLE *
+      FROM SPFLI
+      INTO CORRESPONDING FIELDS OF SDYN_CONN
+      WHERE CARRID = SDYN_CONN-CARRID
+        AND CONNID = SDYN_CONN-CONNID.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE '## #### #### #### ####.' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM. " #### ##
+    WHEN 'CANCEL'.
+      LEAVE TO SCREEN 0. " ### ##
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

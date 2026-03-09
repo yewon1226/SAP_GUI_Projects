@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPCURRI_02_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPCURRI_02_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPCURRI_02_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPCURRI_02_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*TABLES SSCRFIELDS.</font>
+TABLES: ZTCURRICULUM_02.
+
+DATA: OK_CODE TYPE sy-ucomm.
+DATA: go_cont TYPE REF TO cl_gui_custom_container,
+      go_alv  TYPE REF TO cl_gui_alv_grid.
+DATA: go_cont2 TYPE REF TO cl_gui_custom_container,
+      go_alv2  TYPE REF TO cl_gui_alv_grid.
+DATA: gt_fcat TYPE lvc_t_fcat,
+      gs_fcat TYPE lvc_s_fcat.
+DATA: gs_layout TYPE lvc_s_layo.
+DATA: gv_select_index TYPE I.
+
+DATA: BEGIN OF gs_data.
+        include structure <a href ="ztcurriculum_02/dictionary-ztcurriculum_02.html">ZTCURRICULUM_02</a>.
+DATA: week TYPE CHAR10,
+<font color ="#0000FF">*      it_cell_style TYPE LVC_T_STYL,</font>
+      END OF gs_data.
+DATA: gt_data LIKE TABLE OF gs_data.
+
+
+DATA: gs_cell_style TYPE LVC_S_STYL.
+
+"sorter
+DATA : gt_sorter TYPE LVC_T_SORT,
+       gs_sorter TYPE LVC_S_SORT.
+
+DATA: gv_btn_flag TYPE I VALUE 0.
+
+"##
+<font color ="#0000FF">*DATA: gt_update LIKE gt_data</font>
+
+<font color ="#0000FF">*********************************************************</font>
+"200# ###
+DATA: gt_data2 TYPE TABLE OF ZTCURRICULUM_02,
+      gs_data2 LIKE LINE OF gt_data2.
+DATA: gt_fcat2 TYPE lvc_t_fcat,
+      gs_fcat2 TYPE lvc_s_fcat.
+
+
+DATA: gs_layout2 TYPE lvc_s_layo.
+
+"# internal table
+DATA: gt_data3 LIKE gt_data2,
+      gs_data3 LIKE LINE OF gt_data2.
+
+DATA: gv_answer TYPE c.
+
+
+"Main Program # ## ##(NCODE-B-08)
+DATA lv_cur TYPE c.
+
+GET PARAMETER ID 'ZCUR' FIELD lv_cur.
+
+IF lv_cur = 'X'.
+  GET PARAMETER ID 'ZCOU' FIELD ztcurriculum_02-course_id.
+  GET PARAMETER ID 'ZGEN' FIELD ztcurriculum_02-generation.
+ENDIF.
+
+SET PARAMETER ID 'ZCUR' FIELD space.
+
+<font color ="#0000FF">***************************************************</font>
+"#### ### ##
+DATA: BEGIN OF gs_data4.
+        include structure <a href ="ztcurriculum_02/dictionary-ztcurriculum_02.html">ZTCURRICULUM_02</a>.
+DATA: week TYPE CHAR10,
+      it_cell_style TYPE LVC_T_STYL,
+      END OF gs_data4,
+      gt_data4 LIKE TABLE OF gs_data4.
+
+
+<font color ="#0000FF">*   it_cell_style TYPE LVC_T_STYL,</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

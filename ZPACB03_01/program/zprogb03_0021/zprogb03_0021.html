@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0021</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0021</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Join</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0021</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0021.
+
+<font color ="#0000FF">*DATA: BEGIN OF ls_flight,</font>
+<font color ="#0000FF">*        CARRID TYPE S_CARR_ID,</font>
+<font color ="#0000FF">*        CONNID TYPE S_CONN_ID,</font>
+<font color ="#0000FF">*        CARRNAME TYPE S_CARRNAME,</font>
+<font color ="#0000FF">*        CITYFROM TYPE S_FROM_CIT,</font>
+<font color ="#0000FF">*      END OF ls_flight.</font>
+<font color ="#0000FF">*DATA: lt_flight LIKE TABLE OF ls_flight.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SELECT SCARR~CARRID</font>
+<font color ="#0000FF">*       SPFLI~CONNID</font>
+<font color ="#0000FF">*       SCARR~CARRNAME</font>
+<font color ="#0000FF">*       SPFLI~CITYFROM</font>
+<font color ="#0000FF">*  INTO TABLE lt_flight</font>
+<font color ="#0000FF">*  FROM SCARR as A INNER JOIN SPFLI as B</font>
+<font color ="#0000FF">*    ON SCARR~CARRID = SPFLI~CARRID</font>
+<font color ="#0000FF">*  WHERE SCARR~CARRID = 'AA'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  IF sy-subrc = 0.</font>
+<font color ="#0000FF">*    cl_demo_output=&gt;display( lt_flight ).</font>
+<font color ="#0000FF">*  ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+TYPES: BEGIN OF ts_data,
+        CARRID TYPE SCARR-CARRID,
+        CONNID TYPE SFLIGHT-CONNID,
+        FLDATE TYPE SFLIGHT-FLDATE,
+       END OF ts_data.
+
+DATA: gs_data TYPE ts_data,
+      gt_data TYPE TABLE OF ts_data.
+
+SELECT C~CARRID F~CONNID F~FLDATE
+  INTO TABLE gt_data
+  FROM SCARR AS C LEFT OUTER JOIN SFLIGHT AS F
+    ON C~CARRID = F~CARRID
+  WHERE C~CARRID = 'AA'.
+
+  IF sy-subrc = 0.
+    cl_demo_output=&gt;display( gt_data ).
+  ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

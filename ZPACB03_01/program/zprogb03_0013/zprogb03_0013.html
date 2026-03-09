@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0013</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0013</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Internal Table 2</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0013</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0013.
+
+TYPES: BEGIN OF ty_line,
+        carrid TYPE sflight-carrid,
+        connid TYPE sflight-connid,
+        carrname TYPE scarr-carrname,
+       END OF ty_line.
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Standard table ##</font>
+<font color ="#0000FF">*DATA: lt_tab1 TYPE STANDARD TABLE OF ty_line</font>
+<font color ="#0000FF">*              WITH DEFAULT KEY,</font>
+<font color ="#0000FF">*      lt_tab2 TYPE STANDARD TABLE OF ty_line</font>
+<font color ="#0000FF">*              WITH NON-UNIQUE KEY CARRID CONNID.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*DATA: ls_line TYPE ty_line. " work-area (wa)</font>
+<font color ="#0000FF">*ls_line-carrid = 'AA'.</font>
+<font color ="#0000FF">*ls_line-connid = '0017'.</font>
+<font color ="#0000FF">*ls_line-carrname = 'Add Data'.</font>
+<font color ="#0000FF">*APPEND ls_line TO lt_tab2.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ls_line-carrid = 'BB'.</font>
+<font color ="#0000FF">*ls_line-connid = '0064'.</font>
+<font color ="#0000FF">*ls_line-carrname = 'Add Data 2'.</font>
+<font color ="#0000FF">*APPEND ls_line TO lt_tab2.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ls_line-carrid = 'AA'.</font>
+<font color ="#0000FF">*ls_line-connid = '0017'.</font>
+<font color ="#0000FF">*ls_line-carrname = 'Add Data 3'.</font>
+<font color ="#0000FF">*APPEND ls_line TO lt_tab2.  " # ##</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*LOOP AT lt_tab2 INTO ls_line.</font>
+<font color ="#0000FF">*  WRITE:/ ls_line-carrid,</font>
+<font color ="#0000FF">*          ls_line-connid,</font>
+<font color ="#0000FF">*          ls_line-carrname.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CLEAR ls_line.  "### ## ##### ###</font>
+<font color ="#0000FF">*READ TABLE lt_tab2 INTO ls_line</font>
+<font color ="#0000FF">*     WITH KEY CARRID = 'AA' CONNID = '0017'.</font>
+<font color ="#0000FF">*WRITE:/ 'Standard table: ',</font>
+<font color ="#0000FF">*      / ls_line-carrid, ls_line-carrname.</font>
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA: lt_sort TYPE SORTED TABLE OF ty_line</font>
+<font color ="#0000FF">*              WITH NON-UNIQUE KEY CARRID CONNID.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*" ### ##</font>
+<font color ="#0000FF">*DATA: ls_line TYPE ty_line.</font>
+<font color ="#0000FF">*ls_line-carrid ='ZZ'.</font>
+<font color ="#0000FF">*ls_line-connid = '0017'.</font>
+<font color ="#0000FF">*ls_line-carrname = 'First Data'.</font>
+<font color ="#0000FF">*INSERT ls_line INTO TABLE lt_sort.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ls_line-carrid ='AA'.</font>
+<font color ="#0000FF">*ls_line-connid = '0017'.</font>
+<font color ="#0000FF">*ls_line-carrname = 'Second Data'.</font>
+<font color ="#0000FF">** APPEND ls_line to lt_sort. "## ##</font>
+<font color ="#0000FF">*INSERT ls_line INTO TABLE lt_sort.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*READ TABLE lt_sort INTO ls_line INDEX 1.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  WRITE:/ 'Sorted ##: ',</font>
+<font color ="#0000FF">*          ls_line-carrid, ls_line-connid.</font>
+<font color ="#0000FF">*ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*LOOP AT lt_sort INTO ls_line.</font>
+<font color ="#0000FF">*  WRITE:/ ls_line-carrid,</font>
+<font color ="#0000FF">*          ls_line-connid,</font>
+<font color ="#0000FF">*          ls_line-carrname.</font>
+<font color ="#0000FF">*ENDLOOP.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+" Hashed Internal Table
+<font color ="#0000FF">*DATA: lt_hash TYPE HASHED TABLE OF ty_line</font>
+<font color ="#0000FF">*              WITH UNIQUE KEY CARRID CONNID.</font>
+<font color ="#0000FF">*DATA: ls_line TYPE ty_line.</font>
+<font color ="#0000FF">*ls_line-carrid = 'AA'.</font>
+<font color ="#0000FF">*ls_line-connid = '0017'.</font>
+<font color ="#0000FF">*ls_line-carrname = 'Add Data'.</font>
+<font color ="#0000FF">*INSERT ls_line INTO TABLE lt_hash.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CLEAR ls_line.</font>
+<font color ="#0000FF">**READ TABLE lt_hash INTO ls_line INDEX 1. " ## (####### ### x)</font>
+<font color ="#0000FF">*READ TABLE lt_hash INTO ls_line</font>
+<font color ="#0000FF">*     WITH KEY CARRID = 'AA' CONNID = '0017'.</font>
+<font color ="#0000FF">*IF sy-subrc = 0.</font>
+<font color ="#0000FF">*  WRITE:/ 'Hashed ##: ',</font>
+<font color ="#0000FF">*          ls_line-carrid, ls_line-connid.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+DATA: gt_flight TYPE TABLE OF SFLIGHT,
+      gs_flight TYPE SFLIGHT.
+
+SELECT *
+  INTO TABLE gt_flight
+  FROM sflight
+  WHERE carrid = 'AA'
+    AND CONNID = '0017'.
+
+LOOP AT gt_flight INTO gs_flight.
+  WRITE:/ gs_flight-carrid,
+          gs_flight-connid,
+          gs_flight-fldate.
+ENDLOOP.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

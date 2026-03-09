@@ -1,0 +1,366 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPCLASS2_02_O01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPCLASS2_02_O01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPCLASS_02_O01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPCLASS_02_O01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0100 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0100 OUTPUT.
+ SET PF-STATUS 'S100'.
+ SET TITLEBAR 'T100'.
+ENDMODULE.
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module CLEAR_OK_CODE OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE clear_ok_code OUTPUT.
+  CLEAR OK_CODE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv OUTPUT.
+  IF go_cont IS INITIAL.
+    CREATE OBJECT go_cont
+      EXPORTING
+        container_name              = 'AREA'
+      EXCEPTIONS
+        cntl_error                  = 1
+        cntl_system_error           = 2
+        create_error                = 3
+        lifetime_error              = 4
+        lifetime_dynpro_dynpro_link = 5
+        others                      = 6.
+
+    CREATE OBJECT go_alv
+      EXPORTING
+        i_parent          = go_cont
+      EXCEPTIONS
+        error_cntl_create = 1
+        error_cntl_init   = 2
+        error_cntl_link   = 3
+        error_dp_create   = 4
+        others            = 5.
+
+    PERFORM set_layout.
+    PERFORM set_fcat.
+
+    SET HANDLER lcl_event_handler=&gt;on_toolbar FOR go_alv.
+    SET HANDLER lcl_event_handler=&gt;on_user_command FOR go_alv.
+    CALL METHOD go_alv-&gt;set_table_for_first_display
+      EXPORTING
+        is_layout                     = gs_layout
+      CHANGING
+        it_outtab                     = gt_data
+        it_fieldcatalog               = gt_fcat
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+  ELSE.
+    CALL METHOD go_alv-&gt;refresh_table_display.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0110 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0110 OUTPUT.
+ CLEAR gs_data.
+ READ TABLE gt_data INTO gs_data INDEX gv_search_index.
+ SET PF-STATUS 'S110'.
+ SET TITLEBAR 'T110' WITH gs_data-class_no.
+ gs_layout_110-grid_title = gs_data-class_no && '# ## ## ##'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV_110 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv_110 OUTPUT.
+  IF go_cont_110 IS INITIAL.
+    CREATE OBJECT go_cont_110
+      EXPORTING
+        container_name              = 'AREA110'
+      EXCEPTIONS
+        cntl_error                  = 1
+        cntl_system_error           = 2
+        create_error                = 3
+        lifetime_error              = 4
+        lifetime_dynpro_dynpro_link = 5
+        others                      = 6.
+
+    CREATE OBJECT go_alv_110
+      EXPORTING
+        i_parent          = go_cont_110
+      EXCEPTIONS
+        error_cntl_create = 1
+        error_cntl_init   = 2
+        error_cntl_link   = 3
+        error_dp_create   = 4
+        others            = 5.
+
+    PERFORM set_fcat_110.
+    CALL METHOD go_alv_110-&gt;set_table_for_first_display
+      EXPORTING
+        is_layout                     = gs_layout_110
+      CHANGING
+        it_fieldcatalog               = gt_fcat_110
+        it_outtab                     = gt_stu
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+  ELSE.
+    CALL METHOD go_alv_110-&gt;refresh_table_display.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0300 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0300 OUTPUT.
+ SET PF-STATUS 'S300_2'.
+ SET TITLEBAR 'T300'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV_300 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv_300 OUTPUT.
+  IF go_cont_300 IS INITIAL.
+    CREATE OBJECT go_cont_300
+      EXPORTING
+        container_name              = 'AREA300'
+      EXCEPTIONS
+        cntl_error                  = 1
+        cntl_system_error           = 2
+        create_error                = 3
+        lifetime_error              = 4
+        lifetime_dynpro_dynpro_link = 5
+        others                      = 6.
+
+    CREATE OBJECT go_alv_300
+      EXPORTING
+        i_parent          = go_cont_300
+      EXCEPTIONS
+        error_cntl_create = 1
+        error_cntl_init   = 2
+        error_cntl_link   = 3
+        error_dp_create   = 4
+        others            = 5.
+
+    PERFORM set_fcat_300.
+    CALL METHOD go_alv_300-&gt;set_table_for_first_display
+<font color ="#0000FF">*      EXPORTING</font>
+<font color ="#0000FF">*        i_structure_name              = 'ZTPERSON_01'</font>
+<font color ="#0000FF">*        is_layout                     = gs_layout_110</font>
+      CHANGING
+        it_fieldcatalog               = gt_fcat_300
+        it_outtab                     = gt_data_300
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+  ELSE.
+    CALL METHOD go_alv_300-&gt;refresh_table_display
+      EXPORTING
+        i_soft_refresh = ''
+      EXCEPTIONS
+        finished = 1
+        OTHERS   = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE 'alv ##' TYPE 'I'.
+    ENDIF.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0120 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0120 OUTPUT.
+ SET PF-STATUS 'S120'.
+ SET TITLEBAR 'T120'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV_120 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv_120 OUTPUT.
+  IF go_cont_120 IS INITIAL.
+    CREATE OBJECT go_cont_120
+      EXPORTING
+        container_name              = 'AREA120'
+      EXCEPTIONS
+        cntl_error                  = 1
+        cntl_system_error           = 2
+        create_error                = 3
+        lifetime_error              = 4
+        lifetime_dynpro_dynpro_link = 5
+        others                      = 6.
+
+    CREATE OBJECT go_alv_120
+      EXPORTING
+        i_parent          = go_cont_120
+      EXCEPTIONS
+        error_cntl_create = 1
+        error_cntl_init   = 2
+        error_cntl_link   = 3
+        error_dp_create   = 4
+        others            = 5.
+
+    PERFORM set_fcat_120.
+    SET HANDLER lcl_event_handler=&gt;on_double_click FOR go_alv_120.
+    CALL METHOD go_alv_120-&gt;set_table_for_first_display
+      CHANGING
+        it_fieldcatalog               = gt_fcat_120
+        it_outtab                     = gt_teacher_120
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+  ELSE.
+    CALL METHOD go_alv_120-&gt;refresh_table_display.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0200 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0200 OUTPUT.
+ SET PF-STATUS 'S200'.
+ SET TITLEBAR 'T200'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV_200 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv_200 OUTPUT.
+  IF go_cont_200 IS INITIAL.
+    CREATE OBJECT go_cont_200
+      EXPORTING
+        container_name              = 'AREA200'
+      EXCEPTIONS
+        cntl_error                  = 1
+        cntl_system_error           = 2
+        create_error                = 3
+        lifetime_error              = 4
+        lifetime_dynpro_dynpro_link = 5
+        others                      = 6.
+
+    CREATE OBJECT go_alv_200
+      EXPORTING
+        i_parent          = go_cont_200
+      EXCEPTIONS
+        error_cntl_create = 1
+        error_cntl_init   = 2
+        error_cntl_link   = 3
+        error_dp_create   = 4
+        others            = 5.
+
+    gs_layout_200-sel_mode = 'A'.
+    gs_layout_200-stylefname = 'IT_CELL_STYLE'.
+    PERFORM set_fcat_200.
+    SET HANDLER lcl_event_handler=&gt;on_toolbar FOR go_alv_200.
+    SET HANDLER lcl_event_handler=&gt;on_user_command FOR go_alv_200.
+    CALL METHOD go_alv_200-&gt;set_table_for_first_display
+      EXPORTING
+        is_layout                     = gs_layout_200
+      CHANGING
+        it_fieldcatalog               = gt_fcat_200
+        it_outtab                     = gt_cell_200
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+  ELSE.
+    gs_layout_200-sel_mode = 'A'.
+    gs_layout_200-stylefname = 'IT_CELL_STYLE'.
+    CALL METHOD go_alv_200-&gt;refresh_table_display.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module STATUS_0400 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE status_0400 OUTPUT.
+ SET PF-STATUS 'S400'.
+ SET TITLEBAR 'T400'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Module INIT_ALV_400 OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+MODULE init_alv_400 OUTPUT.
+  IF go_cont_400 IS INITIAL.
+    CREATE OBJECT go_cont_400
+      EXPORTING
+        container_name              = 'AREA400'
+      EXCEPTIONS
+        cntl_error                  = 1
+        cntl_system_error           = 2
+        create_error                = 3
+        lifetime_error              = 4
+        lifetime_dynpro_dynpro_link = 5
+        others                      = 6.
+
+    CREATE OBJECT go_alv_400
+      EXPORTING
+        i_parent          = go_cont_400
+      EXCEPTIONS
+        error_cntl_create = 1
+        error_cntl_init   = 2
+        error_cntl_link   = 3
+        error_dp_create   = 4
+        others            = 5.
+
+    PERFORM set_fcat_400.
+    CALL METHOD go_alv_400-&gt;set_table_for_first_display
+      CHANGING
+        it_fieldcatalog               = gt_fcat_400
+        it_outtab                     = gt_data_400
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+  ELSE.
+    CALL METHOD go_alv_400-&gt;refresh_table_display.
+  ENDIF.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZBC410_SOLUTION3_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZBC410_SOLUTION3_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZBC410_SOLUTION2_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZBC410_SOLUTION2_TOP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+PROGRAM SAPMZBC410_SOLUTION_03_01.
+
+TABLES: SDYN_CONN, SPFLI, SCARR, SBOOK.
+
+DATA: exit_button TYPE C,
+      OK_CODE TYPE SY-UCOMM,
+      gs_data TYPE SDYN_CONN,
+      gv_subrc TYPE sy-subrc,
+      gv_button TYPE I.
+
+DATA: VIEW TYPE C VALUE 'X',
+      MAINTAIN_FLIGHTS TYPE C,
+      MAINTAIN_BOOKINGS TYPE C,
+      gv_title TYPE I VALUE 1,
+      gv_tabdynnr TYPE sy-dynnr.
+
+CONTROLS: MY_TABSTRIP TYPE TABSTRIP.
+
+DATA: gs_spfli TYPE spfli,
+      gs_scarr TYPE scarr,
+      gs_sbook TYPE sbook.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZBC400_03_COMPUTE</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZBC400_03_COMPUTE</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Calculator</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZBC400_03_COMPUTE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zbc400_03_compute.
+
+PARAMETERS: pa_int1 TYPE i,
+            pa_int2 TYPE i,
+            pa_op   TYPE c.
+
+DATA gv_result TYPE p LENGTH 16 DECIMALS 2.
+
+
+CASE pa_op.
+  WHEN '+'.
+    gv_result = pa_int1 + pa_int2.
+  WHEN '-'.
+    gv_result = pa_int1 - pa_int2.
+  WHEN '*'.
+    gv_result = pa_int1 * pa_int2.
+  WHEN '/'.
+    IF ( pa_int1 = 0 OR pa_int2 = 0 ).
+      MESSAGE '0# ## # ####.' TYPE 'E'.
+    ENDIF.
+    gv_result = pa_int1 / pa_int2.
+  WHEN OTHERS.
+    MESSAGE '#### ## ######.' TYPE 'E'.
+ENDCASE.
+
+WRITE: gv_result.
+
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*PARAMETERS: p_carrid TYPE c LENGTH 3,</font>
+<font color ="#0000FF">*            p_connid TYPE n LENGTH 4.</font>
+<font color ="#0000FF">*DATA: gs_data TYPE bc400_s_connection.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*CALL FUNCTION 'Z_BC400_03_CONNECTION_GET'</font>
+<font color ="#0000FF">*  EXPORTING</font>
+<font color ="#0000FF">*    iv_carrid     = p_carrid</font>
+<font color ="#0000FF">*    iv_connid     = p_connid</font>
+<font color ="#0000FF">*  IMPORTING</font>
+<font color ="#0000FF">*    es_connection = gs_data</font>
+<font color ="#0000FF">*  EXCEPTIONS</font>
+<font color ="#0000FF">*    no_data       = 1</font>
+<font color ="#0000FF">*    OTHERS        = 2.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*IF sy-subrc &lt;&gt; 0.</font>
+<font color ="#0000FF">*  MESSAGE '#### ####.' TYPE 'E'.</font>
+<font color ="#0000FF">*ELSE.</font>
+<font color ="#0000FF">*  WRITE:/ gs_data-carrid, gs_data-connid,</font>
+<font color ="#0000FF">*          gs_data-cityfrom, gs_data-airpfrom,</font>
+<font color ="#0000FF">*          gs_data-cityto, gs_data-airpto,</font>
+<font color ="#0000FF">*          gs_data-fltime, gs_data-deptime,</font>
+<font color ="#0000FF">*          gs_data-arrtime.</font>
+<font color ="#0000FF">*ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   0# ## # ####.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

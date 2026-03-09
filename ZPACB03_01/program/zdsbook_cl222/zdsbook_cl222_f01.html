@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZDSBOOK_CL222_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZDSBOOK_CL222_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZDSBOOK_CL222_01_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZDSBOOK_CL222_01_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_data .
+<font color ="#0000FF">* ## ##</font>
+<font color ="#0000FF">*  SELECT * from sbook</font>
+<font color ="#0000FF">*    INTO CORRESPONDING FIELDS OF TABLE gt_data</font>
+<font color ="#0000FF">*    WHERE cancelled = 'X'.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  SORT gt_data BY carrid connid fldate.</font>
+<font color ="#0000FF">*  INSERT ztbook_cl222 FROM TABLE gt_data</font>
+<font color ="#0000FF">*    ACCEPTING DUPLICATE KEYS.</font>
+
+  SELECT * from ztbook_cl222
+    INTO CORRESPONDING FIELDS OF TABLE gt_sbook
+    WHERE carrid IN pa_car
+      AND connid IN pa_con
+      AND fldate IN pa_fld.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form update_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM update_data USING lt_select_data TYPE LVC_T_ROW
+                       ls_select_data TYPE LVC_S_ROW.
+  READ TABLE gt_sbook TRANSPORTING NO FIELDS
+       WITH KEY update_cell = ICON_CHANGE.
+  IF sy-subrc = 0.
+    MESSAGE '## #### ## ####.' TYPE 'I'.
+  ELSE.
+    save_flag = 1.
+    LOOP AT gt_sbook INTO gs_sbook WHERE it_cell_style IS NOT INITIAL.
+      DELETE gs_sbook-it_cell_style WHERE fieldname = 'REFUND'.
+      MODIFY gt_sbook FROM gs_sbook TRANSPORTING it_cell_style.
+    ENDLOOP.
+
+    LOOP AT lt_select_data INTO ls_select_data.
+      CLEAR: gs_sbook-it_cell_style, gs_cell_style.
+      READ TABLE gt_sbook INTO gs_sbook INDEX ls_select_data-index.
+      IF sy-subrc = 0.
+        gs_cell_style-fieldname = 'REFUND'.
+        gs_cell_style-style = cl_gui_alv_grid=&gt;mc_style_enabled.
+        INSERT gs_cell_style INTO TABLE gs_sbook-it_cell_style.
+
+        gs_sbook-update_cell = ICON_CHANGE.
+
+        MODIFY gt_sbook FROM gs_sbook INDEX ls_select_data-index
+        TRANSPORTING it_cell_style update_cell.
+      ENDIF.
+    ENDLOOP.
+
+    CALL METHOD go_alv-&gt;set_ready_for_input
+      EXPORTING i_ready_for_input = 1.
+    CALL METHOD go_alv-&gt;refresh_table_display.
+  ENDIF.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_layout</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+  gs_layout-sel_mode = 'A'.
+  gs_layout-stylefname = 'IT_CELL_STYLE'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form set_fieldcat</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_fieldcat .
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'REFUND'.
+  gs_fcat-coltext = '####'.
+  gs_fcat-checkbox = 'X'.
+  gs_fcat-col_pos = 2.
+  APPEND gs_fcat TO gt_fcat.
+
+  CLEAR gs_fcat.
+  gs_fcat-fieldname = 'UPDATE_CELL'.
+  gs_fcat-coltext = '###'.
+  gs_fcat-icon = 'X'.
+  gs_fcat-col_pos = 1.
+  APPEND gs_fcat TO gt_fcat.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form select_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM select_data .
+  SELECT * from ztbook_cl222
+    INTO CORRESPONDING FIELDS OF TABLE gt_sbook
+    WHERE carrid IN pa_car
+      AND connid IN pa_con
+      AND fldate IN pa_fld.
+  SORT gt_sbook BY carrid connid fldate.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form edit_data</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM save_data .
+  CALL METHOD go_alv-&gt;check_changed_data.
+
+<font color ="#0000FF">*  LOOP AT gt_sbook INTO gs_sbook WHERE it_cell_style IS NOT INITIAL.</font>
+<font color ="#0000FF">*    gs_data-refund = gs_sbook-refund.</font>
+<font color ="#0000FF">*    MODIFY gt_data FROM gs_data INDEX sy-tabix</font>
+<font color ="#0000FF">*      TRANSPORTING refund.</font>
+<font color ="#0000FF">*  ENDLOOP.</font>
+
+  CLEAR gt_data.
+  LOOP AT gt_sbook INTO gs_sbook.
+    CLEAR gs_data.
+    MOVE-CORRESPONDING gs_sbook TO gs_data.
+    APPEND gs_data TO gt_data.
+  ENDLOOP.
+
+  UPDATE ztbook_cl222 FROM TABLE gt_data.
+
+  LOOP AT gt_sbook INTO gs_sbook WHERE update_cell = ICON_CHANGE.
+    CLEAR gs_sbook-update_cell.
+    DELETE gs_sbook-it_cell_style WHERE fieldname = 'REFUND'.
+
+    MODIFY gt_sbook FROM gs_sbook INDEX sy-tabix.
+  ENDLOOP.
+
+  CALL METHOD go_alv-&gt;refresh_table_display.
+  IF sy-subrc = 0.
+    MESSAGE '#######.' TYPE 'I'.
+  ENDIF.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

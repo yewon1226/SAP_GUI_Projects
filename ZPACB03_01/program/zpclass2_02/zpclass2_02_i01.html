@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPCLASS2_02_I01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPCLASS2_02_I01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPCLASS_02_I01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPCLASS_02_I01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0100  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0100 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN 'SEARCH'.
+      gv_btn_flag = 1.
+      PERFORM set_data.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0200  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0200 INPUT.
+  CASE OK_CODE.
+    WHEN 'SAVE'.
+      IF gv_save_success = 1.
+        gv_save_success = 0.
+        gv_update_success = 0.
+        PERFORM save_data_200.
+        PERFORM set_data.
+        CALL METHOD go_alv-&gt;refresh_table_display.
+        MESSAGE i102(zmccl2_02).
+<font color ="#0000FF">*        LEAVE TO SCREEN 0.</font>
+      ELSEIF gv_save_success = 0 AND gv_update_success = 1.
+        gv_update_success = 0.
+        MESSAGE i112(zmccl2_02).
+      ELSE.
+        gv_save_success = 0.
+        gv_update_success = 0.
+        PERFORM save_data_200.
+        PERFORM set_data.
+        CALL METHOD go_alv-&gt;refresh_table_display.
+        MESSAGE i113(zmccl2_02).
+      ENDIF.
+    WHEN 'BTN01'.
+      gv_pos_code = 'M'.
+      PERFORM go_120_screen.
+    WHEN 'BTN02'.
+      gv_pos_code = 'S'.
+      PERFORM go_120_screen.
+    WHEN 'BACK'.
+      gv_from_400 = 0.
+      CLEAR gv_update_index.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  EXIT  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE exit INPUT.
+CASE OK_CODE.
+  WHEN 'HOME'.
+    LEAVE TO TRANSACTION 'ZTMAIN_02'.
+  WHEN 'EXIT'.
+    LEAVE PROGRAM.
+  WHEN 'CANCEL'.
+    LEAVE TO SCREEN 0.
+  WHEN OTHERS.
+ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0110  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0110 INPUT.
+  CASE OK_CODE.
+    WHEN 'CLOSE2'.
+      PERFORM FREE_ALV_110.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0300  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0300 INPUT.
+  IF go_alv_300 IS NOT INITIAL.
+    CALL METHOD go_alv_300-&gt;check_changed_data.
+  ENDIF.
+
+  CASE OK_CODE.
+    WHEN 'SAVE'.
+      IF pa_mname IS INITIAL OR pa_sname IS INITIAL OR
+         pa_loc IS INITIAL.
+        MESSAGE i101(zmccl2_02).
+      ELSE.
+        PERFORM save_data.
+        PERFORM set_data.
+        CALL METHOD go_alv-&gt;refresh_table_display.
+        MESSAGE i100(zmccl2_02).
+      ENDIF.
+    WHEN 'BTN01'.
+      gv_pos_code = 'M'.
+      screen300_go120_flag = 1.
+      PERFORM go_120_screen.
+    WHEN 'BTN02'.
+      gv_pos_code = 'S'.
+      screen300_go120_flag = 1.
+      PERFORM go_120_screen.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0120  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0120 INPUT.
+  CASE OK_CODE.
+    WHEN 'CLOSE'.
+      PERFORM FREE_ALV_120.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  USER_COMMAND_0400  INPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE user_command_0400 INPUT.
+  CASE OK_CODE.
+    WHEN 'SAVE'.
+      PERFORM save400_data.
+      PERFORM set_data.
+      CALL METHOD go_alv_400-&gt;refresh_table_display.
+      MESSAGE i100(zmccl2_02).
+    WHEN 'BACK'.
+      LOOP AT gt_data_400 INTO gs_data_400.
+        CLEAR gs_data_400.
+        MODIFY gt_data_400 FROM gs_data_400 INDEX sy-tabix.
+      ENDLOOP.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

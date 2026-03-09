@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0027_E01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0027_E01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_0027_E01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_0027_E01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+INITIALIZATION.
+  so_car-sign = 'I'.
+  so_car-option = 'BT'.
+  so_car-low = 'AA'.
+  so_car-high = 'AZ'.
+  APPEND so_car.
+
+  CLEAR so_car. " Header (Structure)# ####
+  so_car-sign = 'E'.
+  so_car-option = 'EQ'.
+  so_car-low = 'LH'.
+  APPEND so_car.
+
+  tab_strip-activetab ='COMM3'.
+  tab_strip-dynnr = '0103'. " ## ### ##
+
+  gv_text = '## ##'.
+
+<font color ="#0000FF">*AT SELECTION-SCREEN ON pa_carr.</font>
+<font color ="#0000FF">*  IF pa_carr IS INITIAL.</font>
+<font color ="#0000FF">*    MESSAGE e003(zmcb03).</font>
+<font color ="#0000FF">*  ENDIF.</font>
+
+<font color ="#0000FF">*AT SELECTION-SCREEN ON so_car.</font>
+<font color ="#0000FF">*  IF so_car IS INITIAL.</font>
+<font color ="#0000FF">*    MESSAGE e003(zmcb03).</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*AT SELECTION-SCREEN ON RADIOBUTTON GROUP rad.</font>
+<font color ="#0000FF">*  IF pa_rad1 = 'X'.</font>
+<font color ="#0000FF">*    MESSAGE e003(zmcb03).</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*AT SELECTION-SCREEN ON BLOCK blk1.</font>
+<font color ="#0000FF">*  IF pa_rad3 = 'X' AND so_con IS NOT INITIAL.</font>
+<font color ="#0000FF">*    MESSAGE e003(zmcb03).</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+
+AT SELECTION-SCREEN OUTPUT. " PBO
+  LOOP AT SCREEN.
+    IF screen-name CS 'RAD3'.
+      screen-input = gv_mode.
+    ENDIF.
+    MODIFY SCREEN.
+  ENDLOOP.
+
+AT SELECTION-SCREEN. " PAI
+  CHECK sy-dynnr = 1000.
+  CASE sscrfields-ucomm.
+    WHEN 'ON'.
+      IF gv_mode = '1'.
+        gv_mode = '0'.
+        gv_text = '####'.
+      ELSE.
+        gv_mode = '1'.
+        gv_text = '## ##'.
+      ENDIF.
+    WHEN OTHERS.
+  ENDCASE.
+
+AT SELECTION-SCREEN ON HELP-REQUEST FOR pa_carr.
+  CALL SCREEN 100 STARTING AT 5 5.
+
+START-OF-SELECTION.
+
+  SELECT *
+    FROM dv_flights
+    INTO TABLE gt_flight
+    WHERE carrid = 'AA'
+      AND connid = '0017'.
+
+  IF sy-subrc = 0.
+<font color ="#0000FF">*    LOOP AT gt_flight INTO gs_flight.</font>
+<font color ="#0000FF">*      WRITE:/ gs_flight-carrid,</font>
+<font color ="#0000FF">*              gs_flight-connid,</font>
+<font color ="#0000FF">*              gs_flight-fldate,</font>
+<font color ="#0000FF">*              gs_flight-cityfrom,</font>
+<font color ="#0000FF">*              gs_flight-cityto.</font>
+<font color ="#0000FF">*    ENDLOOP.</font>
+    TRY.
+        CALL METHOD cl_salv_table=&gt;factory
+          IMPORTING
+            r_salv_table = go_salv " instance ####
+          CHANGING
+            t_table      = gt_flight. " ## ### itab
+      CATCH cx_salv_msg.
+        MESSAGE 'Error ##' TYPE 'E'.
+    ENDTRY.
+    " ALV #### #### ### ####
+    go_salv-&gt;get_functions( )-&gt;set_all( abap_true ).
+    go_salv-&gt;display( ).
+
+  ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

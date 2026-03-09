@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0032</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0032</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Background job</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZPROGB03_0032</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPROGB03_0032.
+
+DATA: gt_data TYPE TABLE OF ZDBWORK_B03,
+      gs_data LIKE LINE OF gt_data.
+
+SELECT * FROM ZDBWORK_B03
+  INTO TABLE gt_data
+  ORDER BY WORKNO DESCENDING." ####
+
+CHECK sy-subrc = 0.
+
+READ TABLE gt_DATA INTO GS_DATA INDEX 1.
+ADD 1 TO gs_data-workno.
+
+gs_data-workdesc = 'hello work~~'.
+gs_data-ernam = sy-uname. " ####
+gs_data-erdat = sy-datum. " ## ##
+gs_data-erzet = sy-uzeit. " ## ##
+
+INSERT ZDBWORK_B03 FROM gs_data.
+IF sy-subrc = 0.
+  SELECT * FROM ZDBWORK_B03
+    INTO TABLE gt_data
+    ORDER BY workno DESCENDING.
+  cl_demo_output=&gt;display( gt_data ).
+ENDIF.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>

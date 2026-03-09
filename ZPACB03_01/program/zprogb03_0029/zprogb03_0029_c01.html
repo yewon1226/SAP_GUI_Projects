@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPROGB03_0029_C01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPROGB03_0029_C01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPROGB03_0029_C01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZPROGB03_0029_C01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+CLASS lcl_event_handler DEFINITION.
+  PUBLIC SECTION.
+  CLASS-METHODS: ON_DOUBLE_CLICK
+    FOR EVENT DOUBLE_CLICK OF CL_GUI_ALV_GRID
+    IMPORTING ES_ROW_NO E_COLUMN SENDER.
+  " CL_GUI_ALV_GRID #### #### #### ####
+  " ON_DOUBLE_CLICK ### #### #####
+
+  CLASS-METHODS: ON_HOTSPOT_CLICK FOR EVENT HOTSPOT_CLICK
+    OF CL_GUI_ALV_GRID IMPORTING ES_ROW_NO E_COLUMN_ID,
+      ON_TOOLBAR FOR EVENT TOOLBAR
+    OF CL_GUI_ALV_GRID IMPORTING E_OBJECT,
+      ON_USER_COMMAND FOR EVENT USER_COMMAND
+    OF CL_GUI_ALV_GRID IMPORTING E_UCOMM,
+      on_before_user_command FOR EVENT before_user_command
+    OF CL_GUI_ALV_GRID IMPORTING E_UCOMM.
+
+  CLASS-METHODS: on_button_click
+    FOR EVENT button_click OF CL_GUI_ALV_GRID
+    IMPORTING ES_ROW_NO ES_COL_ID.
+ENDCLASS.
+
+CLASS lcl_event_handler IMPLEMENTATION.
+  "#### #### ### ##
+  METHOD ON_DOUBLE_CLICK.
+    IF SENDER = GO_ALV.
+      MESSAGE I004(ZMCB03) WITH ES_ROW_NO-row_id
+                                E_COLUMN-fieldname.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD ON_HOTSPOT_CLICK.
+    MESSAGE I004(ZMCB03) WITH 'Hotspot'
+                              E_COLUMN_ID-fieldname.
+  ENDMETHOD.
+
+  METHOD ON_TOOLBAR.
+    DATA ls_button TYPE STB_BUTTON.
+    ls_button-butn_type = 3.
+    INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+
+    CLEAR ls_button.
+    ls_button-function = 'CUSTOM_TB'.
+    ls_button-icon = ICON_FLIGHT.
+    ls_button-quickinfo = 'This is tooltip~~'.
+    ls_button-butn_type = 0.
+    ls_button-text = 'flight'.
+    INSERT ls_button INTO TABLE e_object-&gt;mt_toolbar.
+  ENDMETHOD.
+
+  METHOD ON_USER_COMMAND.
+    DATA: lv_row TYPE I,
+          lv_col TYPE I.
+
+    CASE E_UCOMM.
+      WHEN 'CUSTOM_TB'.
+        CALL METHOD go_alv-&gt;get_current_cell
+          IMPORTING
+            e_row     = lv_row
+            e_col     = lv_col.
+        MESSAGE 'Row: ' && lv_row && ', Col: ' && lv_col TYPE 'I'.
+<font color ="#0000FF">*        MESSAGE 'flight' TYPE 'I'.</font>
+      WHEN 'SHOW_BOOK'.
+        MESSAGE 'Show-book #######' TYPE 'I'.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD on_before_user_command.
+    CASE e_ucomm.
+      WHEN go_alv-&gt;mc_fc_detail.
+        CALL METHOD go_alv-&gt;set_user_command
+          EXPORTING
+            i_ucomm = 'SHOW_BOOK'.
+
+<font color ="#0000FF">*        MESSAGE 'TEST' TYPE 'I'.</font>
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD on_button_click.
+    IF ES_COL_ID-fieldname = 'DISPLAY_BOOKINGS'.
+      READ TABLE gt_data INTO gs_data INDEX es_row_no-row_id.
+      MESSAGE gs_data-class TYPE 'I'.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 758
+</font>
+</body>
+</html>
